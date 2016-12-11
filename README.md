@@ -24,7 +24,7 @@ WHAT DO I NEED TO GET IT WORKING?
 THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.
-  * Besides this there are some ideas for further features such like
+ * Besides this there are some ideas for further features such like
     * an integrated ReST editor
     * a bookmark function for easy handling of multiple Nikola sites
     * deploy to any other site than GitHub
