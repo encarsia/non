@@ -3,6 +3,11 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="vte-2.91" version="0.46"/>
+  <object class="GtkFileFilter" id="filefilter1">
+    <patterns>
+      <pattern>conf.py</pattern>
+    </patterns>
+  </object>
   <object class="GtkMenu" id="menu1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -150,7 +155,7 @@
   <object class="GtkApplicationWindow" id="non_window">
     <property name="width_request">800</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Knights of Ni</property>
+    <property name="show_menubar">False</property>
     <signal name="destroy" handler="on_non_window_destroy" swapped="no"/>
     <child>
       <object class="GtkBox">
@@ -163,7 +168,7 @@
             <property name="can_focus">False</property>
             <property name="title">Knights of Ni</property>
             <property name="subtitle">Nikola powered GitHub Site Manager</property>
-            <property name="show_close_button">True</property>
+            <property name="spacing">5</property>
             <child>
               <object class="GtkMenuButton">
                 <property name="visible">True</property>
@@ -1025,6 +1030,7 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window</property>
     <property name="create_folders">False</property>
+    <property name="filter">filefilter1</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>

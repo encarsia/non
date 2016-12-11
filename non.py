@@ -49,7 +49,7 @@ class Handler:
 
     def on_build_clicked(self,widget):
         subprocess.run(["nikola","build"])
-        app.get_wdir_info()
+        app.get_window_content()
 
     def on_deploy_clicked(self,widget):
         subprocess.run(["nikola","build"])
@@ -94,8 +94,9 @@ class Handler:
     ############### filechooser dialog ############
 
     def on_choose_conf_file_file_activated(self,widget):
-        app.create_config(os.path.split(widget.get_filename())[0])
-        self.on_window_close(widget)
+        self.on_choose_conf_file_response(widget,0)
+        #app.create_config(os.path.split(widget.get_filename())[0])
+        #self.on_window_close(widget)
 
     def on_choose_conf_file_response(self,widget,response):
         if response == 0:
@@ -211,13 +212,11 @@ class NiApp:
 
     def check_ninstance(self):
         if os.path.isfile(os.path.join(self.install_dir,"ninstance.py")):
-            print("ninstance exists")
             import ninstance
             self.wdir = ninstance.CURRENT_DIR
             self.obj("open_conf").set_sensitive(True)
             self.get_window_content()
         else:
-            print("no ninstance")
             self.obj("choose_conf_file").show_all()
 
     def create_config(self,wdir):
