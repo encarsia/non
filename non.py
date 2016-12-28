@@ -136,6 +136,8 @@ class Handler:
 
     def on_view_posts_row_activated(self,widget,*args):
         row,pos = app.obj("selection_post").get_selected()
+        print("row:",type(row))
+        print("pos:",type(pos))
         subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][8],row[pos][2])])
 
     def on_view_pages_row_activated(self,widget,*args):
@@ -239,12 +241,12 @@ class NiApp:
         self.obj("pathremote").set_uri(siteconf.SITE_URL)
         self.obj("pathremote").set_label(siteconf.SITE_URL)
         
-        ##### these variables are dictionaries, I don't know yet if I really need those but I leave them here ##### 
+        ##### these variables are dictionaries ##### 
         #posts/pages
         #get info: title, slug, date, tags, category, compare to index.rst in output 
         self.posts,post_tags,post_cats = self.get_rst_content("posts")
         self.pages,page_tags,page_cats = self.get_rst_content("pages")
-        #listings/files/images
+        #listings/files/images (not needed because of treestores but I leave these here for possible later usage)
         listings = self.get_filelist("listings")
         files = self.get_filelist("files")
         images = self.get_filelist("images")
@@ -342,7 +344,7 @@ class NiApp:
                 #images are changed in size when deployed so check only for filename
                 if item.endswith(".png"):
                     equ = os.path.isfile(os.path.join("output",subdir,item))
-                #else compare if files are identical
+                #else compare if files are equal
                 else:
                     try:
                         equ = filecmp.cmp(os.path.join(subdir,item),os.path.join("output",subdir,item))
@@ -356,10 +358,15 @@ class NiApp:
                 self.obj(store).append(parent,[item,os.path.getsize(os.path.join(subdir,item)),self.sizeof_fmt(os.path.getsize(os.path.join(subdir,item))),weight])
             elif os.path.isdir(os.path.join(subdir,item)):
                 #TODO size of folder
+                if os.path.isdir(os.path.join("output",subdir,item)):
+                    weight = 400
+                else:
+                    weight = 800
+                    self.obj("build").set_sensitive(True)
                 row = self.obj(store).append(parent,[item,None,None,weight])
-                subdir = os.path.join(subdir,item)
+                subsubdir = os.path.join(subdir,item)
                 #read subdirs as child rows
-                self.get_tree_data(store,subdir,row)
+                self.get_tree_data(store,subsubdir,row)
 
     def get_tree_data_label(self,post_dict,page_dict,post,page,store,label):
         #combine labels from posts and pages and remove empty string
@@ -379,7 +386,7 @@ class NiApp:
 
     def get_filelist(self,subdir):
         d = {}
-        for root,dirs,files in os.walk(subdir):
+        for root,dirs,files in sorted(os.walk(subdir)):
             for f in files:
                 #images are changed in size when deployed so check only for filename
                 if subdir == "images":
