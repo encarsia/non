@@ -27,6 +27,7 @@ class Handler:
     ############ close/destroy  window ############
     
     def on_non_window_destroy(self,*args):
+        app.log.info("Application terminated on window close button. Bye.")
         Gtk.main_quit()
 
     def on_window_close(self,widget,*event):
@@ -42,17 +43,22 @@ class Handler:
     
     def on_preview_toggled(self,widget):
         if widget.get_active():
+            app.messenger("Open preview in standard web browser")
             self.serve = subprocess.Popen(["nikola","serve","-b"])
         else:
             #stop local server when untoggling button
+            app.messenger("Stop preview")
             self.serve.kill()
 
     def on_build_clicked(self,widget):
+        app.messenger("Run build process")
         subprocess.run(["nikola","build"])
         app.get_window_content()
 
     def on_deploy_clicked(self,widget):
+        app.messenger("Run build process")
         subprocess.run(["nikola","build"])
+        app.messenger("Run deploy command in terminal window")
         app.obj("term").spawn_sync(
             Vte.PtyFlags.DEFAULT,
             None,
@@ -75,6 +81,7 @@ class Handler:
         #close window if successfully deployed, otherwise window has to be exited manually
         if "INFO: github_deploy: Successful deployment" in widget.get_text()[0]:
             self.on_term_child_exited(app.obj("terminal_win"))
+            app.messenger("Deploying to GitHub successful.")
 
     def on_term_child_exited(self,widget,*args):
         app.obj("term").reset(True,True)
@@ -83,20 +90,21 @@ class Handler:
     ########### headerbar #########################
 
     def on_info_button_clicked(self,widget):
+        app.messenger("Open About dialog")
         app.obj("about_dialog").show_all()
 
     def on_open_conf_activate(self,widget):
+        app.messenger("Open conf.py in external editor")
         subprocess.run(['xdg-open',os.path.join(app.wdir,"conf.py")])
 
     def on_load_conf_activate(self,widget):
+        app.messenger("Choose configuration file to read")
         app.obj("choose_conf_file").show_all()
 
     ############### filechooser dialog ############
 
     def on_choose_conf_file_file_activated(self,widget):
         self.on_choose_conf_file_response(widget,0)
-        #app.create_config(os.path.split(widget.get_filename())[0])
-        #self.on_window_close(widget)
 
     def on_choose_conf_file_response(self,widget,response):
         if response == 0:
@@ -105,10 +113,13 @@ class Handler:
                     app.create_config(os.path.split(widget.get_filename())[0])
                     app.check_ninstance()
                 else:
+                    app.messenger("Working Nikola configuration required","warning")
                     app.obj("config_info").show_all()
             except AttributeError:
+                app.messenger("Working Nikola configuration required","warning")
                 app.obj("config_info").show_all()
         else:
+            app.messenger("Working Nikola configuration required","warning")
             app.obj("config_info").show_all()
         self.on_window_close(widget)
 
@@ -117,6 +128,7 @@ class Handler:
     def on_newpost_dialog_response(self,widget,response):
         if response == 0:
             if app.obj("newpost_entry").get_text() == "":
+                app.messenger("Create new post")
                 app.obj("entry_message").set_text("Title must not be empty.")
                 app.obj("newpost_entry").grab_focus()
             else:
@@ -135,12 +147,12 @@ class Handler:
     #open files on doubleclick
 
     def on_view_posts_row_activated(self,widget,*args):
+        app.messenger("Open post file")
         row,pos = app.obj("selection_post").get_selected()
-        print("row:",type(row))
-        print("pos:",type(pos))
         subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][8],row[pos][2])])
 
     def on_view_pages_row_activated(self,widget,*args):
+        app.messenger("Open page file")
         row,pos = app.obj("selection_page").get_selected()
         subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][8],row[pos][2])])
         
@@ -179,7 +191,7 @@ class NiApp:
         self.install_dir = os.getcwd()
 
         #set up logging
-        FORMAT = "%(asctime)s %(funcName)-14s %(lineno)d| %(levelname)-8s | %(message)s"
+        FORMAT = "%(asctime)s | %(levelname)-8s | %(message)s"
         logging.basicConfig(filename='non.log',level=logging.DEBUG,filemode='w',format=FORMAT,datefmt="%H:%M:%S")
         self.log = logging.getLogger(__name__)
 
@@ -214,6 +226,7 @@ class NiApp:
 
     def check_ninstance(self):
         if os.path.isfile(os.path.join(self.install_dir,"ninstance.py")):
+            self.messenger("Found conf.py to work with")
             import ninstance
             self.wdir = ninstance.CURRENT_DIR
             self.obj("open_conf").set_sensitive(True)
@@ -222,6 +235,7 @@ class NiApp:
             self.obj("choose_conf_file").show_all()
 
     def create_config(self,wdir):
+        self.messenger("Create new NON config")
         config = open(os.path.join(app.install_dir,"ninstance.py"),"w")
         config.write("##### working directory #####\nCURRENT_DIR = \"%s\"\n" % wdir)
         config.close()
@@ -409,7 +423,22 @@ class NiApp:
     def term_cmd(self,command):
         command += "\n" 
         app.obj("term").feed_child(command,len(command))
-    
+
+    def messenger(self,message,log="info"):
+        """Show notifications in statusbar and log file"""
+        self.obj("statusbar").push(1,message)
+        #time.sleep(.1)
+        #while Gtk.events_pending(): Gtk.main_iteration()
+        logcmd = "self.log.%s(\"%s\")" % (log,message)
+        exec(logcmd)
+        #try:
+            #self.obj("statusbar").push(1,message)
+            #time.sleep(.1)
+            #while Gtk.events_pending(): Gtk.main_iteration()
+        #except NameError:
+            #pass
+        #self.log.info(message)
+
     def sizeof_fmt(self,num, suffix='B'):
         """File size shown in common units"""
         for unit in ['','K','M','G','T','P','E','Z']:
@@ -423,6 +452,5 @@ class NiApp:
 
 app = NiApp()
 app.check_ninstance()
-#app.get_window_content()
 app.main()
 
