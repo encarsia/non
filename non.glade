@@ -747,7 +747,6 @@
                     <child>
                       <object class="GtkTreeViewColumn">
                         <property name="title" translatable="yes">Date</property>
-                        <property name="sort_indicator">True</property>
                         <property name="sort_column_id">2</property>
                         <child>
                           <object class="GtkCellRendererText"/>
