@@ -70,7 +70,7 @@ class Handler:
             )        
         app.obj("terminal_win").show_all()
         app.term_cmd("nikola github_deploy")
-        app.get_wdir_info()
+        app.get_window_content()
 
     def on_refresh_clicked(self,widget):
         app.get_window_content()
@@ -218,12 +218,6 @@ class NiApp:
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
-    def get_window_content(self):
-        
-        """Fill main window with content"""
-        [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images"]]
-        self.get_wdir_info()
-
     def check_ninstance(self):
         if os.path.isfile(os.path.join(self.install_dir,"ninstance.py")):
             self.messenger("Found conf.py to work with")
@@ -240,7 +234,12 @@ class NiApp:
         config.write("##### working directory #####\nCURRENT_DIR = \"%s\"\n" % wdir)
         config.close()
 
-    def get_wdir_info(self):
+    def get_window_content(self):
+        
+        """Fill main window with content"""
+
+        [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images"]]
+
         os.chdir(self.wdir)
         #load nikola conf.py as module to gain simple access to variables
         spec = importlib.util.spec_from_file_location("siteconf", os.path.join(self.wdir,"conf.py"))
@@ -431,13 +430,6 @@ class NiApp:
         #while Gtk.events_pending(): Gtk.main_iteration()
         logcmd = "self.log.%s(\"%s\")" % (log,message)
         exec(logcmd)
-        #try:
-            #self.obj("statusbar").push(1,message)
-            #time.sleep(.1)
-            #while Gtk.events_pending(): Gtk.main_iteration()
-        #except NameError:
-            #pass
-        #self.log.info(message)
 
     def sizeof_fmt(self,num, suffix='B'):
         """File size shown in common units"""
