@@ -107,6 +107,8 @@
       <column type="gint"/>
       <!-- column-name sub -->
       <column type="gchararray"/>
+      <!-- column-name translation -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="store_posts">
@@ -128,6 +130,8 @@
       <!-- column-name weight -->
       <column type="gint"/>
       <!-- column-name sub -->
+      <column type="gchararray"/>
+      <!-- column-name translation -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -546,6 +550,17 @@
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Translation</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">9</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -630,6 +645,17 @@
                           <attributes>
                             <attribute name="text">6</attribute>
                             <attribute name="weight">7</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Translation</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">9</attribute>
                           </attributes>
                         </child>
                       </object>

@@ -254,6 +254,17 @@ class NiApp:
         self.obj("pathremote").set_uri(siteconf.SITE_URL)
         self.obj("pathremote").set_label(siteconf.SITE_URL)
         
+        #TODO support multilingual sites
+        print("Default language:",siteconf.DEFAULT_LANG)
+        if len(siteconf.TRANSLATIONS) > 1:
+            print("Nikola site is configured for following additional language(s):")
+            [print(key) for key in siteconf.TRANSLATIONS if key != siteconf.DEFAULT_LANG]
+        else:
+            print("No further languages configured.")
+            
+        self.default_lang = siteconf.DEFAULT_LANG
+        self.translation_lang = set([key for key in siteconf.TRANSLATIONS if key != "de"])
+
         ##### these variables are dictionaries ##### 
         #posts/pages
         #get info: title, slug, date, tags, category, compare to index.rst in output 
@@ -319,6 +330,14 @@ class NiApp:
                 self.obj("build").set_sensitive(True)
             else:
                 weight = 400
+            #detect language
+            if len(self.translation_lang) > 0:
+                if f.split(".")[1] == "rst":
+                    lang = self.default_lang
+                else:
+                    lang = f.split(".")[1]
+            else:
+                lang = self.default_lang
             #add new found tags/categories to set
             t.update(tags)
             c.update(cats)
@@ -333,22 +352,32 @@ class NiApp:
                             "catstr":catstr,
                             "status":equ,
                             "weight":weight,
-                            "sub":subdir}
+                            "sub":subdir,
+                            "lang":lang,
+                            "transl":set()}
+
+        #add available translation to default file entry
+        #ex: articlename.lang > lang is added to transl entry of articlename
+        [d[key.split(".")[0]]["transl"].add(d[key]["lang"]) for key in d if d[key]["lang"] != self.default_lang]
+
         return d,t,c
 
     def get_tree_data_rst(self,store,dict):
         #append(["title","slug","file","date","ger_date",
         #       "tags","category","weight","sub"])
-        for key in dict:
-            self.obj(store).append([dict[key]["title"],
-                                    dict[key]["slug"],
-                                    dict[key]["file"],
-                                    dict[key]["date"],
-                                    dict[key]["ger_date"],
-                                    dict[key]["tagstr"],
-                                    dict[key]["catstr"],
-                                    dict[key]["weight"],
-                                    dict[key]["sub"]])
+        #append only default language files to treestore
+        [self.obj(store).append([dict[key]["title"],
+                                dict[key]["slug"],
+                                dict[key]["file"],
+                                dict[key]["date"],
+                                dict[key]["ger_date"],
+                                dict[key]["tagstr"],
+                                dict[key]["catstr"],
+                                dict[key]["weight"],
+                                dict[key]["sub"],
+                                #add available translations as comma seperated string
+                                #stolen from gist.github.com/23maverick23/6404685
+                                ",".join(str(s) for s in dict[key]["transl"])]) for key in dict if dict[key]["lang"] == self.default_lang]
         self.obj(store).set_sort_column_id(3,Gtk.SortType.DESCENDING)
 
     def get_tree_data(self,store,subdir,parent=None):
