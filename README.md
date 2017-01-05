@@ -29,6 +29,6 @@ THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
     * a bookmark function for easy handling of multiple Nikola sites
     * deploy to any other site than GitHub
     * provide templates
-    * support multilinugual sites
+    * support multilingual sites
 
 <img src="non_window.png" width="600">

@@ -254,17 +254,13 @@ class NiApp:
         self.obj("pathremote").set_uri(siteconf.SITE_URL)
         self.obj("pathremote").set_label(siteconf.SITE_URL)
         
-        #TODO support multilingual sites
-        print("Default language:",siteconf.DEFAULT_LANG)
-        if len(siteconf.TRANSLATIONS) > 1:
-            print("Nikola site is configured for following additional language(s):")
-            [print(key) for key in siteconf.TRANSLATIONS if key != siteconf.DEFAULT_LANG]
-        else:
-            print("No further languages configured.")
-            
+        #detect multilingual sites
         self.default_lang = siteconf.DEFAULT_LANG
-        self.translation_lang = set([key for key in siteconf.TRANSLATIONS if key != "de"])
+        self.translation_lang = set([key for key in siteconf.TRANSLATIONS if key != self.default_lang])
 
+        self.obj("lang").set_text(self.default_lang)
+        self.obj("trans_lang").set_text(",".join(str(s) for s in self.translation_lang if s != self.default_lang))
+       
         ##### these variables are dictionaries ##### 
         #posts/pages
         #get info: title, slug, date, tags, category, compare to index.rst in output 
