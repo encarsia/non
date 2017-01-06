@@ -48,9 +48,6 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkTreeModelSort" id="sort_cats">
-    <property name="model">store_cats</property>
-  </object>
   <object class="GtkTreeStore" id="store_files">
     <columns>
       <!-- column-name filename -->
@@ -153,10 +150,26 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkTreeModelSort" id="sort_tags">
-    <property name="model">store_tags</property>
+  <object class="GtkTreeStore" id="store_translation">
+    <columns>
+      <!-- column-name title -->
+      <column type="gchararray"/>
+      <!-- column-name slug -->
+      <column type="gchararray"/>
+      <!-- column-name file -->
+      <column type="gchararray"/>
+      <!-- column-name date -->
+      <column type="gchararray"/>
+      <!-- column-name ger_date -->
+      <column type="gchararray"/>
+      <!-- column-name lang -->
+      <column type="gchararray"/>
+      <!-- column-name weight -->
+      <column type="gint"/>
+      <!-- column-name sub -->
+      <column type="gchararray"/>
+    </columns>
   </object>
-  <object class="GtkTreeStore" id="store_translation"/>
   <object class="GtkApplicationWindow" id="non_window">
     <property name="width_request">800</property>
     <property name="can_focus">False</property>
@@ -565,6 +578,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">9</attribute>
+                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -664,6 +678,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">9</attribute>
+                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -695,7 +710,7 @@
                   <object class="GtkTreeView" id="view_tags">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="model">sort_tags</property>
+                    <property name="model">store_tags</property>
                     <property name="rules_hint">True</property>
                     <property name="enable_search">False</property>
                     <property name="level_indentation">2</property>
@@ -994,12 +1009,54 @@
                 <property name="can_focus">True</property>
                 <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkTreeView">
+                  <object class="GtkTreeView" id="view_translations">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">store_translation</property>
+                    <signal name="button-release-event" handler="on_view_translations_button_release_event" swapped="no"/>
+                    <signal name="row-activated" handler="on_view_translations_row_activated" swapped="no"/>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection"/>
+                      <object class="GtkTreeSelection" id="selection_translations"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Title</property>
+                        <property name="sort_column_id">0</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                            <attribute name="weight">6</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Date</property>
+                        <property name="sort_indicator">True</property>
+                        <property name="sort_order">descending</property>
+                        <property name="sort_column_id">3</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">4</attribute>
+                            <attribute name="weight">6</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Language</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">5</attribute>
+                            <attribute name="weight">6</attribute>
+                          </attributes>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>

@@ -4,11 +4,12 @@ WHAT IS THIS?
  
 WHAT CAN I DO WITH IT?
 
- * have an overview of posts, pages, listings, images and files
+ * have an overview of posts, pages, listings, images, files and translations
  * open files from app
  * keep track of changes made since last build (hint: **bold**)
  * create new posts
  * build, preview and deploy to GitHub
+ * create translation file on right click in the 'Translation' tab
 
 WHAT CAN'T I DO WITH IT?
 
@@ -29,6 +30,5 @@ THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
     * a bookmark function for easy handling of multiple Nikola sites
     * deploy to any other site than GitHub
     * provide templates
-    * support multilingual sites
 
 <img src="non_window.png" width="600">

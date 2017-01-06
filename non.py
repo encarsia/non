@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import datetime
 import importlib
 import filecmp
@@ -182,7 +183,36 @@ class Handler:
         row,pos = app.obj("selection_files").get_selected()
         subprocess.run(['xdg-open',os.path.join(app.wdir,"files",row[pos][0])])
 
+    def on_view_translations_row_activated(self,widget,*args):
+        app.messenger("Open file...")
+        row,pos = app.obj("selection_translations").get_selected()
+        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][7],row[pos][2])])
 
+    def on_view_translations_button_release_event(self,widget,event):
+        popup=Gtk.Menu()
+        for l in app.translation_lang:
+            item=Gtk.MenuItem(_("Create translation for %s" % l))
+            #selected row is already caught by on_treeview_selection_changed function
+            item.connect("activate",self.on_create_translation,l)
+            popup.append(item)
+        popup.show_all()
+        #only show on right click
+        if event.button == 3:
+            popup.popup(None,None,None,None,event.button,event.time)
+            return True
+
+    def on_create_translation(self,widget,lang):
+        row,pos = app.obj("selection_translations").get_selected()
+        subdir = row[pos][7]
+        file = row[pos][2]
+        trans_file = "%s.%s.rst" % (file.split(".")[0], lang)
+        if os.path.isfile(os.path.join(subdir,trans_file)):
+            app.messenger("Translation file already exists.","warning")
+        else:
+            shutil.copy(os.path.join(subdir,file),os.path.join(subdir,trans_file))
+            app.messenger("Create translation file for %s" % row[pos][0])
+            app.get_window_content()
+        
 class NiApp:
     
     def __init__(self):
@@ -238,7 +268,7 @@ class NiApp:
         
         """Fill main window with content"""
 
-        [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images"]]
+        [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images","store_translation"]]
 
         os.chdir(self.wdir)
         #load nikola conf.py as module to gain simple access to variables
@@ -259,7 +289,7 @@ class NiApp:
         self.translation_lang = set([key for key in siteconf.TRANSLATIONS if key != self.default_lang])
 
         self.obj("lang").set_text(self.default_lang)
-        self.obj("trans_lang").set_text(",".join(str(s) for s in self.translation_lang if s != self.default_lang))
+        self.obj("trans_lang").set_text(", ".join(str(s) for s in self.translation_lang if s != self.default_lang))
        
         ##### these variables are dictionaries ##### 
         #posts/pages
@@ -279,13 +309,17 @@ class NiApp:
         self.get_tree_data("store_listings","listings")
         self.get_tree_data("store_files","files")
         self.get_tree_data("store_images","images")
-        # tags/category tabs
+        # tags/category tab
         self.get_tree_data_label(self.posts,self.pages,post_tags,page_tags,"store_tags","tags")
         self.get_tree_data_label(self.posts,self.pages,post_cats,page_cats,"store_cats","category")
+        # translation tab
+        self.get_tree_data_translations("store_translation",self.posts)
+        self.get_tree_data_translations("store_translation",self.pages)
         
         #sort tags according to number of occurrences
-        self.obj("sort_tags").set_sort_column_id(4, Gtk.SortType.DESCENDING)
-        self.obj("sort_cats").set_sort_column_id(4, Gtk.SortType.DESCENDING)
+        self.obj("store_tags").set_sort_column_id(4, Gtk.SortType.DESCENDING)
+        self.obj("store_cats").set_sort_column_id(4, Gtk.SortType.DESCENDING)
+        self.obj("store_translation").set_sort_column_id(3, Gtk.SortType.DESCENDING)
         
         #set deploy button inactive if git status returns no change
         git_status = subprocess.Popen(["git","status","-s"],universal_newlines=True,stdout=subprocess.PIPE).communicate()
@@ -421,6 +455,33 @@ class NiApp:
                         counter += 1
             self.obj(store).set_value(row,0,"%s (%d)" % (item,counter))
             self.obj(store).set_value(row,4,counter)
+
+    def get_tree_data_translations(self,store,dict):
+        for key in dict:
+            # add parent row
+            #TODO comprehension
+            if dict[key]["lang"] == self.default_lang:
+                # row = title,slug,date,ger_date,lang,weight,sub
+                row = self.obj(store).append(None,
+                                            [dict[key]["title"],
+                                            dict[key]["slug"],
+                                            dict[key]["file"],
+                                            dict[key]["date"],
+                                            dict[key]["ger_date"],
+                                            None,
+                                            dict[key]["weight"],
+                                            dict[key]["sub"]])
+                # search for translations and append as child row
+                [self.obj(store).append(row,
+                                    [dict[child]["title"],
+                                    dict[child]["slug"],
+                                    dict[child]["file"],
+                                    dict[child]["date"],
+                                    dict[child]["ger_date"],
+                                    dict[child]["lang"],
+                                    dict[child]["weight"],
+                                    dict[child]["sub"]]) for child in dict if dict[child]["file"].split(".")[0] == dict[key]["file"].split(".")[0] and dict[child]["lang"] != self.default_lang]
+
 
     def get_filelist(self,subdir):
         d = {}
