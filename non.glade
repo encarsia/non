@@ -8,14 +8,14 @@
       <pattern>conf.py</pattern>
     </patterns>
   </object>
-  <object class="GtkMenu" id="menu1">
+  <object class="GtkMenu" id="menu">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
       <object class="GtkMenuItem" id="load_conf">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Load conf.py</property>
+        <property name="label" translatable="yes">Choose conf.py</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_load_conf_activate" swapped="no"/>
       </object>
@@ -24,9 +24,24 @@
       <object class="GtkMenuItem" id="open_conf">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Open conf.py</property>
+        <property name="label" translatable="yes">Reload current conf.py</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_open_conf_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="add_bookmark">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Add bookmark</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_add_bookmark_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
       </object>
     </child>
   </object>
@@ -106,6 +121,8 @@
       <column type="gchararray"/>
       <!-- column-name translation -->
       <column type="gchararray"/>
+      <!-- column-name fontstyle -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="store_posts">
@@ -129,6 +146,8 @@
       <!-- column-name sub -->
       <column type="gchararray"/>
       <!-- column-name translation -->
+      <column type="gchararray"/>
+      <!-- column-name fontstyle -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -526,6 +545,7 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">10</attribute>
                             <attribute name="text">0</attribute>
                             <attribute name="weight">7</attribute>
                           </attributes>
@@ -627,6 +647,7 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">10</attribute>
                             <attribute name="text">0</attribute>
                             <attribute name="weight">7</attribute>
                           </attributes>
@@ -1117,7 +1138,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="popup">menu1</property>
+            <property name="popup">menu</property>
             <child>
               <placeholder/>
             </child>

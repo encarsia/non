@@ -101,6 +101,12 @@ class Handler:
     def on_load_conf_activate(self,widget):
         app.messenger("Choose configuration file to read")
         app.obj("choose_conf_file").show_all()
+    
+    def on_add_bookmark_activate(self,widget):
+        print(app.bookmarks)
+        bookmark = app.siteconf.BLOG_TITLE, app.conf_path
+        app.bookmarks.add(bookmark)
+        print(app.bookmarks)
 
     ############### filechooser dialog ############
 
@@ -110,12 +116,15 @@ class Handler:
     def on_choose_conf_file_response(self,widget,response):
         if response == 0:
             try:
-                if os.path.split(widget.get_filename())[1] == "conf.py":
-                    app.create_config(os.path.split(widget.get_filename())[0])
-                    app.check_ninstance()
-                else:
-                    app.messenger("Working Nikola configuration required","warning")
-                    app.obj("config_info").show_all()
+                app.create_config(os.path.split(widget.get_filename())[0])
+                app.check_ninconf()
+                #    app.check_ninconf()
+                #if os.path.split(widget.get_filename())[1] == "conf.py":
+                #    app.create_config(os.path.split(widget.get_filename())[0])
+                #    app.check_ninconf()
+                #else:
+                #    app.messenger("Working Nikola configuration required","warning")
+                #    app.obj("config_info").show_all()
             except AttributeError:
                 app.messenger("Working Nikola configuration required","warning")
                 app.obj("config_info").show_all()
@@ -248,20 +257,31 @@ class NiApp:
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
-    def check_ninstance(self):
-        if os.path.isfile(os.path.join(self.install_dir,"ninstance.py")):
+    def check_ninconf(self):
+        if os.path.isfile(os.path.join(self.install_dir,"ninconf.py")):
+            self.conf_path = os.path.join(self.install_dir,"ninconf.py")
             self.messenger("Found conf.py to work with")
-            import ninstance
-            self.wdir = ninstance.CURRENT_DIR
+            import ninconf
+            self.wdir = ninconf.CURRENT_DIR
+            self.bookmarks = ninconf.BOOKMARKS
             self.obj("open_conf").set_sensitive(True)
+            for b in sorted(ninconf.BOOKMARKS):
+                item=Gtk.MenuItem(_("Bookmark entry %s" % b))
+                item.connect("activate",self.select_bookmark,b)
+                self.obj("menu").append(item)
+            self.obj("menu").show_all()
             self.get_window_content()
         else:
             self.obj("choose_conf_file").show_all()
 
+    
+    def select_bookmark(self,widget,b):
+        print("load",b)
+
     def create_config(self,wdir):
         self.messenger("Create new NON config")
-        config = open(os.path.join(app.install_dir,"ninstance.py"),"w")
-        config.write("##### working directory #####\nCURRENT_DIR = \"%s\"\n" % wdir)
+        config = open(os.path.join(app.install_dir,"ninconf.py"),"w")
+        config.write("##### non configuration #####\nCURRENT_DIR = \"%s\"\nBOOKMARKS = set()\n" % wdir)
         config.close()
 
     def get_window_content(self):
@@ -273,20 +293,20 @@ class NiApp:
         os.chdir(self.wdir)
         #load nikola conf.py as module to gain simple access to variables
         spec = importlib.util.spec_from_file_location("siteconf", os.path.join(self.wdir,"conf.py"))
-        siteconf = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(siteconf)
+        self.siteconf = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.siteconf)
         #labels
-        self.obj("author").set_text(siteconf.BLOG_AUTHOR)
-        self.obj("descr").set_text(siteconf.BLOG_DESCRIPTION)
-        self.obj("title").set_text(siteconf.BLOG_TITLE)
+        self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
+        self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
+        self.obj("title").set_text(self.siteconf.BLOG_TITLE)
         self.obj("pathlocal").set_uri("file://%s" % self.wdir)
         self.obj("pathlocal").set_label("...%s" % self.wdir[-25:])
-        self.obj("pathremote").set_uri(siteconf.SITE_URL)
-        self.obj("pathremote").set_label(siteconf.SITE_URL)
+        self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
+        self.obj("pathremote").set_label(self.siteconf.SITE_URL)
         
         #detect multilingual sites
-        self.default_lang = siteconf.DEFAULT_LANG
-        self.translation_lang = set([key for key in siteconf.TRANSLATIONS if key != self.default_lang])
+        self.default_lang = self.siteconf.DEFAULT_LANG
+        self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS if key != self.default_lang])
 
         self.obj("lang").set_text(self.default_lang)
         self.obj("trans_lang").set_text(", ".join(str(s) for s in self.translation_lang if s != self.default_lang))
@@ -325,28 +345,34 @@ class NiApp:
         git_status = subprocess.Popen(["git","status","-s"],universal_newlines=True,stdout=subprocess.PIPE).communicate()
         if git_status[0] == "":
             self.obj("deploy").set_sensitive(False)
-    
+
+    def read_rst_files(self,subdir,file):
+        title,slug,date,tagstr,tags,catstr,cats = "","",datetime.datetime.today().strftime("%Y-%m-%d"),"","","",""
+        rst = open(os.path.join(subdir,file),"r")
+        for line in rst:
+            if line.startswith(".. title:"):
+                title = line[9:].strip()
+            elif line.startswith(".. slug:"):
+                slug = line[8:].strip()
+            elif line.startswith(".. date:"):
+                date = line[8:20].strip()
+            elif line.startswith(".. tags:"):
+                tagstr = line[8:].strip()
+                tags = [t.strip() for t in tagstr.split(",")]
+            elif line.startswith(".. category:"):
+                catstr = line[12:].strip()
+                cats = [c.strip() for c in catstr.split(",")]
+                break
+        rst.close()
+        
+        return title, slug, date, tagstr, tags, catstr, cats
+
     def get_rst_content(self,subdir):
         d = {}
         t = set()
         c = set()
         for f in os.listdir(subdir):
-            rst = open(os.path.join(subdir,f),"r")
-            for line in rst:
-                if line.startswith(".. title:"):
-                    title = line[9:].strip()
-                elif line.startswith(".. slug:"):
-                    slug = line[8:].strip()
-                elif line.startswith(".. date:"):
-                    date = line[8:20].strip()
-                elif line.startswith(".. tags:"):
-                    tagstr = line[8:].strip()
-                    tags = [t.strip() for t in tagstr.split(",")]
-                elif line.startswith(".. category:"):
-                    catstr = line[12:].strip()
-                    cats = [c.strip() for c in catstr.split(",")]
-                    break
-            rst.close()
+            title, slug, date, tagstr, tags, catstr, cats = self.read_rst_files(subdir,f)
             #check output subdir whether files are equal
             try:
                 equ = filecmp.cmp(os.path.join(subdir,f),os.path.join("output",subdir,slug,"index.rst"))
@@ -371,6 +397,16 @@ class NiApp:
             #add new found tags/categories to set
             t.update(tags)
             c.update(cats)
+            #mark title in italic font if title is missing (use slug or filename instead)
+            if title == "":
+                if slug == "":
+                    title = f
+                else:
+                    title = slug
+                fontstyle = "italic"
+            else:
+                fontstyle = "normal"
+            #add dictionary entry for file
             d[f[:-4]] =    {"title":title,
                             "slug":slug,
                             "file":f,
@@ -382,6 +418,7 @@ class NiApp:
                             "catstr":catstr,
                             "status":equ,
                             "weight":weight,
+                            "fontstyle":fontstyle,
                             "sub":subdir,
                             "lang":lang,
                             "transl":set()}
@@ -407,7 +444,9 @@ class NiApp:
                                 dict[key]["sub"],
                                 #add available translations as comma seperated string
                                 #stolen from gist.github.com/23maverick23/6404685
-                                ",".join(str(s) for s in dict[key]["transl"])]) for key in dict if dict[key]["lang"] == self.default_lang]
+                                ",".join(str(s) for s in dict[key]["transl"]),
+                                dict[key]["fontstyle"],
+                                ]) for key in dict if dict[key]["lang"] == self.default_lang]
         self.obj(store).set_sort_column_id(3,Gtk.SortType.DESCENDING)
 
     def get_tree_data(self,store,subdir,parent=None):
@@ -459,7 +498,6 @@ class NiApp:
     def get_tree_data_translations(self,store,dict):
         for key in dict:
             # add parent row
-            #TODO comprehension
             if dict[key]["lang"] == self.default_lang:
                 # row = title,slug,date,ger_date,lang,weight,sub
                 row = self.obj(store).append(None,
@@ -507,7 +545,7 @@ class NiApp:
 
     def term_cmd(self,command):
         command += "\n" 
-        app.obj("term").feed_child(command,len(command))
+        self.obj("term").feed_child(command,len(command))
 
     def messenger(self,message,log="info"):
         """Show notifications in statusbar and log file"""
@@ -529,6 +567,6 @@ class NiApp:
         Gtk.main()
 
 app = NiApp()
-app.check_ninstance()
+app.check_ninconf()
 app.main()
 
