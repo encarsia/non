@@ -10,6 +10,7 @@ WHAT CAN I DO WITH IT?
  * create new posts
  * build, preview and deploy to GitHub
  * create translation file on right click in the 'Translation' tab
+ * bookmark and switch between different Nikola site instances
 
 WHAT CAN'T I DO WITH IT?
 
@@ -27,7 +28,6 @@ THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.
  * Besides this there are some ideas for further features such like
     * an integrated ReST editor
-    * a bookmark function for easy handling of multiple Nikola sites
     * deploy to any other site than GitHub
     * provide templates
 

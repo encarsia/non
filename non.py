@@ -103,10 +103,20 @@ class Handler:
         app.obj("choose_conf_file").show_all()
     
     def on_add_bookmark_activate(self,widget):
-        print(app.bookmarks)
         bookmark = app.siteconf.BLOG_TITLE, app.wdir
         app.bookmarks.add(bookmark)
-        print(app.bookmarks)
+        with open(app.nonconfig_file) as f:
+            content = f.readlines()
+        for line in content:
+            if line == ("\n"):
+                content.remove(line)
+            elif line.startswith("BOOKMARKS"):
+                content[content.index(line)] = "BOOKMARKS = %s\n" % str(app.bookmarks)
+        with open(app.nonconfig_file,"w") as f:
+            for line in content:
+                f.write(line)
+        app.messenger("New bookmark for \'%s\' added." % app.siteconf.BLOG_TITLE)
+        app.check_ninconf()
 
     ############### filechooser dialog ############
 
@@ -258,19 +268,35 @@ class NiApp:
         if cfile == None:
             #check for config on app start or after changing conf.py
             if os.path.isfile(os.path.join(self.install_dir,"ninconf.py")):
-                self.conf_path = os.path.join(self.install_dir,"ninconf.py")
+                self.nonconfig_file = os.path.join(self.install_dir,"ninconf.py")
                 self.messenger("Found conf.py to work with")
                 import ninconf
                 #reloading module is required when file is changed 
                 ninconf = importlib.reload(ninconf)
                 self.wdir = ninconf.CURRENT_DIR
+                self.messenger("Current Nikola folder: %s" % self.wdir)
                 self.bookmarks = ninconf.BOOKMARKS
                 self.obj("open_conf").set_sensitive(True)
-                for b in sorted(ninconf.BOOKMARKS):
-                    item=Gtk.MenuItem(_("Bookmark entry %s" % b))
+                #remove generated bookmark menu items, otherwise when appending new bookmark all existing bookmarks are appended repeatedly
+                for i in self.obj("menu").get_children():
+                    #the separator item is stretched vertically when applying get_label function (which does not return any value but no error either) but I don't know how to do a GTK class comparison to exclude the separator or include the menuitems so this works fine
+                    if type(i) == type(self.obj("load_conf")):
+                        print(type(i),"this is a menu item")
+                        if i.get_label().startswith("Bookmark: "):
+                            self.obj("menu").remove(i)
+                    else:
+                        print(type(i),"this is not a menu item")
+                #add menu items for bookmarks
+                print(len(self.bookmarks))
+                for b in sorted(self.bookmarks):
+                    item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
                     item.connect("activate",self.select_bookmark,b)
                     self.obj("menu").append(item)
                 self.obj("menu").show_all()
+                if len(self.bookmarks) > 0:
+                    self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
+                else:
+                    self.messenger("No bookmarks")
                 self.get_window_content()
             #show file chooser dialog when no config file exists
             else:
@@ -291,25 +317,28 @@ class NiApp:
                     for line in content:
                         f.write(line)
                 self.messenger("New conf.py has been saved to nonconfig.")
-                self.check_ninconf()
             #or create config and use given cfile
             else:
+                self.messenger("No NON config found.","warning")
                 self.create_config(cfile)
+            self.check_ninconf()
     
     def select_bookmark(self,widget,b):
-        print("load",b)
+        self.check_ninconf(b[1])
+        self.messenger("Changed to %s" % b[1])
 
     def create_config(self,wdir):
-        self.messenger("Create new NON config")
         config = open(os.path.join(app.install_dir,"ninconf.py"),"w")
         config.write("##### non configuration #####\nCURRENT_DIR = \"%s\"\nBOOKMARKS = set()\n" % wdir)
         config.close()
+        self.messenger("Configuration file for NON has been created.")
 
     def get_window_content(self):
         
         """Fill main window with content"""
 
         self.messenger("Refresh window content")
+        
         [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images","store_translation"]]
 
         os.chdir(self.wdir)
