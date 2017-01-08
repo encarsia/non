@@ -104,7 +104,7 @@ class Handler:
     
     def on_add_bookmark_activate(self,widget):
         print(app.bookmarks)
-        bookmark = app.siteconf.BLOG_TITLE, app.conf_path
+        bookmark = app.siteconf.BLOG_TITLE, app.wdir
         app.bookmarks.add(bookmark)
         print(app.bookmarks)
 
@@ -116,15 +116,11 @@ class Handler:
     def on_choose_conf_file_response(self,widget,response):
         if response == 0:
             try:
-                app.create_config(os.path.split(widget.get_filename())[0])
-                app.check_ninconf()
-                #    app.check_ninconf()
-                #if os.path.split(widget.get_filename())[1] == "conf.py":
-                #    app.create_config(os.path.split(widget.get_filename())[0])
-                #    app.check_ninconf()
-                #else:
-                #    app.messenger("Working Nikola configuration required","warning")
-                #    app.obj("config_info").show_all()
+                if os.path.split(widget.get_filename())[1] == "conf.py":
+                    app.check_ninconf(os.path.split(widget.get_filename())[0])
+                else:
+                    app.messenger("Working Nikola configuration required","warning")
+                    app.obj("config_info").show_all()
             except AttributeError:
                 app.messenger("Working Nikola configuration required","warning")
                 app.obj("config_info").show_all()
@@ -257,23 +253,48 @@ class NiApp:
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
-    def check_ninconf(self):
-        if os.path.isfile(os.path.join(self.install_dir,"ninconf.py")):
-            self.conf_path = os.path.join(self.install_dir,"ninconf.py")
-            self.messenger("Found conf.py to work with")
-            import ninconf
-            self.wdir = ninconf.CURRENT_DIR
-            self.bookmarks = ninconf.BOOKMARKS
-            self.obj("open_conf").set_sensitive(True)
-            for b in sorted(ninconf.BOOKMARKS):
-                item=Gtk.MenuItem(_("Bookmark entry %s" % b))
-                item.connect("activate",self.select_bookmark,b)
-                self.obj("menu").append(item)
-            self.obj("menu").show_all()
-            self.get_window_content()
+    def check_ninconf(self,cfile=None):
+        #cfile is None on app start
+        if cfile == None:
+            #check for config on app start or after changing conf.py
+            if os.path.isfile(os.path.join(self.install_dir,"ninconf.py")):
+                self.conf_path = os.path.join(self.install_dir,"ninconf.py")
+                self.messenger("Found conf.py to work with")
+                import ninconf
+                #reloading module is required when file is changed 
+                ninconf = importlib.reload(ninconf)
+                self.wdir = ninconf.CURRENT_DIR
+                self.bookmarks = ninconf.BOOKMARKS
+                self.obj("open_conf").set_sensitive(True)
+                for b in sorted(ninconf.BOOKMARKS):
+                    item=Gtk.MenuItem(_("Bookmark entry %s" % b))
+                    item.connect("activate",self.select_bookmark,b)
+                    self.obj("menu").append(item)
+                self.obj("menu").show_all()
+                self.get_window_content()
+            #show file chooser dialog when no config file exists
+            else:
+                self.obj("choose_conf_file").show_all()
+        #cfile is not None when file chooser dialog from 'choose conf.py' menu item is executed
         else:
-            self.obj("choose_conf_file").show_all()
-
+            #save new cfile in config
+            if os.path.isfile(os.path.join(self.install_dir,"ninconf.py")):
+                conf_file = os.path.join(self.install_dir,"ninconf.py")
+                with open(conf_file) as f:
+                    content = f.readlines()
+                for line in content:
+                    if line == ("\n"):
+                        content.remove(line)
+                    elif line.startswith("CURRENT_DIR"):
+                        content[content.index(line)] = "CURRENT_DIR = \"%s\"\n" % cfile
+                with open(conf_file,"w") as f:
+                    for line in content:
+                        f.write(line)
+                self.messenger("New conf.py has been saved to nonconfig.")
+                self.check_ninconf()
+            #or create config and use given cfile
+            else:
+                self.create_config(cfile)
     
     def select_bookmark(self,widget,b):
         print("load",b)
@@ -288,6 +309,7 @@ class NiApp:
         
         """Fill main window with content"""
 
+        self.messenger("Refresh window content")
         [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images","store_translation"]]
 
         os.chdir(self.wdir)
@@ -364,7 +386,6 @@ class NiApp:
                 cats = [c.strip() for c in catstr.split(",")]
                 break
         rst.close()
-        
         return title, slug, date, tagstr, tags, catstr, cats
 
     def get_rst_content(self,subdir):
@@ -397,7 +418,7 @@ class NiApp:
             #add new found tags/categories to set
             t.update(tags)
             c.update(cats)
-            #mark title in italic font if title is missing (use slug or filename instead)
+            #mark title cell in italic font if title is missing (use slug or filename instead)
             if title == "":
                 if slug == "":
                     title = f
@@ -422,11 +443,9 @@ class NiApp:
                             "sub":subdir,
                             "lang":lang,
                             "transl":set()}
-
         #add available translation to default file entry
         #ex: articlename.lang > lang is added to transl entry of articlename
         [d[key.split(".")[0]]["transl"].add(d[key]["lang"]) for key in d if d[key]["lang"] != self.default_lang]
-
         return d,t,c
 
     def get_tree_data_rst(self,store,dict):
@@ -519,7 +538,6 @@ class NiApp:
                                     dict[child]["lang"],
                                     dict[child]["weight"],
                                     dict[child]["sub"]]) for child in dict if dict[child]["file"].split(".")[0] == dict[key]["file"].split(".")[0] and dict[child]["lang"] != self.default_lang]
-
 
     def get_filelist(self,subdir):
         d = {}
