@@ -281,13 +281,9 @@ class NiApp:
                 for i in self.obj("menu").get_children():
                     #the separator item is stretched vertically when applying get_label function (which does not return any value but no error either) but I don't know how to do a GTK class comparison to exclude the separator or include the menuitems so this works fine
                     if type(i) == type(self.obj("load_conf")):
-                        print(type(i),"this is a menu item")
                         if i.get_label().startswith("Bookmark: "):
                             self.obj("menu").remove(i)
-                    else:
-                        print(type(i),"this is not a menu item")
                 #add menu items for bookmarks
-                print(len(self.bookmarks))
                 for b in sorted(self.bookmarks):
                     item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
                     item.connect("activate",self.select_bookmark,b)
@@ -433,9 +429,11 @@ class NiApp:
                     equ = False
             if equ == False:
                 weight = 800
+                fontstyle = "bold"
                 self.obj("build").set_sensitive(True)
             else:
                 weight = 400
+                fontstyle = "normal"
             #detect language
             if len(self.translation_lang) > 0:
                 if f.split(".")[1] == "rst":
@@ -453,9 +451,10 @@ class NiApp:
                     title = f
                 else:
                     title = slug
-                fontstyle = "italic"
-            else:
-                fontstyle = "normal"
+                if fontstyle == "bold":
+                    fontstyle = "bold italic"
+                else:
+                    fontstyle = "italic"
             #add dictionary entry for file
             d[f[:-4]] =    {"title":title,
                             "slug":slug,
@@ -468,6 +467,7 @@ class NiApp:
                             "catstr":catstr,
                             "status":equ,
                             "weight":weight,
+                            #TODO obsolete, weight is ignored when fontstyle loaded from model, shall be removed in the future
                             "fontstyle":fontstyle,
                             "sub":subdir,
                             "lang":lang,
