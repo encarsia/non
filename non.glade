@@ -115,8 +115,6 @@
       <column type="gchararray"/>
       <!-- column-name cats -->
       <column type="gchararray"/>
-      <!-- column-name weight -->
-      <column type="gint"/>
       <!-- column-name sub -->
       <column type="gchararray"/>
       <!-- column-name translation -->
@@ -141,8 +139,6 @@
       <column type="gchararray"/>
       <!-- column-name cats -->
       <column type="gchararray"/>
-      <!-- column-name weight -->
-      <column type="gint"/>
       <!-- column-name sub -->
       <column type="gchararray"/>
       <!-- column-name translation -->
@@ -183,9 +179,9 @@
       <column type="gchararray"/>
       <!-- column-name lang -->
       <column type="gchararray"/>
-      <!-- column-name weight -->
-      <column type="gint"/>
       <!-- column-name sub -->
+      <column type="gchararray"/>
+      <!-- column-name fontstyle -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -545,9 +541,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="font">10</attribute>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">0</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -561,8 +556,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">4</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -573,8 +568,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">5</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -585,8 +580,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">6</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -597,8 +592,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">9</attribute>
-                            <attribute name="weight">7</attribute>
+                            <attribute name="font">9</attribute>
+                            <attribute name="text">8</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -647,9 +642,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="font">10</attribute>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">0</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -662,8 +656,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">4</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -674,8 +668,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">5</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -686,8 +680,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">9</attribute>
                             <attribute name="text">6</attribute>
-                            <attribute name="weight">7</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -698,8 +692,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">9</attribute>
-                            <attribute name="weight">7</attribute>
+                            <attribute name="font">9</attribute>
+                            <attribute name="text">8</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1046,8 +1040,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">7</attribute>
                             <attribute name="text">0</attribute>
-                            <attribute name="weight">6</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1061,8 +1055,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">7</attribute>
                             <attribute name="text">4</attribute>
-                            <attribute name="weight">6</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1073,8 +1067,8 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
+                            <attribute name="font">7</attribute>
                             <attribute name="text">5</attribute>
-                            <attribute name="weight">6</attribute>
                           </attributes>
                         </child>
                       </object>

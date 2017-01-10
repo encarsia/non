@@ -4,6 +4,7 @@
 import os
 import shutil
 import datetime
+import time
 import importlib
 import filecmp
 import subprocess
@@ -413,35 +414,35 @@ class NiApp:
         rst.close()
         return title, slug, date, tagstr, tags, catstr, cats
 
+    def compare_output_dir(self,od,subdir,filename,slug,lang):
+        try:
+            return filecmp.cmp(os.path.join(subdir,filename),os.path.join("output",lang,subdir,od,"index.rst"))
+        except FileNotFoundError:
+            return False
+
     def get_rst_content(self,subdir):
         d = {}
         t = set()
         c = set()
         for f in os.listdir(subdir):
             title, slug, date, tagstr, tags, catstr, cats = self.read_rst_files(subdir,f)
-            #check output subdir whether files are equal
-            try:
-                equ = filecmp.cmp(os.path.join(subdir,f),os.path.join("output",subdir,slug,"index.rst"))
-            except FileNotFoundError:
-                try:
-                    equ = filecmp.cmp(os.path.join(subdir,f),os.path.join("output",subdir,f[:-4],"index.rst"))
-                except FileNotFoundError:
-                    equ = False
-            if equ == False:
-                weight = 800
-                fontstyle = "bold"
-                self.obj("build").set_sensitive(True)
-            else:
-                weight = 400
-                fontstyle = "normal"
             #detect language
             if len(self.translation_lang) > 0:
                 if f.split(".")[1] == "rst":
-                    lang = self.default_lang
+                    #set empty string because var is used by os.path.join which throws NameError when var is None
+                    lang = ""
                 else:
                     lang = f.split(".")[1]
             else:
-                lang = self.default_lang
+                lang = ""
+            #check for equal file in output dir, mark bold (loaded by treemodel) when False
+            for od in {slug,f[:-4]}:
+                if self.compare_output_dir(od,subdir,f,slug,lang):
+                    fontstyle = "normal"
+                    break
+                else:
+                    fontstyle = "bold"
+                    self.obj("build").set_sensitive(True)
             #add new found tags/categories to set
             t.update(tags)
             c.update(cats)
@@ -465,16 +466,13 @@ class NiApp:
                             "tagstr":tagstr,
                             "category":cats,
                             "catstr":catstr,
-                            "status":equ,
-                            "weight":weight,
-                            #TODO obsolete, weight is ignored when fontstyle loaded from model, shall be removed in the future
                             "fontstyle":fontstyle,
                             "sub":subdir,
                             "lang":lang,
                             "transl":set()}
         #add available translation to default file entry
         #ex: articlename.lang > lang is added to transl entry of articlename
-        [d[key.split(".")[0]]["transl"].add(d[key]["lang"]) for key in d if d[key]["lang"] != self.default_lang]
+        [d[key.split(".")[0]]["transl"].add(d[key]["lang"]) for key in d if d[key]["lang"] != ""]
         return d,t,c
 
     def get_tree_data_rst(self,store,dict):
@@ -488,13 +486,12 @@ class NiApp:
                                 dict[key]["ger_date"],
                                 dict[key]["tagstr"],
                                 dict[key]["catstr"],
-                                dict[key]["weight"],
                                 dict[key]["sub"],
                                 #add available translations as comma seperated string
                                 #stolen from gist.github.com/23maverick23/6404685
                                 ",".join(str(s) for s in dict[key]["transl"]),
                                 dict[key]["fontstyle"],
-                                ]) for key in dict if dict[key]["lang"] == self.default_lang]
+                                ]) for key in dict if dict[key]["lang"] == ""]
         self.obj(store).set_sort_column_id(3,Gtk.SortType.DESCENDING)
 
     def get_tree_data(self,store,subdir,parent=None):
@@ -546,7 +543,7 @@ class NiApp:
     def get_tree_data_translations(self,store,dict):
         for key in dict:
             # add parent row
-            if dict[key]["lang"] == self.default_lang:
+            if dict[key]["lang"] == "":
                 # row = title,slug,date,ger_date,lang,weight,sub
                 row = self.obj(store).append(None,
                                             [dict[key]["title"],
@@ -555,8 +552,8 @@ class NiApp:
                                             dict[key]["date"],
                                             dict[key]["ger_date"],
                                             None,
-                                            dict[key]["weight"],
-                                            dict[key]["sub"]])
+                                            dict[key]["sub"],
+                                            dict[key]["fontstyle"]])
                 # search for translations and append as child row
                 [self.obj(store).append(row,
                                     [dict[child]["title"],
@@ -565,8 +562,8 @@ class NiApp:
                                     dict[child]["date"],
                                     dict[child]["ger_date"],
                                     dict[child]["lang"],
-                                    dict[child]["weight"],
-                                    dict[child]["sub"]]) for child in dict if dict[child]["file"].split(".")[0] == dict[key]["file"].split(".")[0] and dict[child]["lang"] != self.default_lang]
+                                    dict[child]["sub"],
+                                    dict[key]["fontstyle"]]) for child in dict if dict[child]["file"].split(".")[0] == dict[key]["file"].split(".")[0] and dict[child]["lang"] != ""]
 
     def get_filelist(self,subdir):
         d = {}
@@ -597,8 +594,8 @@ class NiApp:
     def messenger(self,message,log="info"):
         """Show notifications in statusbar and log file"""
         self.obj("statusbar").push(1,message)
-        #time.sleep(.1)
-        #while Gtk.events_pending(): Gtk.main_iteration()
+        time.sleep(.1)
+        while Gtk.events_pending(): Gtk.main_iteration()
         logcmd = "self.log.%s(\"%s\")" % (log,message)
         exec(logcmd)
 
