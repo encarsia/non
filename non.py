@@ -166,12 +166,12 @@ class Handler:
     def on_view_posts_row_activated(self,widget,*args):
         app.messenger("Open post file")
         row,pos = app.obj("selection_post").get_selected()
-        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][8],row[pos][2])])
+        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][7],row[pos][2])])
 
     def on_view_pages_row_activated(self,widget,*args):
         app.messenger("Open page file")
         row,pos = app.obj("selection_page").get_selected()
-        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][8],row[pos][2])])
+        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][7],row[pos][2])])
         
     def on_view_tags_row_activated(self,widget,pos,*args):
         if pos.get_depth() == 1:
@@ -202,7 +202,7 @@ class Handler:
     def on_view_translations_row_activated(self,widget,*args):
         app.messenger("Open file...")
         row,pos = app.obj("selection_translations").get_selected()
-        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][7],row[pos][2])])
+        subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][6],row[pos][2])])
 
     def on_view_translations_button_release_event(self,widget,event):
         popup=Gtk.Menu()
@@ -242,7 +242,7 @@ class NiApp:
         self.log = logging.getLogger(__name__)
 
         #Glade files/window configuration
-        gladefile_list = ["non.glade"]
+        gladefile_list = ["non_alt.glade"]
 
         #setting up localization
         locales_dir = os.path.join(self.install_dir,'locale')
@@ -335,14 +335,16 @@ class NiApp:
         """Fill main window with content"""
 
         self.messenger("Refresh window content")
-        
+
         [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images","store_translation"]]
 
         os.chdir(self.wdir)
+
         #load nikola conf.py as module to gain simple access to variables
         spec = importlib.util.spec_from_file_location("siteconf", os.path.join(self.wdir,"conf.py"))
         self.siteconf = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.siteconf)
+
         #labels
         self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
         self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
@@ -351,6 +353,10 @@ class NiApp:
         self.obj("pathlocal").set_label("...%s" % self.wdir[-25:])
         self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
         self.obj("pathremote").set_label(self.siteconf.SITE_URL)
+        #set text aligned left, should work with glade but in reality it doesn't
+        self.obj("author").set_alignment(xalign=0.0, yalign=0.5)
+        self.obj("descr").set_alignment(xalign=0.0, yalign=0.5)
+        self.obj("title").set_alignment(xalign=0.0, yalign=0.5)
         
         #detect multilingual sites
         self.default_lang = self.siteconf.DEFAULT_LANG
