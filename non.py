@@ -242,7 +242,7 @@ class NiApp:
         self.log = logging.getLogger(__name__)
 
         #Glade files/window configuration
-        gladefile_list = ["non_alt.glade"]
+        gladefile_list = ["non.glade"]
 
         #setting up localization
         locales_dir = os.path.join(self.install_dir,'locale')
