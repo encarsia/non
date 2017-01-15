@@ -1,6 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
 import os
 import shutil
 import datetime
@@ -18,7 +19,7 @@ try:
     import gi
     gi.require_version('Gtk','3.0')
     gi.require_version('Vte', '2.91')
-    from gi.repository import Gtk,Vte,GObject,GLib
+    from gi.repository import Gtk, Vte, GObject, GLib, Gio
 except:
     print(_("Unable to load Python bindings for GObject Introspection."))
     raise
@@ -28,9 +29,9 @@ class Handler:
     
     ############ close/destroy  window ############
     
-    def on_non_window_destroy(self,*args):
+    def on_non_window_destroy(self,window):
         app.log.info("Application terminated on window close button. Bye.")
-        Gtk.main_quit()
+        window.close()
 
     def on_window_close(self,widget,*event):
         widget.hide_on_delete()
@@ -232,25 +233,30 @@ class Handler:
 class NiApp:
     
     def __init__(self):
+        self.app = Gtk.Application.new("app.knights-of-ni", Gio.ApplicationFlags(0))
+        self.app.connect("startup", self.on_app_startup)
+        self.app.connect("activate", self.on_app_activate)
+        self.app.connect("shutdown", self.on_app_shutdown)
 
+    def on_app_startup(self,app):
         #get current directory
         self.install_dir = os.getcwd()
-
         #set up logging
         FORMAT = "%(asctime)s | %(levelname)-8s | %(message)s"
         logging.basicConfig(filename='non.log',level=logging.DEBUG,filemode='w',format=FORMAT,datefmt="%H:%M:%S")
         self.log = logging.getLogger(__name__)
 
-        #Glade files/window configuration
-        gladefile_list = ["non.glade"]
-
+    def on_app_activate(self,app):
         #setting up localization
         locales_dir = os.path.join(self.install_dir,'locale')
-        appname = 'NON'
+        appname = 'NoN'
         locale.bindtextdomain(appname,locales_dir)
         locale.textdomain(locales_dir)      
         gettext.bindtextdomain(appname,locales_dir)
         gettext.textdomain(appname)
+
+        #Glade files/window configuration
+        gladefile_list = ["non.glade"]
 
         #set up builder
         builder = Gtk.Builder()
@@ -260,9 +266,14 @@ class NiApp:
         [builder.add_from_file(f) for f in gladefile_list]
         builder.connect_signals(Handler())
         self.obj = builder.get_object
+        
+        self.obj("non_window").set_application(app)
+        self.obj("non_window").set_wmclass("Knights of Ni","Knights of Ni")
         self.obj("non_window").show_all()
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
+
+        self.check_ninconf()
 
     def check_ninconf(self,cfile=None):
         #cfile is None on app start
@@ -612,11 +623,14 @@ class NiApp:
                 return "%3.1f %s%s" % (num, unit, suffix)
             num /= 1024.0
         return "%.1f %s%s" % (num, 'Y', suffix)
-    
-    def main(self):
-        Gtk.main()
+
+    def run(self,argv):
+        self.app.run(argv)
+
+    def on_app_shutdown(self, app):
+        self.app.quit()
+
 
 app = NiApp()
-app.check_ninconf()
-app.main()
-
+app.run(sys.argv)
+#app.check_ninconf()
