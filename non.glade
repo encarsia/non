@@ -927,6 +927,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">0</attribute>
+                            <attribute name="weight">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -940,6 +941,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">2</attribute>
+                            <attribute name="weight">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -986,6 +988,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">0</attribute>
+                            <attribute name="weight">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1000,6 +1003,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">2</attribute>
+                            <attribute name="weight">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1047,6 +1051,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">0</attribute>
+                            <attribute name="weight">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1061,6 +1066,7 @@
                           <object class="GtkCellRendererText"/>
                           <attributes>
                             <attribute name="text">2</attribute>
+                            <attribute name="weight">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -1229,7 +1235,7 @@
     <property name="transient_for">non_window</property>
     <property name="attached_to">non_window</property>
     <property name="program_name">Knights of Ni</property>
-    <property name="version">0.1</property>
+    <property name="version">0.2</property>
     <property name="website">https://github.com/encarsia/non</property>
     <property name="website_label" translatable="yes">A manager for your Nikola powered GitHub Site.</property>
     <property name="logo_icon_name">help-about</property>
