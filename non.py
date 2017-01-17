@@ -220,7 +220,7 @@ class Handler:
 
     def on_create_translation(self,widget,lang):
         row,pos = app.obj("selection_translations").get_selected()
-        subdir = row[pos][7]
+        subdir = row[pos][6]
         file = row[pos][2]
         trans_file = "%s.%s.rst" % (file.split(".")[0], lang)
         if os.path.isfile(os.path.join(subdir,trans_file)):
@@ -276,6 +276,7 @@ class NiApp:
         self.check_ninconf()
 
     def check_ninconf(self,cfile=None):
+        #FIXME: spaces in dir names
         #cfile is None on app start
         if cfile == None:
             #check for config on app start or after changing conf.py
@@ -630,7 +631,7 @@ class NiApp:
     def on_app_shutdown(self, app):
         self.app.quit()
 
-
 app = NiApp()
 app.run(sys.argv)
-#app.check_ninconf()
+
+#FIXME: glade file > window height/size (this is just a reminder for myself, ignore if you are not me)
