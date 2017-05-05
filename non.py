@@ -301,6 +301,10 @@ class NiApp:
                     item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
                     item.connect("activate",self.select_bookmark,b)
                     self.obj("menu").append(item)
+                    #set 'add bookmark' menu item inactive if bookmark already exists
+                    if b[1] == self.wdir:
+                        self.obj("add_bookmark").set_sensitive(False)
+                        img = Gtk.Image.new_from_stock(Gtk.STOCK_YES,1)
                 self.obj("menu").show_all()
                 if len(self.bookmarks) > 0:
                     self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
@@ -407,10 +411,15 @@ class NiApp:
         self.obj("store_cats").set_sort_column_id(4, Gtk.SortType.DESCENDING)
         self.obj("store_translation").set_sort_column_id(3, Gtk.SortType.DESCENDING)
         
+        #expands all rows in translation tab
+        self.obj("view_translations").expand_all()
+        
         #set deploy button inactive if git status returns no change
         git_status = subprocess.Popen(["git","status","-s"],universal_newlines=True,stdout=subprocess.PIPE).communicate()
         if git_status[0] == "":
             self.obj("deploy").set_sensitive(False)
+        else:
+            self.obj("deploy").set_sensitive(True)
 
     def read_rst_files(self,subdir,file):
         title,slug,date,tagstr,tags,catstr,cats = "","",datetime.datetime.today().strftime("%Y-%m-%d"),"","","",""
@@ -581,7 +590,8 @@ class NiApp:
                                     dict[child]["ger_date"],
                                     dict[child]["lang"],
                                     dict[child]["sub"],
-                                    dict[key]["fontstyle"]]) for child in dict if dict[child]["file"].split(".")[0] == dict[key]["file"].split(".")[0] and dict[child]["lang"] != ""]
+                                    dict[key]["fontstyle"]])
+                                    for child in dict if dict[child]["file"].split(".")[0] == dict[key]["file"].split(".")[0] and dict[child]["lang"] != ""]
 
     def get_filelist(self,subdir):
         d = {}
@@ -635,3 +645,5 @@ app = NiApp()
 app.run(sys.argv)
 
 #FIXME: glade file > window height/size (this is just a reminder for myself, ignore if you are not me)
+
+#TODO Link to Nikola and reference

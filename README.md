@@ -22,7 +22,6 @@ WHAT DO I NEED TO GET IT WORKING?
  * [Nikola](https://getnikola.com/) installation
  * configurated Nikola site
  * Python 3 including GObject Introspection bindings
- * Git
 
 THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
