@@ -274,7 +274,9 @@ class NiApp:
         self.obj("build").set_sensitive(False)
 
         self.check_ninconf()
-        self.add_dialogbuttons()
+        self.add_dialogbuttons(self.obj("choose_conf_file"))
+        #self.add_dialogbuttons(self.obj("newpost_dialog"))
+        self.add_dialogokbutton(self.obj("about_dialog"))
 
     def check_ninconf(self,cfile=None):
         #FIXME: spaces in dir names
@@ -337,9 +339,8 @@ class NiApp:
                 self.create_config(cfile)
             self.check_ninconf()
     
-    def add_dialogbuttons(self):
-        dialog = self.obj("choose_conf_file")
-
+    def add_dialogbuttons(self,dialog):
+        #add cancel/apply buttons to dialog to avoid Gtk warning
         button = Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
         button.set_property("can-default",True)
         dialog.add_action_widget(button, Gtk.ResponseType.CANCEL)
@@ -347,7 +348,12 @@ class NiApp:
         button = Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
         button.set_property("can-default",True)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
-    
+
+    def add_dialogokbutton(self,dialog):
+        #add ok button to about dialog to avoid Gtk warning
+        button = Gtk.Button.new_from_stock(Gtk.STOCK_OK)
+        dialog.add_action_widget(button, Gtk.ResponseType.OK)
+
     def select_bookmark(self,widget,b):
         self.check_ninconf(b[1])
         self.messenger("Changed to %s" % b[1])
