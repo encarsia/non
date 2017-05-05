@@ -126,7 +126,7 @@ class Handler:
         self.on_choose_conf_file_response(widget,0)
 
     def on_choose_conf_file_response(self,widget,response):
-        if response == 0:
+        if response == -5:
             try:
                 if os.path.split(widget.get_filename())[1] == "conf.py":
                     app.check_ninconf(os.path.split(widget.get_filename())[0])
@@ -274,6 +274,7 @@ class NiApp:
         self.obj("build").set_sensitive(False)
 
         self.check_ninconf()
+        self.add_dialogbuttons()
 
     def check_ninconf(self,cfile=None):
         #FIXME: spaces in dir names
@@ -335,6 +336,17 @@ class NiApp:
                 self.messenger("No NON config found.","warning")
                 self.create_config(cfile)
             self.check_ninconf()
+    
+    def add_dialogbuttons(self):
+        dialog = self.obj("choose_conf_file")
+
+        button = Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
+        button.set_property("can-default",True)
+        dialog.add_action_widget(button, Gtk.ResponseType.CANCEL)
+        
+        button = Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
+        button.set_property("can-default",True)
+        dialog.add_action_widget(button, Gtk.ResponseType.OK)
     
     def select_bookmark(self,widget,b):
         self.check_ninconf(b[1])
