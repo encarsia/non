@@ -879,7 +879,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Category</property>
+                            <property name="title" translatable="yes">Categories</property>
                             <child>
                               <object class="GtkCellRendererText"/>
                               <attributes>
@@ -1429,7 +1429,7 @@
           </object>
           <packing>
             <property name="name">GUI</property>
-            <property name="title" translatable="yes">GUI</property>
+            <property name="title" translatable="yes">Overview</property>
           </packing>
         </child>
         <child>

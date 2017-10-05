@@ -28,10 +28,6 @@ class Handler:
     """Signal assignment for Glade"""
     
     ############ close/destroy  window ############
-    
-#    def on_non_window_destroy(self,window):
-#        app.log.info("Application terminated on window close button. Bye.")
-#        window.close()
 
     def on_window_close(self,widget,*event):
         widget.hide_on_delete()
