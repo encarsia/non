@@ -29,9 +29,9 @@ class Handler:
     
     ############ close/destroy  window ############
     
-    def on_non_window_destroy(self,window):
-        app.log.info("Application terminated on window close button. Bye.")
-        window.close()
+#    def on_non_window_destroy(self,window):
+#        app.log.info("Application terminated on window close button. Bye.")
+#        window.close()
 
     def on_window_close(self,widget,*event):
         widget.hide_on_delete()
@@ -54,26 +54,10 @@ class Handler:
             self.serve.kill()
 
     def on_build_clicked(self,widget):
-        app.messenger("Run build process")
-        subprocess.run(["nikola","build"])
-        app.get_window_content()
-
+        app.run_nikola_build()
+        
     def on_deploy_clicked(self,widget):
-        app.messenger("Run build process")
-        subprocess.run(["nikola","build"])
-        app.messenger("Run deploy command in terminal window")
-        app.obj("term").spawn_sync(
-            Vte.PtyFlags.DEFAULT,
-            None,
-            ["/bin/bash"],
-            None,
-            GLib.SpawnFlags.DEFAULT,
-            None,
-            None,
-            )        
-        app.obj("terminal_win").show_all()
-        app.term_cmd("nikola github_deploy")
-        app.get_window_content()
+        app.run_nikola_github_deploy()
 
     def on_refresh_clicked(self,widget):
         app.get_window_content()
@@ -81,14 +65,23 @@ class Handler:
     ############ vte terminal ########################
 
     def on_term_contents_changed(self,widget):
-        #close window if successfully deployed, otherwise window has to be exited manually
-        if "INFO: github_deploy: Successful deployment" in widget.get_text()[0]:
-            self.on_term_child_exited(app.obj("terminal_win"))
+        last_line = widget.get_text()[0].rstrip().split("\n")[-1]
+        if app.prompt == "":
+            app.prompt = last_line
+        if last_line == "INFO: github_deploy: Successful deployment":
             app.messenger("Deploying to GitHub successful.")
+        #gui_cmd is bool var for command being run via toolbar button
+        #if command is invoked by button the app focus returns back to graphic interface stack child 'gui'
+        if app.gui_cmd is True and last_line == app.prompt:
+            time.sleep(2)
+            app.obj("stack").set_visible_child(app.obj("gui"))
+            app.get_window_content()
+            app.gui_cmd = False
 
     def on_term_child_exited(self,widget,*args):
-        app.obj("term").reset(True,True)
-        self.on_window_close(app.obj("terminal_win"))
+        #on exit the console is restarted because it does'n run in a separate window anymore but as a (persistent) GTK stack child 
+        widget.reset(True,True)
+        app.start_console()
 
     ########### headerbar #########################
 
@@ -238,6 +231,10 @@ class NiApp:
         self.app.connect("activate", self.on_app_activate)
         self.app.connect("shutdown", self.on_app_shutdown)
 
+    def on_app_shutdown(self, app):
+        self.app.quit()
+        self.log.info("Application terminated on application window close button. Bye.")
+
     def on_app_startup(self,app):
         #get current directory
         self.install_dir = os.getcwd()
@@ -267,9 +264,13 @@ class NiApp:
         builder.connect_signals(Handler())
         self.obj = builder.get_object
         
-        self.obj("non_window").set_application(app)
-        self.obj("non_window").set_wmclass("Knights of Ni","Knights of Ni")
-        self.obj("non_window").show_all()
+        window = self.obj("non_window_stack")
+
+        window.set_application(app)
+        window.set_wmclass("Knights of Ni","Knights of Ni")
+        window.show_all()
+        #print(window.get_preferred_size())
+
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
@@ -277,6 +278,23 @@ class NiApp:
         self.add_dialogbuttons(self.obj("choose_conf_file"))
         #self.add_dialogbuttons(self.obj("newpost_dialog"))
         self.add_dialogokbutton(self.obj("about_dialog"))
+        self.start_console()
+
+    def start_console(self):
+        self.obj("term").spawn_sync(
+            Vte.PtyFlags.DEFAULT,
+            None,
+            ["/bin/bash"],
+            None,
+            GLib.SpawnFlags.DEFAULT,
+            None,
+            None,
+            )
+        #prompt is detected on first emission of the 'contents changed' signal
+        self.prompt = ""
+        #bool variable to decide if focus should return from terminal stack child
+        #True when command is invoked by button, False if command is typed directly in terminal
+        self.gui_cmd = False
 
     def check_ninconf(self,cfile=None):
         #FIXME: spaces in dir names
@@ -637,6 +655,19 @@ class NiApp:
         command += "\n" 
         self.obj("term").feed_child(command,len(command))
 
+    def run_nikola_build(self):
+        self.gui_cmd = True
+        self.obj("stack").set_visible_child(app.obj("term"))
+        self.messenger("Run build process")
+        self.term_cmd("nikola build")
+
+    def run_nikola_github_deploy(self):
+        self.run_nikola_build()
+        self.gui_cmd = True
+        self.obj("stack").set_visible_child(app.obj("term"))
+        self.messenger("Run deploy to GitHub command ")
+        self.term_cmd("nikola github_deploy")
+
     def messenger(self,message,log="info"):
         """Show notifications in statusbar and log file"""
         self.obj("statusbar").push(1,message)
@@ -655,9 +686,6 @@ class NiApp:
 
     def run(self,argv):
         self.app.run(argv)
-
-    def on_app_shutdown(self, app):
-        self.app.quit()
 
 app = NiApp()
 app.run(sys.argv)
