@@ -77,7 +77,7 @@ class Handler:
     def on_term_child_exited(self,widget,*args):
         #on exit the console is restarted because it does'n run in a separate window anymore but as a (persistent) GTK stack child 
         widget.reset(True,True)
-        app.start_console()
+        app.start_console(None)
 
     ########### headerbar #########################
 
@@ -277,12 +277,11 @@ class NiApp:
         self.add_dialogbuttons(self.obj("choose_conf_file"))
         #self.add_dialogbuttons(self.obj("newpost_dialog"))
         self.add_dialogokbutton(self.obj("about_dialog"))
-        self.start_console()
 
-    def start_console(self):
+    def start_console(self, wdir):
         self.obj("term").spawn_sync(
             Vte.PtyFlags.DEFAULT,
-            None,
+            wdir,
             ["/bin/bash"],
             None,
             GLib.SpawnFlags.DEFAULT,
@@ -330,6 +329,10 @@ class NiApp:
                     self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
                 else:
                     self.messenger("No bookmarks")
+                #reload terminal with current wdir
+                self.obj("term").reset(True, True)
+                self.start_console(self.wdir)
+                #refresh window
                 self.get_window_content()
             #show file chooser dialog when no config file exists
             else:
