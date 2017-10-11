@@ -267,6 +267,9 @@ class NiApp:
         window.show_all()
         #print(window.get_preferred_size())
 
+        #setting transient window in Glade is ignored
+        self.obj("about_dialog").set_transient_for(window)
+
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
