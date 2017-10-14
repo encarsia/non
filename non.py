@@ -85,6 +85,10 @@ class Handler:
         app.messenger("Open About dialog")
         app.obj("about_dialog").show_all()
 
+    def on_manual_button_clicked(self, widget):
+        app.messenger("Open Nikola handbook in web browser")
+        subprocess.run(['xdg-open',"https://getnikola.com/handbook.html"])
+
     def on_open_conf_activate(self,widget):
         app.messenger("Open conf.py in external editor")
         subprocess.run(['xdg-open',os.path.join(app.wdir,"conf.py")])
@@ -296,7 +300,6 @@ class NiApp:
         self.gui_cmd = False
 
     def check_ninconf(self,cfile=None):
-        #FIXME: spaces in dir names
         #cfile is None on app start
         if cfile == None:
             #check for config on app start or after changing conf.py
@@ -307,7 +310,6 @@ class NiApp:
                 #reloading module is required when file is changed 
                 ninconf = importlib.reload(ninconf)
                 self.wdir = ninconf.CURRENT_DIR
-
                 ###### setup bookmarks in menu ######
                 self.bookmarks = ninconf.BOOKMARKS
                 self.obj("open_conf").set_sensitive(True)
@@ -335,7 +337,6 @@ class NiApp:
                 try:
                     os.chdir(self.wdir)
                     self.messenger("Current Nikola folder: %s" % self.wdir)
-                    
                     #reload terminal with current wdir
                     self.obj("term").reset(True, True)
                     self.start_console(self.wdir)
@@ -407,7 +408,7 @@ class NiApp:
         #check if folder for files, listings and images exist to avoid FileNotFoundError
         for subdir in ["files", "listings", "images"]:
             if not os.path.isdir(os.path.join(self.wdir,subdir)):
-                self.messenger("\"{}\" doesn't exist...create...".format(subdir))
+                self.messenger("{} doesn't exist...create...".format(subdir))
                 os.mkdir(os.path.join(self.wdir,subdir))
 
         #load nikola conf.py as module to gain simple access to variables
