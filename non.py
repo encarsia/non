@@ -112,7 +112,7 @@ class Handler:
     ############### filechooser dialog ############
 
     def on_choose_conf_file_file_activated(self,widget):
-        self.on_choose_conf_file_response(widget,0)
+        self.on_choose_conf_file_response(widget,-5)
 
     def on_choose_conf_file_response(self,widget,response):
         if response == -5:
@@ -307,31 +307,35 @@ class NiApp:
                 #reloading module is required when file is changed 
                 ninconf = importlib.reload(ninconf)
                 self.wdir = ninconf.CURRENT_DIR
+
+                ###### setup bookmarks in menu ######
+                self.bookmarks = ninconf.BOOKMARKS
+                self.obj("open_conf").set_sensitive(True)
+                #remove generated bookmark menu items, otherwise when appending new bookmark all existing bookmarks are appended repeatedly
+                for i in self.obj("menu").get_children():
+                    #the separator item is stretched vertically when applying get_label function (which does not return any value but no error either) but I don't know how to do a GTK class comparison to exclude the separator or include the menuitems so this works fine
+                    if type(i) == type(self.obj("load_conf")):
+                        if i.get_label().startswith("Bookmark: "):
+                            self.obj("menu").remove(i)
+                #add menu items for bookmarks
+                for b in sorted(self.bookmarks):
+                    item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
+                    item.connect("activate",self.select_bookmark,b)
+                    self.obj("menu").append(item)
+                    #set 'add bookmark' menu item inactive if bookmark already exists
+                    if b[1] == self.wdir:
+                        self.obj("add_bookmark").set_sensitive(False)
+                        img = Gtk.Image.new_from_stock(Gtk.STOCK_YES,1)
+                self.obj("menu").show_all()
+                if len(self.bookmarks) > 0:
+                    self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
+                else:
+                    self.messenger("No bookmarks")
                 #check if last wdir still exists
                 try:
+                    os.chdir(self.wdir)
                     self.messenger("Current Nikola folder: %s" % self.wdir)
-                    self.bookmarks = ninconf.BOOKMARKS
-                    self.obj("open_conf").set_sensitive(True)
-                    #remove generated bookmark menu items, otherwise when appending new bookmark all existing bookmarks are appended repeatedly
-                    for i in self.obj("menu").get_children():
-                        #the separator item is stretched vertically when applying get_label function (which does not return any value but no error either) but I don't know how to do a GTK class comparison to exclude the separator or include the menuitems so this works fine
-                        if type(i) == type(self.obj("load_conf")):
-                            if i.get_label().startswith("Bookmark: "):
-                                self.obj("menu").remove(i)
-                    #add menu items for bookmarks
-                    for b in sorted(self.bookmarks):
-                        item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
-                        item.connect("activate",self.select_bookmark,b)
-                        self.obj("menu").append(item)
-                        #set 'add bookmark' menu item inactive if bookmark already exists
-                        if b[1] == self.wdir:
-                            self.obj("add_bookmark").set_sensitive(False)
-                            img = Gtk.Image.new_from_stock(Gtk.STOCK_YES,1)
-                    self.obj("menu").show_all()
-                    if len(self.bookmarks) > 0:
-                        self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
-                    else:
-                        self.messenger("No bookmarks")
+                    
                     #reload terminal with current wdir
                     self.obj("term").reset(True, True)
                     self.start_console(self.wdir)
@@ -399,6 +403,12 @@ class NiApp:
         [self.obj(store).clear() for store in ["store_posts","store_pages","store_tags","store_cats","store_listings","store_files","store_images","store_translation"]]
 
         os.chdir(self.wdir)
+
+        #check if folder for files, listings and images exist to avoid FileNotFoundError
+        for subdir in ["files", "listings", "images"]:
+            if not os.path.isdir(os.path.join(self.wdir,subdir)):
+                self.messenger("\"{}\" doesn't exist...create...".format(subdir))
+                os.mkdir(os.path.join(self.wdir,subdir))
 
         #load nikola conf.py as module to gain simple access to variables
         spec = importlib.util.spec_from_file_location("siteconf", os.path.join(self.wdir,"conf.py"))
