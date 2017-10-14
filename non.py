@@ -269,6 +269,7 @@ class NiApp:
 
         #setting transient window in Glade is ignored
         self.obj("about_dialog").set_transient_for(window)
+        self.obj("config_info").set_transient_for(window)
 
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
@@ -306,34 +307,39 @@ class NiApp:
                 #reloading module is required when file is changed 
                 ninconf = importlib.reload(ninconf)
                 self.wdir = ninconf.CURRENT_DIR
-                self.messenger("Current Nikola folder: %s" % self.wdir)
-                self.bookmarks = ninconf.BOOKMARKS
-                self.obj("open_conf").set_sensitive(True)
-                #remove generated bookmark menu items, otherwise when appending new bookmark all existing bookmarks are appended repeatedly
-                for i in self.obj("menu").get_children():
-                    #the separator item is stretched vertically when applying get_label function (which does not return any value but no error either) but I don't know how to do a GTK class comparison to exclude the separator or include the menuitems so this works fine
-                    if type(i) == type(self.obj("load_conf")):
-                        if i.get_label().startswith("Bookmark: "):
-                            self.obj("menu").remove(i)
-                #add menu items for bookmarks
-                for b in sorted(self.bookmarks):
-                    item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
-                    item.connect("activate",self.select_bookmark,b)
-                    self.obj("menu").append(item)
-                    #set 'add bookmark' menu item inactive if bookmark already exists
-                    if b[1] == self.wdir:
-                        self.obj("add_bookmark").set_sensitive(False)
-                        img = Gtk.Image.new_from_stock(Gtk.STOCK_YES,1)
-                self.obj("menu").show_all()
-                if len(self.bookmarks) > 0:
-                    self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
-                else:
-                    self.messenger("No bookmarks")
-                #reload terminal with current wdir
-                self.obj("term").reset(True, True)
-                self.start_console(self.wdir)
-                #refresh window
-                self.get_window_content()
+                #check if last wdir still exists
+                try:
+                    self.messenger("Current Nikola folder: %s" % self.wdir)
+                    self.bookmarks = ninconf.BOOKMARKS
+                    self.obj("open_conf").set_sensitive(True)
+                    #remove generated bookmark menu items, otherwise when appending new bookmark all existing bookmarks are appended repeatedly
+                    for i in self.obj("menu").get_children():
+                        #the separator item is stretched vertically when applying get_label function (which does not return any value but no error either) but I don't know how to do a GTK class comparison to exclude the separator or include the menuitems so this works fine
+                        if type(i) == type(self.obj("load_conf")):
+                            if i.get_label().startswith("Bookmark: "):
+                                self.obj("menu").remove(i)
+                    #add menu items for bookmarks
+                    for b in sorted(self.bookmarks):
+                        item=Gtk.MenuItem(_("Bookmark: %s" % b[0]))
+                        item.connect("activate",self.select_bookmark,b)
+                        self.obj("menu").append(item)
+                        #set 'add bookmark' menu item inactive if bookmark already exists
+                        if b[1] == self.wdir:
+                            self.obj("add_bookmark").set_sensitive(False)
+                            img = Gtk.Image.new_from_stock(Gtk.STOCK_YES,1)
+                    self.obj("menu").show_all()
+                    if len(self.bookmarks) > 0:
+                        self.messenger("Found %d bookmark(s)" % len(self.bookmarks))
+                    else:
+                        self.messenger("No bookmarks")
+                    #reload terminal with current wdir
+                    self.obj("term").reset(True, True)
+                    self.start_console(self.wdir)
+                    #refresh window
+                    self.get_window_content()
+                except FileNotFoundError:
+                    self.messenger("Last working directory isn't here anymore.","warning")
+                    self.obj("choose_conf_file").show_all()
             #show file chooser dialog when no config file exists
             else:
                 self.obj("choose_conf_file").show_all()
@@ -660,14 +666,14 @@ class NiApp:
     def run_nikola_build(self):
         self.gui_cmd = True
         self.obj("stack").set_visible_child(app.obj("term"))
-        self.messenger("Run build process")
+        self.messenger("Execute Nikola: run build process")
         self.term_cmd("nikola build")
 
     def run_nikola_github_deploy(self):
         self.run_nikola_build()
         self.gui_cmd = True
         self.obj("stack").set_visible_child(app.obj("term"))
-        self.messenger("Run deploy to GitHub command ")
+        self.messenger("Execute Nikola: run deploy to GitHub command ")
         self.term_cmd("nikola github_deploy")
 
     def messenger(self,message,log="info"):
