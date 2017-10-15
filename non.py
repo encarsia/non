@@ -144,14 +144,17 @@ class Handler:
                 app.obj("newpost_entry").grab_focus()
             else:
                 self.on_window_close(widget)
-                subprocess.run(["nikola","new_post","--title=%s" % app.obj("newpost_entry").get_text()])
+                if app.obj("create_page").get_active():
+                    new_site_obj = "new_page"
+                else:
+                    new_site_obj = "new_post"
+                subprocess.run(["nikola",new_site_obj,"--title=%s" % app.obj("newpost_entry").get_text()])
                 app.get_window_content()
         else:
             self.on_window_close(widget)
 
     def on_newpost_entry_activate(self,widget):
         self.on_newpost_dialog_response(app.obj("newpost_dialog"),0)
-
 
     ################ treeview rows activated ###############
 
