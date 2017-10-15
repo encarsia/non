@@ -710,5 +710,3 @@ app = NiApp()
 app.run(sys.argv)
 
 #FIXME: glade file > window height/size (this is just a reminder for myself, ignore if you are not me)
-
-#TODO Link to Nikola and reference
