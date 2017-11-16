@@ -76,7 +76,7 @@ class Handler:
 
     def on_term_child_exited(self,widget,*args):
         #on exit the console is restarted because it does'n run in a separate window anymore but as a (persistent) GTK stack child 
-        widget.reset(True,True)
+        widget.reset(True, True)
         app.start_console(None)
 
     ########### headerbar #########################
@@ -279,7 +279,6 @@ class NiApp:
 
         self.check_ninconf()
         self.add_dialogbuttons(self.obj("choose_conf_file"))
-        #self.add_dialogbuttons(self.obj("newpost_dialog"))
         self.add_dialogokbutton(self.obj("about_dialog"))
 
     def start_console(self, wdir):
@@ -579,7 +578,7 @@ class NiApp:
         for item in sorted(os.listdir(subdir)):
             if os.path.isfile(os.path.join(subdir,item)):
                 #images are changed in size when deployed so check only for filename
-                if item.endswith(".png"):
+                if item.endswith(('.png', '.gif', '.jpeg', '.jpg')):
                     equ = os.path.isfile(os.path.join("output",subdir,item))
                 #else compare if files are equal
                 else:
@@ -587,7 +586,7 @@ class NiApp:
                         equ = filecmp.cmp(os.path.join(subdir,item),os.path.join("output",subdir,item))
                     except FileNotFoundError:
                         equ = False
-                if equ == False:
+                if not equ:
                     weight = 800
                     self.obj("build").set_sensitive(True)
                 else:
