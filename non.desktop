@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Knights of Ni
+Comment=Nikola Site Generator Desktop Client
+Exec=/home/anke/Python/non_console/non.py
+Path=/home/anke/Python/non_console/
+Icon=/home/anke/Python/non_console/duckyou.svg
+Terminal=false
+Type=Application
+Categories=Utility;Application;Blog;

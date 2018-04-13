@@ -193,6 +193,7 @@
   <object class="GtkApplicationWindow" id="non_window_stack">
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
+    <property name="icon">duckyou.svg</property>
     <child>
       <object class="GtkStack" id="stack">
         <property name="visible">True</property>
@@ -752,7 +753,6 @@
                             </child>
                           </object>
                         </child>
-
                         <child>
                           <object class="GtkTreeViewColumn">
                             <property name="title" translatable="yes">Created</property>

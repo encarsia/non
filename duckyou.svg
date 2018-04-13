@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="128"
+   width="128"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   version="1.0"
+   sodipodi:docbase="D:\Documents and Settings\Joanna\My Documents\My Pictures\graph_vector\thicon_baby"
+   sodipodi:docname="ducky05_ok.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 30 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="60 : 30 : 1"
+       inkscape:persp3d-origin="30 : 20 : 1"
+       id="perspective5561" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:cx="64"
+     inkscape:cy="52.915351"
+     inkscape:zoom="1.5827039"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     width="60px"
+     height="60px"
+     borderlayer="true"
+     showgrid="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="744"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     objecttolerance="10000"
+     guidetolerance="2">
+    <inkscape:grid
+       type="xygrid"
+       id="grid6084"
+       visible="true"
+       enabled="true"
+       empspacing="4" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Warstwa 1"
+     id="layer1"
+     style="display:inline" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="zzz"
+     style="display:inline">
+    <path
+       style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       d="M 106.70867,28.013754 C 101.81817,28.013754 97.917624,31.981406 97.917624,36.871904 L 97.917624,47.273521 C 99.98535,48.295116 102.32887,48.884094 104.76256,48.884094 C 113.62934,48.884094 120.80118,41.311496 120.80118,31.973079 C 120.80118,30.611225 120.62038,29.28272 120.33143,28.013754 L 106.70867,28.013754 z"
+       id="path3297" />
+    <path
+       style="fill:#ffff0e;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 80,11.236952 C 66.957283,11.236952 56.378267,22.124668 56.378265,35.52976 C 56.378265,43.26132 59.887531,50.139759 65.37063,54.588206 C 62.12699,54.250379 58.808482,54.051348 55.438764,54.051348 C 50.575856,54.051348 45.833524,54.502472 41.212037,55.192171 C 37.327325,47.06534 28.27819,40.085839 20.802369,37.951849 C 10.683477,49.113141 8.7044183,60.809057 8.8001729,71.235368 C 8.9115047,83.35781 12.418716,92.795762 17.38898,100.08689 C 28.90481,106.56044 42.741336,110.35429 57.586195,110.35429 C 70.066771,110.35429 81.809657,107.66867 92.079297,102.9725 C 98.646301,95.083667 102.61513,84.99031 102.61513,73.982188 C 102.61513,66.124448 100.59643,58.752055 97.04523,52.306561 C 101.11182,47.943856 103.62174,42.043886 103.62174,35.52976 C 103.62174,22.124668 93.042714,11.236953 80,11.236952 z"
+       id="path2278"
+       sodipodi:nodetypes="cscsccscscscsc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#050505;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3307"
+       sodipodi:cx="40.663132"
+       sodipodi:cy="14.64191"
+       sodipodi:rx="2.4668436"
+       sodipodi:ry="2.5464191"
+       d="M 43.129975,14.64191 A 2.4668436,2.5464191 0 1 1 38.196288,14.64191 A 2.4668436,2.5464191 0 1 1 43.129975,14.64191 z"
+       transform="matrix(1.6225444,0,0,1.5047329,19.960452,6.8349399)" />
+  </g>
+</svg>

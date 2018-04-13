@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -556,8 +556,6 @@ class NiApp:
         return d,t,c
 
     def get_tree_data_rst(self,store,dict):
-        #append(["title","slug","file","date","ger_date",
-        #       "tags","category","weight","sub"])
         #append only default language files to treestore
         [self.obj(store).append([dict[key]["title"],
                                 dict[key]["slug"],
@@ -670,7 +668,7 @@ class NiApp:
 
     def term_cmd(self,command):
         command += "\n" 
-        self.obj("term").feed_child(command,len(command))
+        self.obj("term").feed_child(command.encode())
 
     def run_nikola_build(self):
         self.gui_cmd = True
