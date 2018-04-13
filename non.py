@@ -243,7 +243,7 @@ class NiApp:
         self.install_dir = os.getcwd()
         #set up logging
         FORMAT = "%(asctime)s | %(levelname)-8s | %(message)s"
-        logging.basicConfig(filename='non.log',level=logging.DEBUG,filemode='w',format=FORMAT,datefmt="%H:%M:%S")
+        logging.basicConfig(filename='non.log',level=logging.DEBUG,filemode='w',format=FORMAT,datefmt="%Y-%m-%d %H:%M:%S")
         self.log = logging.getLogger(__name__)
 
     def on_app_activate(self,app):
