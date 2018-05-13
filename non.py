@@ -201,6 +201,8 @@ class Handler:
         row,pos = app.obj("selection_translations").get_selected()
         subprocess.run(['xdg-open',os.path.join(app.wdir,row[pos][6],row[pos][2])])
 
+    #open context menu for translation options
+
     def on_view_translations_button_release_event(self,widget,event):
         popup=Gtk.Menu()
         for l in app.translation_lang:
@@ -225,7 +227,47 @@ class Handler:
             shutil.copy(os.path.join(subdir,file),os.path.join(subdir,trans_file))
             app.messenger("Create translation file for %s" % row[pos][0])
             app.get_window_content()
+
+    #open context menu on right click to open post/page in browser
+
+    def on_view_posts_button_release_event(self,widget,event):
+        popup=Gtk.Menu()
+        item=Gtk.MenuItem(_("Open in web browser"))
+        #selected row is already caught by on_treeview_selection_changed function
+        item.connect("activate",self.on_open_post_web)
+        popup.append(item)
+        popup.show_all()
+        #only show on right click
+        if event.button == 3:
+            popup.popup(None,None,None,None,event.button,event.time)
+            return True
         
+    def on_open_post_web(self, widget):
+        row, pos = app.obj("selection_post").get_selected()
+        title = row[pos][0]
+        slug = row[pos][1]
+        app.messenger("Open '{}' in web browser".format(title))
+        subprocess.run(['xdg-open',"{}/posts/{}".format(app.siteconf.SITE_URL, slug)])
+
+    def on_view_pages_button_release_event(self,widget,event):
+        popup=Gtk.Menu()
+        item=Gtk.MenuItem(_("Open in web browser"))
+        #selected row is already caught by on_treeview_selection_changed function
+        item.connect("activate",self.on_open_page_web)
+        popup.append(item)
+        popup.show_all()
+        #only show on right click
+        if event.button == 3:
+            popup.popup(None,None,None,None,event.button,event.time)
+            return True
+        
+    def on_open_page_web(self, widget):
+        row, pos = app.obj("selection_page").get_selected()
+        title = row[pos][0]
+        slug = row[pos][1]
+        app.messenger("Open '{}' in web browser".format(title))
+        subprocess.run(['xdg-open',"{}/pages/{}".format(app.siteconf.SITE_URL, slug)])
+
 class NiApp:
     
     def __init__(self):

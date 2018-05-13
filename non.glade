@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.1 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="vte-2.91" version="0.46"/>
@@ -194,6 +194,68 @@
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
     <property name="icon">duckyou.svg</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="title">Knights of Ni</property>
+        <property name="subtitle">Nikola powered GitHub Site Manager</property>
+        <property name="spacing">5</property>
+        <property name="show_close_button">True</property>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkMenuButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="popup">menu</property>
+            <property name="use_popover">False</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="info_button">
+            <property name="label">gtk-about</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="use_stock">True</property>
+            <property name="always_show_image">True</property>
+            <signal name="clicked" handler="on_info_button_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="manual_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="image">image</property>
+            <property name="always_show_image">True</property>
+            <signal name="clicked" handler="on_manual_button_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
     <child>
       <object class="GtkStack" id="stack">
         <property name="visible">True</property>
@@ -603,6 +665,7 @@
                         <property name="rules_hint">True</property>
                         <property name="enable_search">False</property>
                         <property name="show_expanders">False</property>
+                        <signal name="button-release-event" handler="on_view_posts_button_release_event" swapped="no"/>
                         <signal name="row-activated" handler="on_view_posts_row_activated" swapped="no"/>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="selection_post"/>
@@ -719,6 +782,7 @@
                         <property name="rules_hint">True</property>
                         <property name="enable_search">False</property>
                         <property name="show_expanders">False</property>
+                        <signal name="button-release-event" handler="on_view_pages_button_release_event" swapped="no"/>
                         <signal name="row-activated" handler="on_view_pages_row_activated" swapped="no"/>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="selection_page"/>
@@ -1256,68 +1320,6 @@
         </child>
       </object>
     </child>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="title">Knights of Ni</property>
-        <property name="subtitle">Nikola powered GitHub Site Manager</property>
-        <property name="spacing">5</property>
-        <property name="show_close_button">True</property>
-        <child>
-          <object class="GtkStackSwitcher">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="stack">stack</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkMenuButton">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="popup">menu</property>
-            <property name="use_popover">False</property>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="info_button">
-            <property name="label">gtk-about</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="use_stock">True</property>
-            <property name="always_show_image">True</property>
-            <signal name="clicked" handler="on_info_button_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="manual_button">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="image">image</property>
-            <property name="always_show_image">True</property>
-            <signal name="clicked" handler="on_manual_button_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkAboutDialog" id="about_dialog">
     <property name="can_focus">False</property>
@@ -1332,6 +1334,9 @@
     <property name="license_type">mit-x11</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -1353,9 +1358,6 @@
         </child>
       </object>
     </child>
-    <child>
-      <placeholder/>
-    </child>
   </object>
   <object class="GtkFileChooserDialog" id="choose_conf_file">
     <property name="width_request">700</property>
@@ -1368,6 +1370,15 @@
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -1386,15 +1397,6 @@
             <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
-        </child>
-      </object>
-    </child>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>
@@ -1441,9 +1443,6 @@
         </child>
       </object>
     </child>
-    <child>
-      <placeholder/>
-    </child>
   </object>
   <object class="GtkDialog" id="newpost_dialog">
     <property name="width_request">300</property>
@@ -1453,6 +1452,9 @@
     <property name="transient_for">non_window_stack</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_newpost_dialog_response" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -1572,8 +1574,5 @@
       <action-widget response="1">newpost_cancel</action-widget>
       <action-widget response="0">newpost_ok</action-widget>
     </action-widgets>
-    <child>
-      <placeholder/>
-    </child>
   </object>
 </interface>
