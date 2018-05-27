@@ -156,7 +156,8 @@ class Handler:
                     new_site_obj = "new_post"
                 subprocess.run(["nikola",
                                 new_site_obj,
-                                "--title={}".format(app.obj("newpost_entry").get_text()),
+                                "--title={}".format(app.obj(
+                                    "newpost_entry").get_text()),
                                 ])
                 app.get_window_content()
         else:
