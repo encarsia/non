@@ -6,11 +6,13 @@ import gettext
 import importlib
 import locale
 import logging
+import logging.config
 import os
 import shutil
 import subprocess
 import sys
 import time
+import yaml
 
 _ = gettext.gettext
 
@@ -317,15 +319,10 @@ class NiApp:
     def on_app_startup(self, app):
         # get current directory
         self.install_dir = os.getcwd()
-        # set up logging
-        FORMAT = "%(asctime)s | %(levelname)-8s | %(message)s"
-        logging.basicConfig(filename='non.log',
-                            level=logging.DEBUG,
-                            filemode='w',
-                            format=FORMAT,
-                            datefmt="%Y-%m-%d %H:%M:%S",
-                            )
-        self.log = logging.getLogger(__name__)
+        self.log = logging.getLogger("non")
+        with open("logging.yaml") as f:
+            config = yaml.load(f)
+            logging.config.dictConfig(config)
 
     def on_app_activate(self, app):
         # setting up localization
