@@ -23,6 +23,12 @@ WHAT DO I NEED TO GET IT WORKING?
  * configurated Nikola site
  * Python 3 including GObject Introspection bindings
 
+INSTALLATION
+
+ * download and extract or clone repository
+ * run `non.py`
+ * if you intend to use the desktop icon, edit `non.desktop` and customize real path of "Exec", "Path" and "Icon" and copy file to `~/.local/share/applications/`
+
 THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.

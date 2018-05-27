@@ -317,7 +317,6 @@ class NiApp:
         self.log.info("Application terminated on window close button. Bye.")
 
     def on_app_startup(self, app):
-        # get current directory
         self.install_dir = os.getcwd()
         self.log = logging.getLogger("non")
         with open("logging.yaml") as f:
@@ -350,7 +349,6 @@ class NiApp:
         window.set_application(app)
         window.set_wmclass("Knights of Ni", "Knights of Ni")
         window.show_all()
-        # print(window.get_preferred_size())
 
         self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)

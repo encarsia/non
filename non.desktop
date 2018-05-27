@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Knights of Ni
+Comment=Nikola Site Generator Desktop Client
+Exec=/abs_path_to/non/non.py
+Path=/abs_path_to/to/non/
+Icon=/abs_path_to/non/duckyou.svg
+Terminal=false
+Type=Application
+Categories=Utility;Application;Blog;
