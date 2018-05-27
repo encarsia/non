@@ -156,9 +156,8 @@ class Handler:
                     new_site_obj = "new_post"
                 subprocess.run(["nikola",
                                 new_site_obj,
-                                "--title={}".format(
-                                    app.obj("newpost_entry").get_text()]),
-                               )
+                                "--title={}".format(app.obj("newpost_entry").get_text()),
+                                ])
                 app.get_window_content()
         else:
             self.on_window_close(widget)
@@ -406,7 +405,7 @@ class NiApp:
 
                     # E721 pep8 warning, delete commented line if it works
                     # if type(i) == type(self.obj("load_conf")):
-                    if isinstance(i, self.obj("load_conf")):
+                    if isinstance(i, type(self.obj("load_conf"))):
                         if i.get_label().startswith("Bookmark: "):
                             self.obj("menu").remove(i)
                 # add menu items for bookmarks
@@ -608,7 +607,7 @@ BOOKMARKS = set()
 
     def read_rst_files(self, subdir, file):
         date = datetime.datetime.today().strftime("%Y-%m-%d")
-        title, slug, tagstr, tags, catstr, cats = "" * 6
+        title, slug, tagstr, tags, catstr, cats = "", "", "", "", "", ""
         rst = open(os.path.join(subdir, file), "r")
         for line in rst:
             if line.startswith(".. title:"):
