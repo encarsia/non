@@ -54,8 +54,11 @@ class Handler:
     def on_build_clicked(self, widget):
         app.run_nikola_build()
 
-    def on_deploy_clicked(self, widget):
+    def on_deploy_git_clicked(self, widget):
         app.run_nikola_github_deploy()
+
+    def on_deploy_clicked(self, widget):
+        app.run_nikola_deploy()
 
     def on_refresh_clicked(self, widget):
         app.get_window_content()
@@ -67,7 +70,7 @@ class Handler:
         if app.prompt == "":
             app.prompt = last_line
         if last_line == "INFO: github_deploy: Successful deployment":
-            app.messenger("Deploying to GitHub successful.")
+            app.messenger("Deploying to GitHub/GitLab successful.")
         # gui_cmd is bool var for command being run via toolbar button
         # if command is invoked by button the app focus returns back to graphic
         # interface stack child 'gui'
@@ -319,7 +322,7 @@ class NiApp:
     def on_app_startup(self, app):
         self.install_dir = os.getcwd()
         self.log = logging.getLogger("non")
-        with open("logging.yaml") as f:
+        with open("log/logging.yaml") as f:
             config = yaml.load(f)
             logging.config.dictConfig(config)
 
@@ -398,9 +401,6 @@ class NiApp:
                     # no error either) but I don't know how to do a GTK class
                     # comparison to exclude the separator or include the
                     # menuitems so this works fine
-
-                    # E721 pep8 warning, delete commented line if it works
-                    # if type(i) == type(self.obj("load_conf")):
                     if isinstance(i, type(self.obj("load_conf"))):
                         if i.get_label().startswith("Bookmark: "):
                             self.obj("menu").remove(i)
@@ -530,28 +530,40 @@ BOOKMARKS = set()
         self.obj("author").set_alignment(xalign=0.0, yalign=0.5)
         self.obj("descr").set_alignment(xalign=0.0, yalign=0.5)
         self.obj("title").set_alignment(xalign=0.0, yalign=0.5)
-
         # detect multilingual sites
         self.default_lang = self.siteconf.DEFAULT_LANG
         self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS
                                     if key != self.default_lang])
-
         self.obj("lang").set_text(self.default_lang)
         self.obj("trans_lang").set_text(", ".join(str(s) for s in
                                         self.translation_lang
                                         if s != self.default_lang))
+        # activate toolbar item if deploy commands for default preset exists
+        try:
+            self.deploy_cmd = self.siteconf.DEPLOY_COMMANDS["default"]
+            self.obj("deploy").set_sensitive(True)
+        except AttributeError:
+            self.messenger("No deploy commands set, edit conf.py or use \
+'github_deploy'")
+        # check for output folder, variable not set for GitHub deploy
+        try:
+            self.output_folder = self.siteconf.OUTPUT_FOLDER
+            self.messenger("Output folder: '{}'".format(self.output_folder))
+        except AttributeError:
+            self.output_folder = "output"
+            self.messenger("Output folder is set to default 'output'")
 
         # #### these variables are dictionaries #####
         # posts/pages
         # get info: title, slug, date, tags, category, compare to index.rst in
-        # output
+        # output folder
         self.posts, post_tags, post_cats = self.get_rst_content("posts")
         self.pages, page_tags, page_cats = self.get_rst_content("pages")
         # listings/files/images (not needed because of treestores but I leave
         # these here for possible later usage)
-        listings = self.get_filelist("listings")
-        files = self.get_filelist("files")
-        images = self.get_filelist("images")
+        listings = self.get_filelist("listings", self.output_folder)
+        files = self.get_filelist("files", self.output_folder)
+        images = self.get_filelist("images", self.output_folder)
 
         # #### add information to notebook tab datastores #####
         # posts/pages tabs are based on liststores and created from dict
@@ -560,9 +572,9 @@ BOOKMARKS = set()
         self.get_tree_data_rst("store_pages", self.pages)
         # files/listings/images are based on treestores, data rows are appended
         # without dict usage
-        self.get_tree_data("store_listings", "listings")
-        self.get_tree_data("store_files", "files")
-        self.get_tree_data("store_images", "images")
+        self.get_tree_data("store_listings", "listings", self.output_folder)
+        self.get_tree_data("store_files", "files", self.output_folder)
+        self.get_tree_data("store_images", "images", self.output_folder)
         # tags/category tab
         self.get_tree_data_label(self.posts,
                                  self.pages,
@@ -597,9 +609,9 @@ BOOKMARKS = set()
                                       stdout=subprocess.PIPE,
                                       ).communicate()
         if git_status[0] == "":
-            self.obj("deploy").set_sensitive(False)
+            self.obj("deploy_git").set_sensitive(False)
         else:
-            self.obj("deploy").set_sensitive(True)
+            self.obj("deploy_git").set_sensitive(True)
 
     def read_rst_files(self, subdir, file):
         date = datetime.datetime.today().strftime("%Y-%m-%d")
@@ -622,10 +634,10 @@ BOOKMARKS = set()
         rst.close()
         return title, slug, date, tagstr, tags, catstr, cats
 
-    def compare_output_dir(self, od, subdir, filename, slug, lang):
+    def compare_output_dir(self, od, subdir, filename, lang, output):
         try:
             return filecmp.cmp(os.path.join(subdir, filename),
-                               os.path.join("output",
+                               os.path.join(output,
                                             lang,
                                             subdir,
                                             od,
@@ -654,7 +666,8 @@ BOOKMARKS = set()
             # check for equal file in output dir, mark bold (loaded by
             # treemodel) when False
             for od in {slug, f[:-4]}:
-                if self.compare_output_dir(od, subdir, f, slug, lang):
+                if self.compare_output_dir(od, subdir, f, lang,
+                                           self.output_folder):
                     fontstyle = "normal"
                     break
                 else:
@@ -713,18 +726,18 @@ BOOKMARKS = set()
                                  ]) for key in dict if dict[key]["lang"] == ""]
         self.obj(store).set_sort_column_id(3, Gtk.SortType.DESCENDING)
 
-    def get_tree_data(self, store, subdir, parent=None):
+    def get_tree_data(self, store, subdir, output, parent=None):
         for item in sorted(os.listdir(subdir)):
             if os.path.isfile(os.path.join(subdir, item)):
                 # images are changed in size when deployed so check only for
                 # filename
                 if item.endswith(('.png', '.gif', '.jpeg', '.jpg')):
-                    equ = os.path.isfile(os.path.join("output", subdir, item))
+                    equ = os.path.isfile(os.path.join(output, subdir, item))
                 # else compare if files are equal
                 else:
                     try:
                         equ = filecmp.cmp(os.path.join(subdir, item),
-                                          os.path.join("output", subdir, item))
+                                          os.path.join(output, subdir, item))
                     except FileNotFoundError:
                         equ = False
                 if not equ:
@@ -742,7 +755,7 @@ BOOKMARKS = set()
                                         ])
             elif os.path.isdir(os.path.join(subdir, item)):
                 # TODO size of folder
-                if os.path.isdir(os.path.join("output", subdir, item)):
+                if os.path.isdir(os.path.join(output, subdir, item)):
                     weight = 400
                 else:
                     weight = 800
@@ -751,7 +764,7 @@ BOOKMARKS = set()
                                              [item, None, None, weight])
                 subsubdir = os.path.join(subdir, item)
                 # read subdirs as child rows
-                self.get_tree_data(store, subsubdir, row)
+                self.get_tree_data(store, subsubdir, output, row)
 
     def get_tree_data_label(self, post_dict, page_dict,
                             post, page, store, label):
@@ -807,19 +820,19 @@ BOOKMARKS = set()
                  dict[child]["file"].split(".")[0] == dict[key]["file"].split(
                     ".")[0] and dict[child]["lang"] != ""]
 
-    def get_filelist(self, subdir):
+    def get_filelist(self, subdir, output):
         d = {}
         for root, dirs, files in sorted(os.walk(subdir)):
             for f in files:
                 # images are changed in size when deployed so check only for#
                 # filename
                 if subdir == "images":
-                    equ = os.path.isfile(os.path.join("output", root, f))
+                    equ = os.path.isfile(os.path.join(output, root, f))
                 # else compare if files are identical
                 else:
                     try:
                         equ = filecmp.cmp(os.path.join(root, f), os.path.join(
-                            "output", root, f))
+                            output, root, f))
                     except FileNotFoundError:
                         equ = False
                 if equ is False:
@@ -846,8 +859,14 @@ BOOKMARKS = set()
         self.run_nikola_build()
         self.gui_cmd = True
         self.obj("stack").set_visible_child(app.obj("term"))
-        self.messenger("Execute Nikola: run deploy to GitHub command ")
+        self.messenger("Execute Nikola: run deploy to GitHub command")
         self.term_cmd("nikola github_deploy")
+
+    def run_nikola_deploy(self):
+        self.run_nikola_build()
+        self.gui_cmd = True
+        self.messenger("Execute Nikola: run deploy to default preset command")
+        self.term_cmd("nikola deploy")
 
     def messenger(self, message, log="info"):
         """Show notifications in statusbar and log file"""

@@ -2,5 +2,5 @@ __pycache__/
 ninconf.py
 non.glade~
 #non.glade#
-non.log
+log/non.log*
 .idea/

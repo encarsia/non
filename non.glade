@@ -199,7 +199,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="title">Knights of Ni</property>
-        <property name="subtitle">Nikola powered GitHub Site Manager</property>
+        <property name="subtitle">Nikola powered Site Manager</property>
         <property name="spacing">5</property>
         <property name="show_close_button">True</property>
         <child>
@@ -315,10 +315,27 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="deploy">
+                  <object class="GtkToolButton" id="deploy_git">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Deploy site to GitHub/GitLab</property>
                     <property name="label" translatable="yes">Deploy to GitHub</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-execute</property>
+                    <signal name="clicked" handler="on_deploy_git_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="deploy">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Deploy site to default deploy preset</property>
+                    <property name="label" translatable="yes">Deploy</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-execute</property>
                     <signal name="clicked" handler="on_deploy_clicked" swapped="no"/>
@@ -1327,9 +1344,9 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
     <property name="program_name">Knights of Ni</property>
-    <property name="version">0.3</property>
+    <property name="version">0.4</property>
     <property name="website">https://github.com/encarsia/non</property>
-    <property name="website_label" translatable="yes">A manager for your Nikola powered GitHub Site.</property>
+    <property name="website_label" translatable="yes">A manager for your Nikola powered website.</property>
     <property name="logo_icon_name">help-about</property>
     <property name="license_type">mit-x11</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>

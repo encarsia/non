@@ -8,9 +8,10 @@ formatters:
 handlers:
     file:
         formatter: default
-        class: logging.FileHandler
-        mode: w
-        filename: non.log
+        class: logging.handlers.RotatingFileHandler
+        maxBytes: 10000
+        backupCount: 1
+        filename: log/non.log
         level: DEBUG
     console:
         formatter: default
