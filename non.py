@@ -450,7 +450,7 @@ class NiApp:
                         content.remove(line)
                     elif line.startswith("CURRENT_DIR"):
                         content[content.index(line)] = "CURRENT_DIR = \
-                                                        {}\n".format(cfile)
+\"{}\"\n".format(cfile)
                 with open(conf_file, "w") as f:
                     for line in content:
                         f.write(line)

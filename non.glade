@@ -245,6 +245,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Open Nikola handbook</property>
             <property name="image">image</property>
             <property name="always_show_image">True</property>
             <signal name="clicked" handler="on_manual_button_clicked" swapped="no"/>
@@ -1425,7 +1426,7 @@
     <property name="transient_for">non_window_stack</property>
     <property name="buttons">ok</property>
     <property name="text" translatable="yes">This application will not work without pointing to a local Nikola site configuration file.</property>
-    <property name="secondary_text" translatable="yes">Run "Load conf.py" menu item again.</property>
+    <property name="secondary_text" translatable="yes">Run "Choose conf.py" menu item again.</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
     <child internal-child="vbox">
