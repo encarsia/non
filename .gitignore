@@ -1,6 +1,21 @@
 __pycache__/
+
+# non config
 ninconf.py
-non.glade~
-#non.glade#
-log/non.log*
+
+# temporary glade files
+*non.glade~
+*#non.glade#
+
+# logging
+*/log/non.log*
+
+# PyCharm
 .idea/
+
+# setuptools packaging
+build/
+dist/
+*.egg-info/
+data/non.desktop
+
