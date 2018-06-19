@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import datetime
 import filecmp
@@ -336,7 +337,7 @@ class NiApp:
         gettext.textdomain(appname)
 
         # Glade files/window configuration
-        gladefile_list = ["non.glade"]
+        gladefile_list = ["ui/non.glade"]
 
         # set up builder
         builder = Gtk.Builder()
