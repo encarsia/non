@@ -61,7 +61,7 @@
     * an integrated ReST editor
     * provide personal article templates
  * Roadmap:
-    * improve speed and reduce file accesss by storing metadata as JSON or some other crazy shit
+    * improve speed and reduce file access by storing metadata as JSON or some other crazy shit
     * stats on size/articles/pages/installed themes and plugins
     * give the bookmark feature some love
 
