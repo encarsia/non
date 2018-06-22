@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import datetime
 import filecmp
@@ -105,22 +106,12 @@ class Handler:
         app.obj("choose_conf_file").show_all()
 
     def on_add_bookmark_activate(self, widget):
-        bookmark = app.siteconf.BLOG_TITLE, app.wdir
-        app.bookmarks.add(bookmark)
-        with open(app.nonconfig_file) as f:
-            content = f.readlines()
-        for line in content:
-            if line == ("\n"):
-                content.remove(line)
-            elif line.startswith("BOOKMARKS"):
-                content[content.index(line)] = "BOOKMARKS = {}".format(
-                                                            str(app.bookmarks))
-        with open(app.nonconfig_file, "w") as f:
-            for line in content:
-                f.write(line)
+        # add title and location to bookmark dict
+        bookmark = [app.siteconf.BLOG_TITLE, app.wdir]
+        app.bookmarks.append(bookmark)
         app.messenger("New bookmark for {} added.".format(
                                                     app.siteconf.BLOG_TITLE))
-        app.check_ninconf()
+        app.check_nonconf()
 
     # ############## filechooser dialog ############
 
@@ -130,12 +121,8 @@ class Handler:
     def on_choose_conf_file_response(self, widget, response):
         if response == -5:
             try:
-                if os.path.split(widget.get_filename())[1] == "conf.py":
-                    app.check_ninconf(os.path.split(widget.get_filename())[0])
-                else:
-                    app.messenger("Working Nikola configuration required",
-                                  "warning")
-                    app.obj("config_info").show_all()
+                app.non_config["wdir"] = os.path.split(widget.get_filename())[0]
+                app.check_nonconf()
             except AttributeError:
                 app.messenger("Working Nikola configuration required",
                               "warning")
@@ -309,6 +296,17 @@ class Handler:
 class NiApp:
 
     def __init__(self):
+        self.install_dir = os.getcwd()
+        self.user_app_dir = os.path.join(os.path.expanduser("~"),
+                                          ".non",
+                                         )
+        #self.conf_file = os.path.join(self.user_app_dir, "conf.py")
+        self.conf_file = os.path.join(self.user_app_dir, "config.yaml")
+
+        if not os.path.isdir((self.user_app_dir)):
+            os.makedirs(self.user_app_dir)
+
+        # initiate GTK+ application
         self.app = Gtk.Application.new("app.knights-of-ni",
                                        Gio.ApplicationFlags(0))
         self.app.connect("startup", self.on_app_startup)
@@ -316,13 +314,15 @@ class NiApp:
         self.app.connect("shutdown", self.on_app_shutdown)
 
     def on_app_shutdown(self, app):
+        # write config to config.yaml in case of changes
+        yaml.dump(self.non_config, open(self.conf_file, "w"), default_flow_style=False)
         self.app.quit()
         self.log.info("Application terminated on window close button. Bye.")
 
     def on_app_startup(self, app):
-        self.install_dir = os.getcwd()
+        os.chdir(self.user_app_dir)
         self.log = logging.getLogger("non")
-        with open("log/logging.yaml") as f:
+        with open(os.path.join(self.install_dir, "logging.yaml")) as f:
             config = yaml.load(f)
             logging.config.dictConfig(config)
 
@@ -343,7 +343,7 @@ class NiApp:
         GObject.type_register(Vte.Terminal)
 
         builder.set_translation_domain(appname)
-        [builder.add_from_file(f) for f in gladefile_list]
+        [builder.add_from_file(os.path.join(self.install_dir, "ui", f)) for f in gladefile_list]
         builder.connect_signals(Handler())
         self.obj = builder.get_object
 
@@ -353,12 +353,23 @@ class NiApp:
         window.set_wmclass("Knights of Ni", "Knights of Ni")
         window.show_all()
 
-        self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
-        self.check_ninconf()
         self.add_dialogbuttons(self.obj("choose_conf_file"))
         self.add_dialogokbutton(self.obj("about_dialog"))
+
+        # load config from config.yaml or start with new
+        if not os.path.isfile(self.conf_file):
+            self.messenger("No config available...")
+            self.non_config = {"wdir" : None,
+                               "bookmarks": [],
+                               }
+            self.messenger("Empty config created...")
+        else:
+            self.non_config = yaml.load(open(self.conf_file))
+            self.messenger("Found config to work with...")
+
+        self.check_nonconf()
 
     def start_console(self, wdir):
         self.obj("term").spawn_sync(
@@ -377,89 +388,58 @@ class NiApp:
         # typed directly in terminal
         self.gui_cmd = False
 
-    def check_ninconf(self, cfile=None):
-        # cfile is None on app start
-        if cfile is None:
-            # check for config on app start or after changing conf.py
-            if os.path.isfile(os.path.join(self.install_dir, "ninconf.py")):
-                self.nonconfig_file = os.path.join(self.install_dir,
-                                                   "ninconf.py")
-                self.messenger("Found conf.py to work with")
-                import ninconf
-                # reloading module is required when file is changed
-                ninconf = importlib.reload(ninconf)
-                self.wdir = ninconf.CURRENT_DIR
-                # ##### setup bookmarks in menu ######
-                self.bookmarks = ninconf.BOOKMARKS
-                self.obj("open_conf").set_sensitive(True)
-                # remove generated bookmark menu items, otherwise when
-                # appending new bookmark all existing bookmarks are appended
-                # repeatedly
-                for i in self.obj("menu").get_children():
-                    # the separator item is stretched vertically when applying
-                    # get_label function (which does not return any value but
-                    # no error either) but I don't know how to do a GTK class
-                    # comparison to exclude the separator or include the
-                    # menuitems so this works fine
-                    if isinstance(i, type(self.obj("load_conf"))):
-                        if i.get_label().startswith("Bookmark: "):
-                            self.obj("menu").remove(i)
-                # add menu items for bookmarks
-                for b in sorted(self.bookmarks):
-                    item = Gtk.MenuItem(_("Bookmark: %s" % b[0]))
-                    item.connect("activate", self.select_bookmark, b)
-                    self.obj("menu").append(item)
-                    # set 'add bookmark' menu item inactive if bookmark already
-                    # exists
-                    if b[1] == self.wdir:
-                        self.obj("add_bookmark").set_sensitive(False)
-                        img = Gtk.Image.new_from_stock(Gtk.STOCK_YES, 1)
-                self.obj("menu").show_all()
-                if len(self.bookmarks) > 0:
-                    self.messenger("Found {} bookmark(s)".format(
-                                                        len(self.bookmarks)))
-                else:
-                    self.messenger("No bookmarks found.")
-                # check if last wdir still exists
-                try:
-                    os.chdir(self.wdir)
-                    self.messenger("Current Nikola folder: %s" % self.wdir)
-                    # reload terminal with current wdir
-                    self.obj("term").reset(True, True)
-                    self.start_console(self.wdir)
-                    # refresh window
-                    self.get_window_content()
-                except FileNotFoundError:
-                    self.messenger("Last working directory isn't here \
-                                        anymore.",
-                                   "warning")
-                    self.obj("choose_conf_file").show_all()
-            # show file chooser dialog when no config file exists
-            else:
-                self.obj("choose_conf_file").show_all()
-        # cfile is not None when file chooser dialog from 'choose conf.py' menu
-        # item is executed
+    def check_nonconf(self):
+        self.wdir = self.non_config["wdir"]
+        # ##### setup bookmarks in menu ######
+        self.bookmarks = self.non_config["bookmarks"]
+        # remove generated bookmark menu items, otherwise when
+        # appending new bookmark all existing bookmarks are appended
+        # repeatedly
+        for i in self.obj("menu").get_children():
+            # the separator item is stretched vertically when applying
+            # get_label function (which does not return any value but
+            # no error either) but I don't know how to do a GTK class
+            # comparison to exclude the separator or include the
+            # menuitems so this works fine
+            if isinstance(i, type(self.obj("load_conf"))):
+                if i.get_label().startswith("Bookmark: "):
+                    self.obj("menu").remove(i)
+        # add menu items for bookmarks
+        for b in sorted(self.bookmarks):
+            item = Gtk.MenuItem(_("Bookmark: %s" % b[0]))
+            item.connect("activate", self.select_bookmark, b)
+            self.obj("menu").append(item)
+            # set 'add bookmark' menu item inactive if bookmark already
+            # exists for wdir
+            if b[1] == self.wdir:
+                self.obj("add_bookmark").set_sensitive(False)
+                img = Gtk.Image.new_from_stock(Gtk.STOCK_YES, 1)
+            self.obj("menu").show_all()
+        if len(self.bookmarks) > 0:
+            self.messenger("Found {} bookmark(s)".format(
+                len(self.bookmarks)))
         else:
-            # save new cfile in config
-            if os.path.isfile(os.path.join(self.install_dir, "ninconf.py")):
-                conf_file = os.path.join(self.install_dir, "ninconf.py")
-                with open(conf_file) as f:
-                    content = f.readlines()
-                for line in content:
-                    if line == ("\n"):
-                        content.remove(line)
-                    elif line.startswith("CURRENT_DIR"):
-                        content[content.index(line)] = "CURRENT_DIR = \
-\"{}\"\n".format(cfile)
-                with open(conf_file, "w") as f:
-                    for line in content:
-                        f.write(line)
-                self.messenger("New conf.py has been saved to nonconfig.")
-            # or create config and use given cfile
-            else:
-                self.messenger("No NON config found.", "warning")
-                self.create_config(cfile)
-            self.check_ninconf()
+            self.messenger("No bookmarks found.")
+        # check if last wdir still exists
+        try:
+            os.chdir(self.wdir)
+            self.messenger("Current Nikola folder: %s" % self.wdir)
+            # reload terminal with current wdir
+            self.obj("term").reset(True, True)
+            self.start_console(self.wdir)
+            # by default set to false to prevent adding None entry
+            self.obj("add_bookmark").set_sensitive(True)
+            # refresh window
+            self.get_window_content()
+        except FileNotFoundError:
+            self.messenger("The chosen Nikola instance isn't here \
+anymore.", "warning")
+            self.non_config["wdir"] = None
+            self.obj("choose_conf_file").show_all()
+        except TypeError as e:
+            self.messenger("Path to working directory malformed or None.", "warn")
+            self.messenger("Error: {}".format(e), "warn")
+            self.obj("choose_conf_file").show_all()
 
     def add_dialogbuttons(self, dialog):
         # add cancel/apply buttons to dialog to avoid Gtk warning
@@ -477,17 +457,8 @@ class NiApp:
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, b):
-        self.check_ninconf(b[1])
-        self.messenger("Changed to %s" % b[1])
-
-    def create_config(self, wdir):
-        config = open(os.path.join(app.install_dir, "ninconf.py"), "w")
-        config.write("""##### non configuration #####
-CURRENT_DIR = '{}'
-BOOKMARKS = set()
-""".format(wdir))
-        config.close()
-        self.messenger("Configuration file for NON has been created.")
+        self.non_config["wdir"] = b[1]
+        self.check_nonconf()
 
     def get_window_content(self):
 
@@ -503,7 +474,6 @@ BOOKMARKS = set()
                                                "store_images",
                                                "store_translation",
                                                ]]
-        os.chdir(self.wdir)
 
         # check if folder for files, listings and images exist to avoid
         # FileNotFoundError
