@@ -48,6 +48,12 @@
 
  * Lucky you asked. If you installed the application via `setup.py`, run `python setup.py uninstall --user` or `python setup.py uninstall` (with superuserpowers) to undo the installation. This will remove the Python package and any desktop files.
 
+### ANYTHING ELSE I SHOULD KNOW?
+
+ * application related files are stored in `~/.non`:
+   * `config.yaml` for current Nikola site and bookmarks, editing or deleting does not affect any actual local Nikola site 
+   * `non.log` for the type of persons who stick their noses into everything
+
 ### THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.

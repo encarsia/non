@@ -353,7 +353,6 @@ class NiApp:
         window.set_wmclass("Knights of Ni", "Knights of Ni")
         window.show_all()
 
-        #self.obj("open_conf").set_sensitive(False)
         self.obj("build").set_sensitive(False)
 
         self.add_dialogbuttons(self.obj("choose_conf_file"))
