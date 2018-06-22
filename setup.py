@@ -41,7 +41,7 @@ DATAFILES = [
 # add non-code ui (glade/icon) files
 PACKAGES = ["non"]
 PACKAGE_DIR = {"non": "non"}
-PACKAGE_DATA = {"non": ["ui/*"]}
+PACKAGE_DATA = {"non": ["ui/*", "logging.yaml"]}
     
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = '\n' + f.read()
@@ -86,7 +86,8 @@ class CustomInstall(install):
 # https://dankeder.com/posts/adding-custom-commands-to-setup-py/
 
 class UnInstall(Command):
-    """Custom command to remove all files from the installation and build processes. This includes
+    """Custom command to remove all files from the install/build/sdist processes.
+       This includes
             * files in the extracted repo folder
             * the Python module
             * .desktop files and the application icon
@@ -94,19 +95,21 @@ class UnInstall(Command):
        Usage: 1) run 'python setup.py uninstall' without any options for
                     uninstalling system-wide, you may run this command
                     with superuser privilege
-              2) run 'python setup.py uninstall --user to undo
-                    installation in the local user directory.
+              2) run 'python setup.py uninstall --user' to undo
+                    installation in local user directory.
     """
     
     description = "remove files from installation and build processes"
     user_options = [("user", "u", "delete local user installation")]
 
     def initialize_options(self):
-        """Abstract method that is required to be overwritten"""
+        """Abstract method that is required to be overwritten.
+           Define all available options here.
+        """
         self.user = None
 
     def finalize_options(self):
-        """Abstract method that is required to be overwritten"""
+        """Abstract method that is required to be overwritten."""
 
     def run(self):
         install_path, prefix = _find_install_path()
@@ -170,4 +173,3 @@ setup(
               "uninstall": UnInstall,
               }
     )
-

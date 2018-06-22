@@ -11,7 +11,7 @@ handlers:
         class: logging.handlers.RotatingFileHandler
         maxBytes: 10000
         backupCount: 1
-        filename: log/non.log
+        filename: non.log
         level: DEBUG
     console:
         formatter: default

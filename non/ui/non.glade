@@ -37,6 +37,7 @@
     <child>
       <object class="GtkMenuItem" id="add_bookmark">
         <property name="visible">True</property>
+        <property name="sensitive">False</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">Add bookmark</property>
         <property name="use_underline">True</property>
@@ -1383,8 +1384,10 @@
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
+    <property name="attached_to">non_window_stack</property>
     <property name="create_folders">False</property>
     <property name="filter">filefilter1</property>
+    <property name="preview_widget_active">False</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>
