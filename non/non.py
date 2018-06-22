@@ -363,7 +363,6 @@ class NiApp:
         if not os.path.isfile(self.conf_file):
             self.messenger("No config available...")
             self.non_config = {"wdir" : None,
-                               # TODO: convert to dict
                                "bookmarks": dict(),
                                }
             self.messenger("Empty config created...")
@@ -460,14 +459,14 @@ anymore.", "warning")
         button = Gtk.Button.new_from_stock(Gtk.STOCK_OK)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
-    def select_bookmark(self, widget, b):
-        self.non_config["wdir"] = b[1]
+    def select_bookmark(self, widget, path):
+        self.non_config["wdir"] = path
         self.check_nonconf()
 
     def load_sitedata(self, f):
         with open(f) as data:
             sitedata = json.load(data)
-        self.update_sitedata()
+        #self.update_sitedata()
         self.messenger("Site data loaded from file.")
         return sitedata
 
@@ -478,6 +477,7 @@ anymore.", "warning")
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts")
         sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages")
 
+        # TODO only dump to file when changing instance or on shutdown
         with open(f, "w") as f:
             json.dump(sitedata, f, indent=4)
 
