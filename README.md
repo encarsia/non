@@ -53,6 +53,7 @@
  * application related files are stored in `~/.non`:
    * `config.yaml` for current Nikola site and bookmarks, editing or deleting does not affect any actual local Nikola site 
    * `non.log` for the type of persons who stick their noses into everything
+ * if you want to edit or delete bookmarks you have to edit the config file (`.non/config.yaml`)
 
 ### THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
@@ -61,7 +62,6 @@
     * an integrated ReST editor
     * provide personal article templates
  * Roadmap:
-    * improve speed and reduce file accesss by storing metadata as JSON or some other crazy shit
     * stats on size/articles/pages/installed themes and plugins
     * give the bookmark feature some love
 

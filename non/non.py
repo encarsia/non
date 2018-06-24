@@ -5,6 +5,7 @@ import datetime
 import filecmp
 import gettext
 import importlib
+import json
 import locale
 import logging
 import logging.config
@@ -62,6 +63,7 @@ class Handler:
         app.run_nikola_deploy()
 
     def on_refresh_clicked(self, widget):
+        app.update_sitedata(app.sitedata)
         app.get_window_content()
 
     # ########### vte terminal ########################
@@ -78,6 +80,7 @@ class Handler:
         if app.gui_cmd is True and last_line == app.prompt:
             time.sleep(2)
             app.obj("stack").set_visible_child(app.obj("gui"))
+            app.update_sitedata(app.sitedata)
             app.get_window_content()
             app.gui_cmd = False
 
@@ -107,8 +110,8 @@ class Handler:
 
     def on_add_bookmark_activate(self, widget):
         # add title and location to bookmark dict
-        bookmark = [app.siteconf.BLOG_TITLE, app.wdir]
-        app.bookmarks.append(bookmark)
+        bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
+        app.bookmarks.update(bookmark)
         app.messenger("New bookmark for {} added.".format(
                                                     app.siteconf.BLOG_TITLE))
         app.check_nonconf()
@@ -121,6 +124,7 @@ class Handler:
     def on_choose_conf_file_response(self, widget, response):
         if response == -5:
             try:
+                app.dump_sitedata_file()
                 app.non_config["wdir"] = os.path.split(widget.get_filename())[0]
                 app.check_nonconf()
             except AttributeError:
@@ -134,6 +138,7 @@ class Handler:
 
     # ############## new post dialog ############
 
+    # TODO catch console output and send some message to log
     def on_newpost_dialog_response(self, widget, response):
         if response == 0:
             if app.obj("newpost_entry").get_text() == "":
@@ -151,6 +156,7 @@ class Handler:
                                 "--title={}".format(app.obj(
                                     "newpost_entry").get_text()),
                                 ])
+                app.update_sitedata(app.sitedata)
                 app.get_window_content()
         else:
             self.on_window_close(widget)
@@ -246,6 +252,7 @@ class Handler:
                 os.path.join(subdir, file),
                 os.path.join(subdir, trans_file))
             app.messenger("Create translation file for %s" % row[pos][0])
+            app.update_sitedata(app.sitedata)
             app.get_window_content()
 
     # open context menu on right click to open post/page in browser
@@ -316,6 +323,8 @@ class NiApp:
     def on_app_shutdown(self, app):
         # write config to config.yaml in case of changes
         yaml.dump(self.non_config, open(self.conf_file, "w"), default_flow_style=False)
+        # write site data dict to json file
+        self.dump_sitedata_file()
         self.app.quit()
         self.log.info("Application terminated on window close button. Bye.")
 
@@ -362,7 +371,7 @@ class NiApp:
         if not os.path.isfile(self.conf_file):
             self.messenger("No config available...")
             self.non_config = {"wdir" : None,
-                               "bookmarks": [],
+                               "bookmarks": dict(),
                                }
             self.messenger("Empty config created...")
         else:
@@ -390,8 +399,9 @@ class NiApp:
 
     def check_nonconf(self):
         self.wdir = self.non_config["wdir"]
-        # ##### setup bookmarks in menu ######
         self.bookmarks = self.non_config["bookmarks"]
+
+        # ##### setup bookmarks in menu ######
         # remove generated bookmark menu items, otherwise when
         # appending new bookmark all existing bookmarks are appended
         # repeatedly
@@ -405,16 +415,12 @@ class NiApp:
                 if i.get_label().startswith("Bookmark: "):
                     self.obj("menu").remove(i)
         # add menu items for bookmarks
-        for b in sorted(self.bookmarks):
-            item = Gtk.MenuItem(_("Bookmark: %s" % b[0]))
-            item.connect("activate", self.select_bookmark, b)
+        for b in self.bookmarks:
+            item = Gtk.MenuItem(_("Bookmark: %s" % b))
+            item.connect("activate", self.select_bookmark, self.bookmarks[b])
             self.obj("menu").append(item)
-            # set 'add bookmark' menu item inactive if bookmark already
-            # exists for wdir
-            if b[1] == self.wdir:
-                self.obj("add_bookmark").set_sensitive(False)
-                img = Gtk.Image.new_from_stock(Gtk.STOCK_YES, 1)
-            self.obj("menu").show_all()
+
+        self.obj("menu").show_all()
         if len(self.bookmarks) > 0:
             self.messenger("Found {} bookmark(s)".format(
                 len(self.bookmarks)))
@@ -430,8 +436,8 @@ class NiApp:
             # by default set to false to prevent adding None entry
             self.obj("add_bookmark").set_sensitive(True)
             # refresh window
-            self.get_window_content()
         except FileNotFoundError:
+            raise
             self.messenger("The chosen Nikola instance isn't here \
 anymore.", "warning")
             self.non_config["wdir"] = None
@@ -440,6 +446,17 @@ anymore.", "warning")
             self.messenger("Path to working directory malformed or None.", "warn")
             self.messenger("Error: {}".format(e), "warn")
             self.obj("choose_conf_file").show_all()
+
+        try:
+            self.get_site_info()
+        except:
+            self.messenger("I thought we were done here...", "critical")
+            raise
+        try:
+            self.get_window_content()
+        except:
+            self.messenger("It isn't over yet...", "critical")
+            raise
 
     def add_dialogbuttons(self, dialog):
         # add cancel/apply buttons to dialog to avoid Gtk warning
@@ -456,32 +473,68 @@ anymore.", "warning")
         button = Gtk.Button.new_from_stock(Gtk.STOCK_OK)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
-    def select_bookmark(self, widget, b):
-        self.non_config["wdir"] = b[1]
+    def select_bookmark(self, widget, path):
+        self.dump_sitedata_file()
+        self.non_config["wdir"] = path
         self.check_nonconf()
 
-    def get_window_content(self):
+    def load_sitedata(self, f):
+        with open(f) as data:
+            try:
+                sitedata = json.load(data)
+            except json.decoder.JSONDecodeError:
+                self.messenger("Could not read data file.", "error")
+                sitedata = self.create_sitedata()
+        sitedata = self.update_sitedata(sitedata)
+        self.messenger("Site data loaded from file.")
+        return sitedata
 
-        """Fill main window with content"""
+    def create_sitedata(self):
+        # read all posts/pages and store in sitedata dict
+        sitedata = dict()
+        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts", d={})
+        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages", d={})
+        self.messenger("Collected data for Nikola site.")
+        return sitedata
 
-        self.messenger("Refresh window content")
-        [self.obj(store).clear() for store in ["store_posts",
-                                               "store_pages",
-                                               "store_tags",
-                                               "store_cats",
-                                               "store_listings",
-                                               "store_files",
-                                               "store_images",
-                                               "store_translation",
-                                               ]]
+    def update_sitedata(self, sitedata):
+        self.messenger("Update data file for: {}".format(self.siteconf.BLOG_TITLE))
+        filelist = dict()
+        for sub in ["posts", "pages"]:
+            filelist[sub] = []
+            for f in os.listdir(sub):
+                if f in sitedata[sub].keys():
+                    if not sitedata[sub][f]["last_modified"] == os.path.getmtime(os.path.join(sub, f)):
+                        filelist[sub].append(f)
+                        self.messenger("Update article data for: {}".format(f))
+                else:
+                    filelist[sub].append(f)
+                    self.messenger("Add new article data for: {}.".format(f))
+            # delete dict items of removed rst source files
+            for p in sitedata[sub].copy():
+                if p not in os.listdir(sub):
+                    self.messenger("Delete data for: {}.".format(p))
+                    del sitedata[sub][p]
 
-        # check if folder for files, listings and images exist to avoid
-        # FileNotFoundError
-        for subdir in ["files", "listings", "images"]:
-            if not os.path.isdir(os.path.join(self.wdir, subdir)):
-                self.messenger("{} doesn't exist...create...".format(subdir))
-                os.mkdir(os.path.join(self.wdir, subdir))
+        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts",
+                                                                                               d=sitedata["posts"],
+                                                                                               update=filelist["posts"],
+                                                                                               )
+        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages",
+                                                                                               sitedata["pages"],
+                                                                                               update=filelist["pages"],
+                                                                                               )
+        return sitedata
 
+    def dump_sitedata_file(self):
+        try:
+            with open(self.datafile, "w") as outfile:
+                json.dump(self.sitedata, outfile, indent=4)
+            self.messenger("Write site data to JSON file.")
+        except AttributeError:
+            self.messenger("Could not write site data to JSON file", "warn")
+
+    def get_site_info(self):
         # load nikola conf.py as module to gain simple access to variables
         spec = importlib.util.spec_from_file_location(
             "siteconf", os.path.join(self.wdir, "conf.py"))
@@ -503,11 +556,11 @@ anymore.", "warning")
         # detect multilingual sites
         self.default_lang = self.siteconf.DEFAULT_LANG
         self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS
-                                    if key != self.default_lang])
+                                     if key != self.default_lang])
         self.obj("lang").set_text(self.default_lang)
         self.obj("trans_lang").set_text(", ".join(str(s) for s in
-                                        self.translation_lang
-                                        if s != self.default_lang))
+                                                  self.translation_lang
+                                                  if s != self.default_lang))
         # activate toolbar item if deploy commands for default preset exists
         try:
             self.deploy_cmd = self.siteconf.DEPLOY_COMMANDS["default"]
@@ -523,17 +576,55 @@ anymore.", "warning")
             self.output_folder = "output"
             self.messenger("Output folder is set to default 'output'")
 
-        # #### these variables are dictionaries #####
-        # posts/pages
-        # get info: title, slug, date, tags, category, compare to index.rst in
-        # output folder
-        self.posts, post_tags, post_cats = self.get_rst_content("posts")
-        self.pages, page_tags, page_cats = self.get_rst_content("pages")
-        # listings/files/images (not needed because of treestores but I leave
-        # these here for possible later usage)
-        listings = self.get_filelist("listings", self.output_folder)
-        files = self.get_filelist("files", self.output_folder)
-        images = self.get_filelist("images", self.output_folder)
+        # check if folder for files, listings and images exist to avoid
+        # FileNotFoundError, this also has to be done only on startup
+        for subdir in ["files", "listings", "images"]:
+            if not os.path.isdir(os.path.join(self.wdir, subdir)):
+                self.messenger("{} doesn't exist...create...".format(subdir))
+                os.mkdir(os.path.join(self.wdir, subdir))
+
+        # set 'add bookmark' menu item inactive if bookmark already
+        # exists for wdir
+        if  self.siteconf.BLOG_TITLE in self.bookmarks:
+            self.obj("add_bookmark").set_sensitive(False)
+            # TODO set checkmark at open bookmark
+            img = Gtk.Image.new_from_stock(Gtk.STOCK_YES, 1)
+
+        # look for JSON data file with sitedata
+        # cut home dir in name and leading slash
+        filename = self.wdir.split(os.path.expanduser("~"))[-1][1:]
+        # replace slash by underscore
+        filename = filename.replace("/", "_") + ".json"
+
+        self.datafile = os.path.join(self.user_app_dir, filename)
+
+        if os.path.isfile(self.datafile):
+            self.sitedata = self.load_sitedata(self.datafile)
+        else:
+            self.sitedata = self.create_sitedata()
+
+    def get_window_content(self):
+        """Fill main window with content."""
+
+        # posts/pages are dictionaries
+        # tags/categories are sets to avoid duplicates but can only be stored as list in JSON file
+        self.posts = self.sitedata["posts"]
+        post_tags = set(self.sitedata["post_tags"])
+        post_cats = set(self.sitedata["post_cats"])
+        self.pages = self.sitedata["pages"]
+        page_tags = set(self.sitedata["page_tags"])
+        page_cats = set(self.sitedata["page_cats"])
+
+        self.messenger("Refresh window content")
+        [self.obj(store).clear() for store in ["store_posts",
+                                               "store_pages",
+                                               "store_tags",
+                                               "store_cats",
+                                               "store_listings",
+                                               "store_files",
+                                               "store_images",
+                                               "store_translation",
+                                               ]]
 
         # #### add information to notebook tab datastores #####
         # posts/pages tabs are based on liststores and created from dict
@@ -573,15 +664,74 @@ anymore.", "warning")
         # expands all rows in translation tab
         self.obj("view_translations").expand_all()
 
-        # set deploy button inactive if git status returns no change
-        git_status = subprocess.Popen(["git", "status", "-s"],
-                                      universal_newlines=True,
-                                      stdout=subprocess.PIPE,
-                                      ).communicate()
-        if git_status[0] == "":
-            self.obj("deploy_git").set_sensitive(False)
+    def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
+        if not update:
+            files = os.listdir(subdir)
         else:
-            self.obj("deploy_git").set_sensitive(True)
+            files = update
+        for f in files:
+            title, slug, date, tagstr, tags, catstr, cats = \
+                self.read_rst_files(subdir, f)
+            # detect language
+            if len(self.translation_lang) > 0:
+                if f.split(".")[1] == "rst":
+                    # set empty string because var is used by os.path.join
+                    # which throws NameError if var is None
+                    lang = ""
+                else:
+                    lang = f.split(".")[1]
+            else:
+                lang = ""
+            # check for equal file in output dir, mark bold (loaded by
+            # treemodel) when False
+            for od in {slug, f[:-4]}:
+                if self.compare_output_dir(od, subdir, f, lang,
+                                           self.output_folder):
+                    fontstyle = "normal"
+                    break
+                else:
+                    fontstyle = "bold"
+                    self.obj("build").set_sensitive(True)
+            # add new found tags/categories to set
+            t.update(tags)
+            c.update(cats)
+            # mark title cell in italic font if title is missing (use slug or
+            # filename instead)
+            if title == "":
+                if slug == "":
+                    title = f
+                else:
+                    title = slug
+                if fontstyle == "bold":
+                    fontstyle = "bold italic"
+                else:
+                    fontstyle = "italic"
+            # add dictionary entry for file
+            # set filename as key for easy file comparison on datafile update
+            d[f] = {"title": title,
+                         "slug": slug,
+                         "file": f,
+                         "date": date,
+                         "ger_date": datetime.datetime.strptime(
+                            date, '%Y-%m-%d').strftime('%d.%m.%Y'),
+                         "tags": tags,
+                         "tagstr": tagstr,
+                         "category": cats,
+                         "catstr": catstr,
+                         "fontstyle": fontstyle,
+                         "sub": subdir,
+                         "lang": lang,
+                         "transl": [],
+                         "last_modified": os.path.getmtime(os.path.join(subdir, f))
+                         }
+        # add available translation to default file entry
+        # ex: articlename.lang.rst > lang is added to transl entry of articlename.rst
+        for key in d:
+            if d[key]["lang"] is not "":
+                lang = d[key]["lang"]
+                default_rst = key.replace(".{}.".format(lang), ".")
+                d[default_rst]["transl"].append(lang)
+        return d, list(t), list(c)
 
     def read_rst_files(self, subdir, file):
         date = datetime.datetime.today().strftime("%Y-%m-%d")
@@ -615,68 +765,6 @@ anymore.", "warning")
                                             ))
         except FileNotFoundError:
             return False
-
-    def get_rst_content(self, subdir):
-        d = {}
-        t = set()
-        c = set()
-        for f in os.listdir(subdir):
-            title, slug, date, tagstr, tags, catstr, cats = \
-                self.read_rst_files(subdir, f)
-            # detect language
-            if len(self.translation_lang) > 0:
-                if f.split(".")[1] == "rst":
-                    # set empty string because var is used by os.path.join
-                    # which throws NameError when var is None
-                    lang = ""
-                else:
-                    lang = f.split(".")[1]
-            else:
-                lang = ""
-            # check for equal file in output dir, mark bold (loaded by
-            # treemodel) when False
-            for od in {slug, f[:-4]}:
-                if self.compare_output_dir(od, subdir, f, lang,
-                                           self.output_folder):
-                    fontstyle = "normal"
-                    break
-                else:
-                    fontstyle = "bold"
-                    self.obj("build").set_sensitive(True)
-            # add new found tags/categories to set
-            t.update(tags)
-            c.update(cats)
-            # mark title cell in italic font if title is missing (use slug or
-            # filename instead)
-            if title == "":
-                if slug == "":
-                    title = f
-                else:
-                    title = slug
-                if fontstyle == "bold":
-                    fontstyle = "bold italic"
-                else:
-                    fontstyle = "italic"
-            # add dictionary entry for file
-            d[f[:-4]] = {"title": title,
-                         "slug": slug,
-                         "file": f,
-                         "date": date,
-                         "ger_date": datetime.datetime.strptime(
-                            date, '%Y-%m-%d').strftime('%d.%m.%Y'),
-                         "tags": tags,
-                         "tagstr": tagstr,
-                         "category": cats,
-                         "catstr": catstr,
-                         "fontstyle": fontstyle,
-                         "sub": subdir,
-                         "lang": lang,
-                         "transl": set()}
-        # add available translation to default file entry
-        # ex: articlename.lang > lang is added to transl entry of articlename
-        [d[key.split(".")[0]]["transl"].add(d[key]["lang"]) for key in d
-            if d[key]["lang"] != ""]
-        return d, t, c
 
     def get_tree_data_rst(self, store, dict):
         # append only default language files to treestore
