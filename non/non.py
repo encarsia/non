@@ -485,8 +485,8 @@ anymore.", "warning")
             except json.decoder.JSONDecodeError:
                 self.messenger("Could not read data file.", "error")
                 sitedata = self.create_sitedata()
-        sitedata = self.update_sitedata(sitedata)
         self.messenger("Site data loaded from file.")
+        sitedata = self.update_sitedata(sitedata)
         return sitedata
 
     def create_sitedata(self):
@@ -503,7 +503,7 @@ anymore.", "warning")
         for sub in ["posts", "pages"]:
             filelist[sub] = []
             for f in os.listdir(sub):
-                if f in sitedata[sub].keys():
+                if f in sitedata[sub].keys() and not f.startswith("."):
                     if not sitedata[sub][f]["last_modified"] == os.path.getmtime(os.path.join(sub, f)):
                         filelist[sub].append(f)
                         self.messenger("Update article data for: {}".format(f))
@@ -666,7 +666,7 @@ anymore.", "warning")
 
     def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
-            files = os.listdir(subdir)
+            files = [x for x in os.listdir(subdir) if not x.startswith(".")]
         else:
             files = update
         for f in files:
