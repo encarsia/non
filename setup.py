@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# initially stolen from here:
-# https://github.com/kennethreitz/setup.py/blob/master/setup.py
-
 import glob
 import os
 import shutil
@@ -32,7 +29,6 @@ REQUIRED = [
             "PyGObject",
             "PyYAML",
             ]
-# https://stackoverflow.com/questions/25284879/install-desktop-file-with-setup-py
 # put desktop and app icon in the right place
 DATAFILES = [
             (rel_app_path, ["data/non.desktop"]),
@@ -46,10 +42,6 @@ PACKAGE_DATA = {"non": ["ui/*", "logging.yaml"]}
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = '\n' + f.read()
 
-# https://seasonofcode.com/posts/how-to-add-custom-build-steps-and-commands-to-setuppy.html
-# https://stackoverflow.com/questions/36187264/how-to-get-installation-directory-using-setuptools-and-pkg-ressources
-# https://stackoverflow.com/questions/25284879/install-desktop-file-with-setup-py
-
 def _find_install_path():
     if "--user" in sys.argv:
         inst = site.getusersitepackages()
@@ -58,6 +50,7 @@ def _find_install_path():
         inst = site.getsitepackages()[0]
         prefix = sys.prefix
     return inst, prefix
+
 
 class CustomInstall(install):
     
@@ -82,8 +75,6 @@ class CustomInstall(install):
         with open("data/non.desktop", "w") as f:
             f.writelines(content_new) 
 
-# https://coderwall.com/p/3q_czg/custom-subcommand-at-setup-py
-# https://dankeder.com/posts/adding-custom-commands-to-setup-py/
 
 class UnInstall(Command):
     """Custom command to remove all files from the install/build/sdist processes.
@@ -173,3 +164,4 @@ setup(
               "uninstall": UnInstall,
               }
     )
+

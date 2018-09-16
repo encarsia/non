@@ -1,14 +1,8 @@
 __pycache__/
 
-# non config
-ninconf.py
-
 # temporary glade files
 *non.glade~
 *#non.glade#
-
-# logging
-*/log/non.log*
 
 # PyCharm
 .idea/

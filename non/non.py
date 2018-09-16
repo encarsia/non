@@ -485,15 +485,15 @@ anymore.", "warning")
             except json.decoder.JSONDecodeError:
                 self.messenger("Could not read data file.", "error")
                 sitedata = self.create_sitedata()
-        sitedata = self.update_sitedata(sitedata)
         self.messenger("Site data loaded from file.")
+        sitedata = self.update_sitedata(sitedata)
         return sitedata
 
     def create_sitedata(self):
         # read all posts/pages and store in sitedata dict
         sitedata = dict()
-        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts", d={})
-        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages", d={})
+        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts")
+        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages")
         self.messenger("Collected data for Nikola site.")
         return sitedata
 
@@ -502,7 +502,7 @@ anymore.", "warning")
         filelist = dict()
         for sub in ["posts", "pages"]:
             filelist[sub] = []
-            for f in os.listdir(sub):
+            for f in [x for x in os.listdir(sub) if not x.startswith(".")]:
                 if f in sitedata[sub].keys():
                     if not sitedata[sub][f]["last_modified"] == os.path.getmtime(os.path.join(sub, f)):
                         filelist[sub].append(f)
@@ -517,13 +517,13 @@ anymore.", "warning")
                     del sitedata[sub][p]
 
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts",
-                                                                                               d=sitedata["posts"],
-                                                                                               update=filelist["posts"],
-                                                                                               )
+                        d=sitedata["posts"],
+                        update=filelist["posts"],
+                        )
         sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages",
-                                                                                               sitedata["pages"],
-                                                                                               update=filelist["pages"],
-                                                                                               )
+                        sitedata["pages"],
+                        update=filelist["pages"],
+                        )
         return sitedata
 
     def dump_sitedata_file(self):
@@ -666,7 +666,7 @@ anymore.", "warning")
 
     def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
-            files = os.listdir(subdir)
+            files = [x for x in os.listdir(subdir) if not x.startswith(".")]
         else:
             files = update
         for f in files:
