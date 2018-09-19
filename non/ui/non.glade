@@ -215,6 +215,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Menu</property>
             <property name="popup">menu</property>
             <property name="use_popover">False</property>
             <child>
@@ -232,6 +233,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Show info window about this application</property>
             <property name="use_stock">True</property>
             <property name="always_show_image">True</property>
             <signal name="clicked" handler="on_info_button_clicked" swapped="no"/>
@@ -748,7 +750,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Categories</property>
+                            <property name="title" translatable="yes">Category</property>
                             <child>
                               <object class="GtkCellRendererText"/>
                               <attributes>

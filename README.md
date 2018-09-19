@@ -23,7 +23,9 @@
 ### WHAT DO I NEED TO GET IT WORKING?
 
  * Python 3
- * [Nikola](https://getnikola.com/) installation (latest tested version is 7.8.15)
+ * [Nikola](https://getnikola.com/) installation
+   * latest tested versions are 7.8.15 and 8.0.0
+   * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it 
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
@@ -62,6 +64,7 @@
     * an integrated ReST editor
     * provide personal article templates
  * Roadmap:
+    * upgrade GUI to GTK 3.22
     * stats on size/articles/pages/installed themes and plugins
     * give the bookmark feature some love
 

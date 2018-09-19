@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__version__ = "0.4dev"
+
 import datetime
 import filecmp
 import gettext
@@ -47,7 +49,12 @@ class Handler:
     def on_preview_toggled(self, widget):
         if widget.get_active():
             app.messenger("Open preview in standard web browser")
-            self.serve = subprocess.Popen(["nikola", "serve", "-b"])
+            # nikola is affected by a bug in the Python webbrowser
+            # package: https://bugs.python.org/issue34238
+            # TODO: replace subprocess commands to webbrowser package
+            # use where links are opened
+            self.serve = subprocess.Popen(["nikola", "serve"])
+            subprocess.run(["xdg-open", "http://localhost:8000"])
         else:
             # stop local server when untoggling button
             app.messenger("Stop preview")
@@ -230,7 +237,7 @@ class Handler:
     def on_view_translations_button_release_event(self, widget, event):
         popup = Gtk.Menu()
         for l in app.translation_lang:
-            item = Gtk.MenuItem(_("Create translation for %s" % l))
+            item = Gtk.MenuItem.new_with_label(_("Create translation for %s" % l))
             # selected row already caught by on_treeview_selection_changed func
             item.connect("activate", self.on_create_translation, l)
             popup.append(item)
@@ -259,7 +266,7 @@ class Handler:
 
     def on_view_posts_button_release_event(self, widget, event):
         popup = Gtk.Menu()
-        item = Gtk.MenuItem(_("Open in web browser"))
+        item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
         # selected row already caught by on_treeview_selection_changed function
         item.connect("activate", self.on_open_post_web)
         popup.append(item)
@@ -280,7 +287,7 @@ class Handler:
 
     def on_view_pages_button_release_event(self, widget, event):
         popup = Gtk.Menu()
-        item = Gtk.MenuItem(_("Open in web browser"))
+        item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
         # selected row already caught by on_treeview_selection_changed function
         item.connect("activate", self.on_open_page_web)
         popup.append(item)
@@ -307,10 +314,11 @@ class NiApp:
         self.user_app_dir = os.path.join(os.path.expanduser("~"),
                                           ".non",
                                          )
-        #self.conf_file = os.path.join(self.user_app_dir, "conf.py")
         self.conf_file = os.path.join(self.user_app_dir, "config.yaml")
 
-        if not os.path.isdir((self.user_app_dir)):
+        # create hidden app folder in user's home directory if it does
+        # not exist
+        if not os.path.isdir(self.user_app_dir):
             os.makedirs(self.user_app_dir)
 
         # initiate GTK+ application
@@ -330,10 +338,18 @@ class NiApp:
 
     def on_app_startup(self, app):
         os.chdir(self.user_app_dir)
+        # setting up logging
         self.log = logging.getLogger("non")
         with open(os.path.join(self.install_dir, "logging.yaml")) as f:
             config = yaml.load(f)
             logging.config.dictConfig(config)
+
+        # log version info for debugging
+        self.log.debug("Application version: {}".format(__version__))
+        self.log.debug("Application executed from {}".format(self.install_dir))
+        self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
+                                                    Gtk.get_minor_version(),
+                                                    Gtk.get_micro_version()))
 
     def on_app_activate(self, app):
         # setting up localization
@@ -359,7 +375,7 @@ class NiApp:
         window = self.obj("non_window_stack")
 
         window.set_application(app)
-        window.set_wmclass("Knights of Ni", "Knights of Ni")
+        #window.set_wmclass("Knights of Ni", "Knights of Ni")
         window.show_all()
 
         self.obj("build").set_sensitive(False)
@@ -381,6 +397,10 @@ class NiApp:
         self.check_nonconf()
 
     def start_console(self, wdir):
+        # spawn_sync is deprecated and spawn_async doesn't exist anymore
+        # and I don't understand how to use GLib.spawn_async so I leave
+        # this here for now as long as this is only a warning and I
+        # don't have a solution
         self.obj("term").spawn_sync(
             Vte.PtyFlags.DEFAULT,
             wdir,
@@ -416,7 +436,7 @@ class NiApp:
                     self.obj("menu").remove(i)
         # add menu items for bookmarks
         for b in self.bookmarks:
-            item = Gtk.MenuItem(_("Bookmark: %s" % b))
+            item = Gtk.MenuItem.new_with_label(_("Bookmark: %s" % b))
             item.connect("activate", self.select_bookmark, self.bookmarks[b])
             self.obj("menu").append(item)
 
@@ -443,8 +463,8 @@ anymore.", "warning")
             self.non_config["wdir"] = None
             self.obj("choose_conf_file").show_all()
         except TypeError as e:
-            self.messenger("Path to working directory malformed or None.", "warn")
-            self.messenger("Error: {}".format(e), "warn")
+            self.messenger("Path to working directory malformed or None.", "warning")
+            self.messenger("Error: {}".format(e), "warning")
             self.obj("choose_conf_file").show_all()
 
         try:
@@ -460,17 +480,17 @@ anymore.", "warning")
 
     def add_dialogbuttons(self, dialog):
         # add cancel/apply buttons to dialog to avoid Gtk warning
-        button = Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
+        button = Gtk.Button.new_with_label(Gtk.STOCK_CANCEL)
         button.set_property("can-default", True)
         dialog.add_action_widget(button, Gtk.ResponseType.CANCEL)
 
-        button = Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
+        button = Gtk.Button.new_with_label(Gtk.STOCK_APPLY)
         button.set_property("can-default", True)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def add_dialogokbutton(self, dialog):
         # add ok button to about dialog to avoid Gtk warning
-        button = Gtk.Button.new_from_stock(Gtk.STOCK_OK)
+        button = Gtk.Button.new_with_label(Gtk.STOCK_OK)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
@@ -549,10 +569,6 @@ anymore.", "warning")
         self.obj("pathlocal").set_label("...%s" % self.wdir[-25:])
         self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
         self.obj("pathremote").set_label(self.siteconf.SITE_URL)
-        # text align set left, should work with glade but in reality it doesn't
-        self.obj("author").set_alignment(xalign=0.0, yalign=0.5)
-        self.obj("descr").set_alignment(xalign=0.0, yalign=0.5)
-        self.obj("title").set_alignment(xalign=0.0, yalign=0.5)
         # detect multilingual sites
         self.default_lang = self.siteconf.DEFAULT_LANG
         self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS
@@ -588,7 +604,7 @@ anymore.", "warning")
         if  self.siteconf.BLOG_TITLE in self.bookmarks:
             self.obj("add_bookmark").set_sensitive(False)
             # TODO set checkmark at open bookmark
-            img = Gtk.Image.new_from_stock(Gtk.STOCK_YES, 1)
+            img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
 
         # look for JSON data file with sitedata
         # cut home dir in name and leading slash
@@ -927,7 +943,7 @@ anymore.", "warning")
         self.term_cmd("nikola deploy")
 
     def messenger(self, message, log="info"):
-        """Show notifications in statusbar and log file"""
+        """Show notifications in statusbar and log file/stream"""
         self.obj("statusbar").push(1, message)
         time.sleep(.1)
         while Gtk.events_pending():
