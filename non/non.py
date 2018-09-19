@@ -237,7 +237,7 @@ class Handler:
     def on_view_translations_button_release_event(self, widget, event):
         popup = Gtk.Menu()
         for l in app.translation_lang:
-            item = Gtk.MenuItem(_("Create translation for %s" % l))
+            item = Gtk.MenuItem.new_with_label(_("Create translation for %s" % l))
             # selected row already caught by on_treeview_selection_changed func
             item.connect("activate", self.on_create_translation, l)
             popup.append(item)
@@ -266,7 +266,7 @@ class Handler:
 
     def on_view_posts_button_release_event(self, widget, event):
         popup = Gtk.Menu()
-        item = Gtk.MenuItem(_("Open in web browser"))
+        item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
         # selected row already caught by on_treeview_selection_changed function
         item.connect("activate", self.on_open_post_web)
         popup.append(item)
@@ -287,7 +287,7 @@ class Handler:
 
     def on_view_pages_button_release_event(self, widget, event):
         popup = Gtk.Menu()
-        item = Gtk.MenuItem(_("Open in web browser"))
+        item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
         # selected row already caught by on_treeview_selection_changed function
         item.connect("activate", self.on_open_page_web)
         popup.append(item)
