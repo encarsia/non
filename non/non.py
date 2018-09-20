@@ -11,6 +11,7 @@ import json
 import locale
 import logging
 import logging.config
+import markdown
 import os
 import shutil
 import subprocess
@@ -24,7 +25,8 @@ try:
     import gi
     gi.require_version('Gtk', '3.0')
     gi.require_version('Vte', '2.91')
-    from gi.repository import Gtk, Vte, GObject, GLib, Gio
+    gi.require_version('WebKit2', '4.0')
+    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
 except ImportError:
     print(_("Unable to load Python bindings for GObject Introspection."))
     raise
@@ -122,6 +124,10 @@ class Handler:
         app.messenger("New bookmark for {} added.".format(
                                                     app.siteconf.BLOG_TITLE))
         app.check_nonconf()
+
+    def on_gen_sum_activate(self, widget):
+        app.messenger("Generate page for summary tab")
+        app.generate_summary()
 
     # ############## filechooser dialog ############
 
@@ -353,8 +359,8 @@ class NiApp:
 
     def on_app_activate(self, app):
         # setting up localization
-        locales_dir = os.path.join(self.install_dir, 'locale')
-        appname = 'NoN'
+        locales_dir = os.path.join(self.install_dir, "locale")
+        appname = "NoN"
         locale.bindtextdomain(appname, locales_dir)
         locale.textdomain(locales_dir)
         gettext.bindtextdomain(appname, locales_dir)
@@ -372,10 +378,12 @@ class NiApp:
         builder.connect_signals(Handler())
         self.obj = builder.get_object
 
-        window = self.obj("non_window_stack")
+        # use WebKit for summary view
+        self.webview = WebKit2.WebView()
+        self.obj("html_view").add(self.webview)
 
+        window = self.obj("non_window_stack")
         window.set_application(app)
-        #window.set_wmclass("Knights of Ni", "Knights of Ni")
         window.show_all()
 
         self.obj("build").set_sensitive(False)
@@ -610,14 +618,23 @@ anymore.", "warning")
         # cut home dir in name and leading slash
         filename = self.wdir.split(os.path.expanduser("~"))[-1][1:]
         # replace slash by underscore
-        filename = filename.replace("/", "_") + ".json"
+        filename = filename.replace("/", "_")
 
-        self.datafile = os.path.join(self.user_app_dir, filename)
-
+        # load or create json data for Nikola site
+        self.datafile = os.path.join(self.user_app_dir, filename + ".json")
         if os.path.isfile(self.datafile):
             self.sitedata = self.load_sitedata(self.datafile)
         else:
             self.sitedata = self.create_sitedata()
+        
+        # load or create summary page for notebook tab
+        self.summaryfile = os.path.join(self.user_app_dir, filename + ".html")
+        if os.path.isfile(self.summaryfile):
+            self.messenger("Found summary page. Loading {}".format(self.summaryfile))
+            self.webview.load_uri("file://" + self.summaryfile)
+        else:
+            app.messenger("No summary file to load, load Google instead.")
+            self.webview.load_uri("https://google.com")
 
     def get_window_content(self):
         """Fill main window with content."""
@@ -679,7 +696,7 @@ anymore.", "warning")
 
         # expands all rows in translation tab
         self.obj("view_translations").expand_all()
-
+        
     def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
             files = [x for x in os.listdir(subdir) if not x.startswith(".")]
@@ -918,6 +935,76 @@ anymore.", "warning")
                             os.path.join(root, f))),
                         "weight": weight}
         return d
+
+    def generate_summary(self):
+
+        def get_dir_size(folder):
+            total = 0
+            counter = 0
+            for path, dirs, files in os.walk(folder):
+                counter += len([name for name in os.listdir(path) if os.path.isfile(os.path.join(path, name))])
+                for f in files:
+                    fp = os.path.join(path, f)
+                    total += os.path.getsize(fp)
+            return self.sizeof_fmt(total), counter
+
+        def nikola_cmd(subcmd):
+            cmd = ["nikola"] + subcmd.split()
+            output = subprocess.run(cmd,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE,
+                                    encoding="utf-8",
+                                    )
+            return output
+        
+        def get_diskusage_string(folders):
+            string = "Name | Size | Files\n--- | --- | ---\n"
+            for name, folder in folders:
+                s, c = get_dir_size(os.path.join(self.wdir, folder))
+                string += """{} | {} | {}\n""".format(name, s, c)
+            return string
+
+        def get_brokenlinks_string(output):
+            string = ""
+            for line in output.stderr.split("\n"):
+                if "WARNING: check:" in line:
+                    string += " * {}\n".format(line.split("WARNING: check: ")[1])
+            if string == "":
+                return "(no broken links)"
+            else:
+                return string
+        
+        # load template
+        with open(os.path.join(self.install_dir,
+                                "templates",
+                                "summary.md")
+                   ) as f:
+            template = f.read()
+        
+        # collect data
+        infodict = dict()
+
+        folders = [("Site", "output"),
+                   ("Files", "output/files"),
+                   ("Galleries", "output/galleries"),
+                   ("Images", "output/images"),
+                   ("Posts", "posts"),
+                   ("Pages", "pages"),
+                   ]
+
+        infodict["disk_usage"] = get_diskusage_string(folders)
+        infodict["status"] = nikola_cmd("status").stdout.split("\n")[1]
+        infodict["broken_links"] = get_brokenlinks_string(nikola_cmd("check -l"))
+
+        # template format data strings
+        txt = template.format(**infodict)
+        # convert markdown to html
+        html = markdown.markdown(txt, extensions=["markdown.extensions.tables"])
+        # dump html to file
+        with open(self.summaryfile, "w") as f:
+            f.write(html)
+        # load file into webview
+        self.webview.load_uri("file://" + self.summaryfile)
 
     def term_cmd(self, command):
         command += "\n"

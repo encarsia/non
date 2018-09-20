@@ -7,7 +7,7 @@
  * have an overview of posts, pages, listings, images, files and translations
  * open files from app
  * keep track of changes made since last build (hint: **bold**)
- * create new posts and pages
+ * create new posts and pages (in default ReST format)
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation file on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances (rudimentary feature)
@@ -64,7 +64,7 @@
     * an integrated ReST editor
     * provide personal article templates
  * Roadmap:
-    * upgrade GUI to GTK 3.22
+    * upgrade GUI to GTK 3.24
     * stats on size/articles/pages/installed themes and plugins
     * give the bookmark feature some love
 
