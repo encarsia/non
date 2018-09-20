@@ -10,11 +10,15 @@
  * create new posts and pages (in default ReST format)
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation file on right click in the 'Translation' tab
- * bookmark and switch between different Nikola site instances (rudimentary feature)
- * integrated terminal for switching easily between GUI and commandline interface
+ * bookmark and switch between different Nikola site instances (beta feature)
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
+### WHAT ELSE IS THERE TO SEE?
+
+ * integrated terminal for switching easily between GUI and commandline interface
+ * in the 'Summary' tab there are some detailed information about the Nikola site like disk usage, available and installed themes or plugins (beta feature)
+ 
 ### WHAT CAN'T I DO WITH IT?
 
  * create a Nikola site
@@ -29,6 +33,7 @@
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
+ * [Python-Markdown](https://python-markdown.github.io)
 
 ### INSTALLATION
 
@@ -56,6 +61,7 @@
    * `config.yaml` for current Nikola site and bookmarks, editing or deleting does not affect any actual local Nikola site 
    * `non.log` for the type of persons who stick their noses into everything
  * if you want to edit or delete bookmarks you have to edit the config file (`.non/config.yaml`)
+ * the summary page is generated if a ``conf.py`` is loaded for the first time or invoked by the corresponding menu item because the task may take some time; it is a HTML file with [GitHub flavoured css](https://github.com/sindresorhus/github-markdown-css)
 
 ### THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
@@ -65,7 +71,6 @@
     * provide personal article templates
  * Roadmap:
     * upgrade GUI to GTK 3.24
-    * stats on size/articles/pages/installed themes and plugins
     * give the bookmark feature some love
 
 ### WHAT DOES IT LOOK LIKE? 

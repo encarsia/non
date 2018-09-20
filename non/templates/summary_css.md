@@ -1,3 +1,16 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{css_file}">
+<style>
+    .markdown-body {{
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+    }}
+</style>
+<article class="markdown-body">
+
 ***
 
 ### Content
@@ -33,3 +46,4 @@
 
 {shortcodes}
 
+</article>

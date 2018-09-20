@@ -633,8 +633,8 @@ anymore.", "warning")
             self.messenger("Found summary page. Loading {}".format(self.summaryfile))
             self.webview.load_uri("file://" + self.summaryfile)
         else:
-            app.messenger("No summary file to load, load Google instead.")
-            self.webview.load_uri("https://google.com")
+            self.messenger("No summary file to load, let's generate one!")
+            self.generate_summary()
 
     def get_window_content(self):
         """Fill main window with content."""
@@ -970,24 +970,85 @@ anymore.", "warning")
                 if "WARNING: check:" in line:
                     string += " * {}\n".format(line.split("WARNING: check: ")[1])
             if string == "":
-                return "(no broken links)"
+                return "> (no broken links)"
             else:
                 return string
+        
+        def get_themes_table(available, installed):
+            # chop the output
+            available = available.stdout.split("\n")[2:-1]
+            installed = installed.stdout.split("\n")[2:-1]
+            # generate a dict from a list with string value
+            d = dict.fromkeys(available, "{} | | | x\n")
+            
+            for i in installed:
+                name, path = i.split(" at ")
+                if path.startswith("themes"):
+                    d[name] = "{} | x | | \n"
+                else:
+                    d[name] = "{} | | x | \n"
+            
+            string = """available | local | systemwide | not installed
+--- |:---:|:---:|:---:\n"""
+            for line in d:
+                string += d[line].format(line)
+
+            return string
+
+        # TODO: merge with nearly identical function obove
+        def get_plugins_table(available, installed):
+            # chop the output
+            available = available.stdout.split("\n")[2:-1]
+            installed = installed.stdout.split("\n")[2:-4]
+            # generate a dict from a list with string value
+            d = dict.fromkeys(available, "{} | | | x\n")
+            
+            for i in installed:
+                name, path = i.split(" at ")
+                if path.startswith("/home"):
+                    d[name] = "{} | x | | \n"
+                else:
+                    d[name] = "{} | | x | \n"
+            
+            string = """available | local | systemwide | not installed
+--- |:---:|:---:|:---:\n"""
+            for line in d:
+                string += d[line].format(line)
+
+            return string
+        
+        def get_shortcodes(folder):
+            try:
+                sc = os.listdir(folder)
+                string = ""
+                for item in sc:
+                    string += "* {}\n".format(item)
+                return string
+            except FileNotFoundError:
+                return "> (no custom shortcodes)"
         
         # load template
         with open(os.path.join(self.install_dir,
                                 "templates",
-                                "summary.md")
+                                #"summary.md",
+                                "summary_css.md",)
                    ) as f:
             template = f.read()
-        
+
         # collect data
         infodict = dict()
 
+        # css version uses GitHub flavoured css from
+        # https://github.com/sindresorhus/github-markdown-css
+        infodict["css_file"] = os.path.join(self.install_dir,
+                                           "templates",
+                                           "github-markdown.css",
+                                           )
+        
         folders = [("Site", "output"),
-                   ("Files", "output/files"),
-                   ("Galleries", "output/galleries"),
-                   ("Images", "output/images"),
+                   ("Files", os.path.join("output", "files")),
+                   ("Galleries", os.path.join("output", "galleries")),
+                   ("Images", os.path.join("output", "images")),
                    ("Posts", "posts"),
                    ("Pages", "pages"),
                    ]
@@ -995,11 +1056,21 @@ anymore.", "warning")
         infodict["disk_usage"] = get_diskusage_string(folders)
         infodict["status"] = nikola_cmd("status").stdout.split("\n")[1]
         infodict["broken_links"] = get_brokenlinks_string(nikola_cmd("check -l"))
+        infodict["current_theme"] = self.siteconf.THEME
+        infodict["themes"] = get_themes_table(nikola_cmd("theme -l"),
+                                              nikola_cmd("theme --list-installed"))
+        infodict["plugins"] = get_plugins_table(nikola_cmd("plugin -l"),
+                                               nikola_cmd("plugin --list-installed"))
+
+        infodict["shortcodes"] = get_shortcodes("shortcodes")
 
         # template format data strings
         txt = template.format(**infodict)
+
         # convert markdown to html
-        html = markdown.markdown(txt, extensions=["markdown.extensions.tables"])
+        html = markdown.markdown(txt, extensions=["markdown.extensions.tables",
+                                                   "markdown.extensions.toc",
+                                                   ])
         # dump html to file
         with open(self.summaryfile, "w") as f:
             f.write(html)
