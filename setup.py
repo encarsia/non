@@ -28,6 +28,7 @@ REQUIRES_PYTHON = ">=3.2"
 REQUIRED = [
             "PyGObject",
             "PyYAML",
+            "Markdown",
             ]
 # put desktop and app icon in the right place
 DATAFILES = [
@@ -37,7 +38,11 @@ DATAFILES = [
 # add non-code ui (glade/icon) files
 PACKAGES = ["non"]
 PACKAGE_DIR = {"non": "non"}
-PACKAGE_DATA = {"non": ["ui/*", "logging.yaml"]}
+PACKAGE_DATA = {"non": ["ui/*",
+                        "logging.yaml",
+                        "templates/*",
+                         ]
+                }
     
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = '\n' + f.read()
