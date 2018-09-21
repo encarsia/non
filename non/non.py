@@ -1047,9 +1047,9 @@ anymore.", "warning")
                                            )
         
         folders = [("Site", "output"),
-                   ("Files", os.path.join("output", "files")),
-                   ("Galleries", os.path.join("output", "galleries")),
-                   ("Images", os.path.join("output", "images")),
+                   ("Files", "files"),
+                   ("Galleries", "galleries"),
+                   ("Images", "images"),
                    ("Posts", "posts"),
                    ("Pages", "pages"),
                    ]

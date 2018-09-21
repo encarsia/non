@@ -75,4 +75,14 @@
 
 ### WHAT DOES IT LOOK LIKE? 
 
-<img src="data/non_window.png" width="600">
+#### MAIN WINDOW
+
+![main window](data/screenshot_main.png)
+
+#### INTEGRATED CONSOLE
+
+![integrated console](data/screenshot_console.png)
+
+#### SUMMARY TAB
+
+![main window](data/screenshot_summary.png)
