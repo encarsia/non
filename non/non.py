@@ -53,7 +53,8 @@ class Handler:
             app.messenger("Open preview in standard web browser")
             # nikola is affected by a bug in the Python webbrowser
             # package: https://bugs.python.org/issue34238
-            # TODO: replace subprocess commands to webbrowser package
+            # TODO: replace subprocess commands with webbrowser package
+            # when package is fixed
             # use where links are opened
             self.serve = subprocess.Popen(["nikola", "serve"])
             subprocess.run(["xdg-open", "http://localhost:8000"])
@@ -488,17 +489,17 @@ anymore.", "warning")
 
     def add_dialogbuttons(self, dialog):
         # add cancel/apply buttons to dialog to avoid Gtk warning
-        button = Gtk.Button.new_with_label(Gtk.STOCK_CANCEL)
+        button = Gtk.Button.new_with_label("Cancel")
         button.set_property("can-default", True)
         dialog.add_action_widget(button, Gtk.ResponseType.CANCEL)
 
-        button = Gtk.Button.new_with_label(Gtk.STOCK_APPLY)
+        button = Gtk.Button.new_with_label("OK")
         button.set_property("can-default", True)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def add_dialogokbutton(self, dialog):
         # add ok button to about dialog to avoid Gtk warning
-        button = Gtk.Button.new_with_label(Gtk.STOCK_OK)
+        button = Gtk.Button.new_with_label("OK")
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
@@ -1123,6 +1124,3 @@ anymore.", "warning")
 
 app = NiApp()
 app.run(sys.argv)
-
-# FIXME: glade file > window height/size (this is just a reminder for myself,
-# ignore if you are not me)
