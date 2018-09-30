@@ -13,3 +13,7 @@ dist/
 *.egg-info/
 data/non.desktop
 
+# localization helper script
+localizeorcry.py
+update_mo.py
+ignoredstrings

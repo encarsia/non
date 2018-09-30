@@ -50,7 +50,7 @@ class Handler:
 
     def on_preview_toggled(self, widget):
         if widget.get_active():
-            app.messenger("Open preview in standard web browser")
+            app.messenger(_("Open preview in standard web browser"))
             # nikola is affected by a bug in the Python webbrowser
             # package: https://bugs.python.org/issue34238
             # TODO: replace subprocess commands with webbrowser package
@@ -60,7 +60,7 @@ class Handler:
             subprocess.run(["xdg-open", "http://localhost:8000"])
         else:
             # stop local server when untoggling button
-            app.messenger("Stop preview")
+            app.messenger(_("Stop preview"))
             self.serve.kill()
 
     def on_build_clicked(self, widget):
@@ -83,7 +83,7 @@ class Handler:
         if app.prompt == "":
             app.prompt = last_line
         if last_line == "INFO: github_deploy: Successful deployment":
-            app.messenger("Deploying to GitHub/GitLab successful.")
+            app.messenger(_("Deploying to GitHub/GitLab successful."))
         # gui_cmd is bool var for command being run via toolbar button
         # if command is invoked by button the app focus returns back to graphic
         # interface stack child 'gui'
@@ -103,31 +103,31 @@ class Handler:
     # ########## headerbar #########################
 
     def on_info_button_clicked(self, widget):
-        app.messenger("Open About dialog")
+        app.messenger(_("Open About dialog"))
         app.obj("about_dialog").show_all()
 
     def on_manual_button_clicked(self, widget):
-        app.messenger("Open Nikola handbook in web browser")
+        app.messenger(_("Open Nikola handbook in web browser"))
         subprocess.run(['xdg-open', "https://getnikola.com/handbook.html"])
 
     def on_open_conf_activate(self, widget):
-        app.messenger("Open conf.py in external editor")
+        app.messenger(_("Open conf.py in external editor"))
         subprocess.run(['xdg-open', os.path.join(app.wdir, "conf.py")])
 
     def on_load_conf_activate(self, widget):
-        app.messenger("Choose configuration file to read")
+        app.messenger(_("Choose configuration file to read"))
         app.obj("choose_conf_file").show_all()
 
     def on_add_bookmark_activate(self, widget):
         # add title and location to bookmark dict
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
         app.bookmarks.update(bookmark)
-        app.messenger("New bookmark for {} added.".format(
+        app.messenger(_("New bookmark for {} added.").format(
                                                     app.siteconf.BLOG_TITLE))
         app.check_nonconf()
 
     def on_gen_sum_activate(self, widget):
-        app.messenger("Generate page for summary tab")
+        app.messenger(_("Generate page for summary tab"))
         app.generate_summary()
 
     # ############## filechooser dialog ############
@@ -142,11 +142,11 @@ class Handler:
                 app.non_config["wdir"] = os.path.split(widget.get_filename())[0]
                 app.check_nonconf()
             except AttributeError:
-                app.messenger("Working Nikola configuration required",
+                app.messenger(_("Working Nikola configuration required"),
                               "warning")
                 app.obj("config_info").show_all()
         else:
-            app.messenger("Working Nikola configuration required", "warning")
+            app.messenger(_("Working Nikola configuration required", "warning"))
             app.obj("config_info").show_all()
         self.on_window_close(widget)
 
@@ -156,7 +156,7 @@ class Handler:
     def on_newpost_dialog_response(self, widget, response):
         if response == 0:
             if app.obj("newpost_entry").get_text() == "":
-                app.messenger("Create new post")
+                app.messenger(_("Create new post"))
                 app.obj("entry_message").set_text("Title must not be empty.")
                 app.obj("newpost_entry").grab_focus()
             else:
@@ -183,14 +183,14 @@ class Handler:
     # open files on doubleclick
 
     def on_view_posts_row_activated(self, widget, *args):
-        app.messenger("Open post file")
+        app.messenger(_("Open post file"))
         row, pos = app.obj("selection_post").get_selected()
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, row[pos][7], row[pos][2])],
                        )
 
     def on_view_pages_row_activated(self, widget, *args):
-        app.messenger("Open page file")
+        app.messenger(_("Open page file"))
         row, pos = app.obj("selection_page").get_selected()
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, row[pos][7], row[pos][2])],
@@ -233,7 +233,7 @@ class Handler:
                        )
 
     def on_view_translations_row_activated(self, widget, *args):
-        app.messenger("Open file...")
+        app.messenger(_("Open file..."))
         row, pos = app.obj("selection_translations").get_selected()
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, row[pos][6], row[pos][2])],
@@ -260,12 +260,12 @@ class Handler:
         file = row[pos][2]
         trans_file = "%s.%s.rst" % (file.split(".")[0], lang)
         if os.path.isfile(os.path.join(subdir, trans_file)):
-            app.messenger("Translation file already exists.", "warning")
+            app.messenger(_("Translation file already exists.", "warning"))
         else:
             shutil.copy(
                 os.path.join(subdir, file),
                 os.path.join(subdir, trans_file))
-            app.messenger("Create translation file for %s" % row[pos][0])
+            app.messenger(_("Create translation file for %s") % row[pos][0])
             app.update_sitedata(app.sitedata)
             app.get_window_content()
 
@@ -287,7 +287,7 @@ class Handler:
         row, pos = app.obj("selection_post").get_selected()
         title = row[pos][0]
         slug = row[pos][1]
-        app.messenger("Open '{}' in web browser".format(title))
+        app.messenger(_("Open '{}' in web browser").format(title))
         subprocess.run(['xdg-open',
                         "{}/posts/{}".format(app.siteconf.SITE_URL, slug)],
                        )
@@ -308,7 +308,7 @@ class Handler:
         row, pos = app.obj("selection_page").get_selected()
         title = row[pos][0]
         slug = row[pos][1]
-        app.messenger("Open '{}' in web browser".format(title))
+        app.messenger(_("Open '{}' in web browser").format(title))
         subprocess.run(['xdg-open',
                         "{}/pages/{}".format(app.siteconf.SITE_URL, slug)],
                        )
@@ -360,7 +360,7 @@ class NiApp:
 
     def on_app_activate(self, app):
         # setting up localization
-        locales_dir = os.path.join(self.install_dir, "locale")
+        locales_dir = os.path.join(self.install_dir, "ui", "locale")
         appname = "NoN"
         locale.bindtextdomain(appname, locales_dir)
         locale.textdomain(locales_dir)
@@ -394,14 +394,14 @@ class NiApp:
 
         # load config from config.yaml or start with new
         if not os.path.isfile(self.conf_file):
-            self.messenger("No config available...")
+            self.messenger(_("No config available..."))
             self.non_config = {"wdir" : None,
                                "bookmarks": dict(),
                                }
-            self.messenger("Empty config created...")
+            self.messenger(_("Empty config created..."))
         else:
             self.non_config = yaml.load(open(self.conf_file))
-            self.messenger("Found config to work with...")
+            self.messenger(_("Found config to work with..."))
 
         self.check_nonconf()
 
@@ -451,14 +451,14 @@ class NiApp:
 
         self.obj("menu").show_all()
         if len(self.bookmarks) > 0:
-            self.messenger("Found {} bookmark(s)".format(
+            self.messenger(_("Found {} bookmark(s)").format(
                 len(self.bookmarks)))
         else:
-            self.messenger("No bookmarks found.")
+            self.messenger(_("No bookmarks found."))
         # check if last wdir still exists
         try:
             os.chdir(self.wdir)
-            self.messenger("Current Nikola folder: %s" % self.wdir)
+            self.messenger(_("Current Nikola folder: %s") % self.wdir)
             # reload terminal with current wdir
             self.obj("term").reset(True, True)
             self.start_console(self.wdir)
@@ -467,24 +467,24 @@ class NiApp:
             # refresh window
         except FileNotFoundError:
             raise
-            self.messenger("The chosen Nikola instance isn't here \
-anymore.", "warning")
+            self.messenger(_("The chosen Nikola instance isn't here \
+anymore."), "warning")
             self.non_config["wdir"] = None
             self.obj("choose_conf_file").show_all()
         except TypeError as e:
-            self.messenger("Path to working directory malformed or None.", "warning")
-            self.messenger("Error: {}".format(e), "warning")
+            self.messenger(_("Path to working directory malformed or None.", "warning"))
+            self.messenger(_("Error: {}".format(e), "warning"))
             self.obj("choose_conf_file").show_all()
 
         try:
             self.get_site_info()
         except:
-            self.messenger("I thought we were done here...", "critical")
+            self.messenger(_("I thought we were done here...", "critical"))
             raise
         try:
             self.get_window_content()
         except:
-            self.messenger("It isn't over yet...", "critical")
+            self.messenger(_("It isn't over yet...", "critical"))
             raise
 
     def add_dialogbuttons(self, dialog):
@@ -512,9 +512,9 @@ anymore.", "warning")
             try:
                 sitedata = json.load(data)
             except json.decoder.JSONDecodeError:
-                self.messenger("Could not read data file.", "error")
+                self.messenger(_("Could not read data file.", "error"))
                 sitedata = self.create_sitedata()
-        self.messenger("Site data loaded from file.")
+        self.messenger(_("Site data loaded from file."))
         sitedata = self.update_sitedata(sitedata)
         return sitedata
 
@@ -523,11 +523,11 @@ anymore.", "warning")
         sitedata = dict()
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts")
         sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages")
-        self.messenger("Collected data for Nikola site.")
+        self.messenger(_("Collected data for Nikola site."))
         return sitedata
 
     def update_sitedata(self, sitedata):
-        self.messenger("Update data file for: {}".format(self.siteconf.BLOG_TITLE))
+        self.messenger(_("Update data file for: {}").format(self.siteconf.BLOG_TITLE))
         filelist = dict()
         for sub in ["posts", "pages"]:
             filelist[sub] = []
@@ -535,14 +535,14 @@ anymore.", "warning")
                 if f in sitedata[sub].keys():
                     if not sitedata[sub][f]["last_modified"] == os.path.getmtime(os.path.join(sub, f)):
                         filelist[sub].append(f)
-                        self.messenger("Update article data for: {}".format(f))
+                        self.messenger(_("Update article data for: {}").format(f))
                 else:
                     filelist[sub].append(f)
-                    self.messenger("Add new article data for: {}.".format(f))
+                    self.messenger(_("Add new article data for: {}.").format(f))
             # delete dict items of removed rst source files
             for p in sitedata[sub].copy():
                 if p not in os.listdir(sub):
-                    self.messenger("Delete data for: {}.".format(p))
+                    self.messenger(_("Delete data for: {}.").format(p))
                     del sitedata[sub][p]
 
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts",
@@ -559,9 +559,9 @@ anymore.", "warning")
         try:
             with open(self.datafile, "w") as outfile:
                 json.dump(self.sitedata, outfile, indent=4)
-            self.messenger("Write site data to JSON file.")
+            self.messenger(_("Write site data to JSON file."))
         except AttributeError:
-            self.messenger("Could not write site data to JSON file", "warn")
+            self.messenger(_("Could not write site data to JSON file", "warn"))
 
     def get_site_info(self):
         # load nikola conf.py as module to gain simple access to variables
@@ -591,21 +591,21 @@ anymore.", "warning")
             self.deploy_cmd = self.siteconf.DEPLOY_COMMANDS["default"]
             self.obj("deploy").set_sensitive(True)
         except AttributeError:
-            self.messenger("No deploy commands set, edit conf.py or use \
-'github_deploy'")
+            self.messenger(_("No deploy commands set, edit conf.py or use \
+'github_deploy'"))
         # check for output folder, variable not set for GitHub deploy
         try:
             self.output_folder = self.siteconf.OUTPUT_FOLDER
-            self.messenger("Output folder: '{}'".format(self.output_folder))
+            self.messenger(_("Output folder: '{}'").format(self.output_folder))
         except AttributeError:
             self.output_folder = "output"
-            self.messenger("Output folder is set to default 'output'")
+            self.messenger(_("Output folder is set to default 'output'"))
 
         # check if folder for files, listings and images exist to avoid
         # FileNotFoundError, this also has to be done only on startup
         for subdir in ["files", "listings", "images"]:
             if not os.path.isdir(os.path.join(self.wdir, subdir)):
-                self.messenger("{} doesn't exist...create...".format(subdir))
+                self.messenger(_("{} doesn't exist...create...").format(subdir))
                 os.mkdir(os.path.join(self.wdir, subdir))
 
         # set 'add bookmark' menu item inactive if bookmark already
@@ -613,7 +613,7 @@ anymore.", "warning")
         if  self.siteconf.BLOG_TITLE in self.bookmarks:
             self.obj("add_bookmark").set_sensitive(False)
             # TODO set checkmark at open bookmark
-            img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
+            #img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
 
         # look for JSON data file with sitedata
         # cut home dir in name and leading slash
@@ -631,10 +631,10 @@ anymore.", "warning")
         # load or create summary page for notebook tab
         self.summaryfile = os.path.join(self.user_app_dir, filename + ".html")
         if os.path.isfile(self.summaryfile):
-            self.messenger("Found summary page. Loading {}".format(self.summaryfile))
+            self.messenger(_("Found summary page. Loading {}").format(self.summaryfile))
             self.webview.load_uri("file://" + self.summaryfile)
         else:
-            self.messenger("No summary file to load, let's generate one!")
+            self.messenger(_("No summary file to load, let's generate one!"))
             self.generate_summary()
 
     def get_window_content(self):
@@ -649,7 +649,7 @@ anymore.", "warning")
         page_tags = set(self.sitedata["page_tags"])
         page_cats = set(self.sitedata["page_cats"])
 
-        self.messenger("Refresh window content")
+        self.messenger(_("Refresh window content"))
         [self.obj(store).clear() for store in ["store_posts",
                                                "store_pages",
                                                "store_tags",
@@ -1085,20 +1085,20 @@ anymore.", "warning")
     def run_nikola_build(self):
         self.gui_cmd = True
         self.obj("stack").set_visible_child(app.obj("term"))
-        self.messenger("Execute Nikola: run build process")
+        self.messenger(_("Execute Nikola: run build process"))
         self.term_cmd("nikola build")
 
     def run_nikola_github_deploy(self):
         self.run_nikola_build()
         self.gui_cmd = True
         self.obj("stack").set_visible_child(app.obj("term"))
-        self.messenger("Execute Nikola: run deploy to GitHub command")
+        self.messenger(_("Execute Nikola: run deploy to GitHub command"))
         self.term_cmd("nikola github_deploy")
 
     def run_nikola_deploy(self):
         self.run_nikola_build()
         self.gui_cmd = True
-        self.messenger("Execute Nikola: run deploy to default preset command")
+        self.messenger(_("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
 
     def messenger(self, message, log="info"):

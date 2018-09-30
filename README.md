@@ -4,8 +4,8 @@
  
 ### WHAT CAN I DO WITH IT?
 
- * have an overview of posts, pages, listings, images, files and translations
- * open files from app
+ * have an overview of posts, pages, listings, images, files, translations and site statistics
+ * open files from app or load article in a browser on right click
  * keep track of changes made since last build (hint: **bold**)
  * create new posts and pages (in default ReST format)
  * build, preview and deploy to GitHub or GitLab or a custom target¹
@@ -18,6 +18,7 @@
 
  * integrated terminal for switching easily between GUI and commandline interface
  * in the 'Summary' tab there are some detailed information about the Nikola site like disk usage, available and installed themes or plugins (beta feature)
+ * this application is ready for localization ([POT file](ui/NoN.pot)); add your translation and open a PR if you like
  
 ### WHAT CAN'T I DO WITH IT?
 
@@ -72,6 +73,8 @@
  * Roadmap:
     * upgrade GUI to GTK 3.24
     * give the bookmark feature some love
+    * add MarkDown support
+    * add some markup reference links
 
 ### WHAT DOES IT LOOK LIKE? 
 

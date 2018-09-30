@@ -1,0 +1,319 @@
+# Translations template for Knights of Ni.
+# Copyright (C) 2018.
+# This file is distributed under the same license as the 
+# Knights of Ni project.
+# Anke K <An.Ke@bahnfreikartoffelbrei.de>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: NoN 0.4\n"
+"Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
+"POT-Creation-Date: 2018-09-30 18:18+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "A manager for your Nikola powered website."
+msgstr ""
+
+msgid "Add bookmark"
+msgstr ""
+
+msgid "Add new article data for: {}."
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+#, python-format
+msgid "Bookmark: %s"
+msgstr ""
+
+msgid "Browser preview"
+msgstr ""
+
+msgid "Build"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Choose conf.py"
+msgstr ""
+
+msgid "Choose configuration file"
+msgstr ""
+
+msgid "Choose configuration file to read"
+msgstr ""
+
+msgid "Collected data for Nikola site."
+msgstr ""
+
+msgid "Console"
+msgstr ""
+
+msgid "Could not read data file."
+msgstr ""
+
+msgid "Could not write site data to JSON file"
+msgstr ""
+
+msgid "Create a new page"
+msgstr ""
+
+msgid "Create new post"
+msgstr ""
+
+#, python-format
+msgid "Create translation file for %s"
+msgstr ""
+
+#, python-format
+msgid "Create translation for %s"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+#, python-format
+msgid "Current Nikola folder: %s"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Default language"
+msgstr ""
+
+msgid "Delete data for: {}."
+msgstr ""
+
+msgid "Deploy"
+msgstr ""
+
+msgid "Deploy site to GitHub/GitLab"
+msgstr ""
+
+msgid "Deploy site to default deploy preset"
+msgstr ""
+
+msgid "Deploy to GitHub"
+msgstr ""
+
+msgid "Deploying to GitHub/GitLab successful."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Empty config created..."
+msgstr ""
+
+msgid "Error: {}"
+msgstr ""
+
+msgid "Execute Nikola: run build process"
+msgstr ""
+
+msgid "Execute Nikola: run deploy to GitHub command"
+msgstr ""
+
+msgid "Execute Nikola: run deploy to default preset command"
+msgstr ""
+
+msgid "Filename"
+msgstr ""
+
+msgid "Files"
+msgstr ""
+
+msgid "Found config to work with..."
+msgstr ""
+
+msgid "Found summary page. Loading {}"
+msgstr ""
+
+msgid "Found {} bookmark(s)"
+msgstr ""
+
+msgid "Generate page for summary tab"
+msgstr ""
+
+msgid "Generate summary"
+msgstr ""
+
+msgid "I thought we were done here..."
+msgstr ""
+
+msgid "Images"
+msgstr ""
+
+msgid "It isn't over yet..."
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Listings"
+msgstr ""
+
+msgid "Local"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "New bookmark for {} added."
+msgstr ""
+
+msgid "New post"
+msgstr ""
+
+msgid "No bookmarks found."
+msgstr ""
+
+msgid "No config available..."
+msgstr ""
+
+msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
+msgstr ""
+
+msgid "No summary file to load, let's generate one!"
+msgstr ""
+
+msgid "Open '{}' in web browser"
+msgstr ""
+
+msgid "Open About dialog"
+msgstr ""
+
+msgid "Open Nikola handbook"
+msgstr ""
+
+msgid "Open Nikola handbook in web browser"
+msgstr ""
+
+msgid "Open conf.py in external editor"
+msgstr ""
+
+msgid "Open current conf.py"
+msgstr ""
+
+msgid "Open file..."
+msgstr ""
+
+msgid "Open in web browser"
+msgstr ""
+
+msgid "Open page file"
+msgstr ""
+
+msgid "Open post file"
+msgstr ""
+
+msgid "Open preview in standard web browser"
+msgstr ""
+
+msgid "Output folder is set to default 'output'"
+msgstr ""
+
+msgid "Output folder: '{}'"
+msgstr ""
+
+msgid "Overview"
+msgstr ""
+
+msgid "Pages"
+msgstr ""
+
+msgid "Path to working directory malformed or None."
+msgstr ""
+
+msgid "Posts"
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Refresh window content"
+msgstr ""
+
+msgid "Remote"
+msgstr ""
+
+msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
+msgstr ""
+
+msgid "Show info window about this application"
+msgstr ""
+
+msgid "Site data loaded from file."
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Slug"
+msgstr ""
+
+msgid "Stop preview"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+msgid "The chosen Nikola instance isn't here anymore."
+msgstr ""
+
+msgid ""
+"This application will not work without pointing to a local Nikola site "
+"configuration file."
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Title of new post"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation file already exists."
+msgstr ""
+
+msgid "Translations"
+msgstr ""
+
+msgid "Unable to load Python bindings for GObject Introspection."
+msgstr ""
+
+msgid "Update article data for: {}"
+msgstr ""
+
+msgid "Update data file for: {}"
+msgstr ""
+
+msgid "Working Nikola configuration required"
+msgstr ""
+
+msgid "Write site data to JSON file."
+msgstr ""
+
+msgid "{} doesn't exist...create..."
+msgstr ""
