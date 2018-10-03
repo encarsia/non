@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.4dev"
+__version__ = "0.5dev"
 
 import datetime
 import filecmp
@@ -106,9 +106,25 @@ class Handler:
         app.messenger(_("Open About dialog"))
         app.obj("about_dialog").show_all()
 
-    def on_manual_button_clicked(self, widget):
+    # ########## link menu #########################
+
+    def on_ref_handbook_activate(self, widget):
         app.messenger(_("Open Nikola handbook in web browser"))
         subprocess.run(['xdg-open', "https://getnikola.com/handbook.html"])
+
+    def on_ref_rest_markup_activate(self, widget):
+        app.messenger(_("Open reST syntax reference in web browser"))
+        subprocess.run(['xdg-open', "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html"])
+
+    def on_ref_rest_dir_activate(self, widget):
+        app.messenger(_("Open reST directives in web browser"))
+        subprocess.run(['xdg-open', "http://docutils.sourceforge.net/docs/ref/rst/directives.html"])
+
+    def on_ref_md_activate(self, widget):
+        app.messenger(_("Open Markdown syntax reference in web browser"))
+        subprocess.run(['xdg-open', "https://www.markdownguide.org/basic-syntax"])
+
+    # ########### menu #############################
 
     def on_open_conf_activate(self, widget):
         app.messenger(_("Open conf.py in external editor"))
@@ -129,6 +145,8 @@ class Handler:
     def on_gen_sum_activate(self, widget):
         app.messenger(_("Generate page for summary tab"))
         app.generate_summary()
+        # change to tab when finished
+        app.obj("notebook").set_current_page(-1)
 
     # ############## filechooser dialog ############
 
@@ -157,7 +175,7 @@ class Handler:
         if response == 0:
             if app.obj("newpost_entry").get_text() == "":
                 app.messenger(_("Create new post"))
-                app.obj("entry_message").set_text("Title must not be empty.")
+                app.obj("entry_message").set_text(_("Title must not be empty."))
                 app.obj("newpost_entry").grab_focus()
             else:
                 self.on_window_close(widget)
@@ -165,10 +183,15 @@ class Handler:
                     new_site_obj = "new_page"
                 else:
                     new_site_obj = "new_post"
+                if app.obj("create_md").get_active():
+                    format = "--format=markdown"
+                else:
+                    format = ""
                 subprocess.run(["nikola",
                                 new_site_obj,
                                 "--title={}".format(app.obj(
                                     "newpost_entry").get_text()),
+                                format,
                                 ])
                 app.update_sitedata(app.sitedata)
                 app.get_window_content()
@@ -244,7 +267,7 @@ class Handler:
     def on_view_translations_button_release_event(self, widget, event):
         popup = Gtk.Menu()
         for l in app.translation_lang:
-            item = Gtk.MenuItem.new_with_label(_("Create translation for %s" % l))
+            item = Gtk.MenuItem.new_with_label(_("Create translation for {}".format(l)))
             # selected row already caught by on_treeview_selection_changed func
             item.connect("activate", self.on_create_translation, l)
             popup.append(item)
@@ -258,14 +281,16 @@ class Handler:
         row, pos = app.obj("selection_translations").get_selected()
         subdir = row[pos][6]
         file = row[pos][2]
-        trans_file = "%s.%s.rst" % (file.split(".")[0], lang)
+        file_base = file.split(".")[0]
+        file_ext = file.split(".")[-1]
+        trans_file = "{}.{}.{}".format(file_base, lang, file_ext)
         if os.path.isfile(os.path.join(subdir, trans_file)):
-            app.messenger(_("Translation file already exists.", "warning"))
+            app.messenger(_("Translation file already exists."), "warning")
         else:
             shutil.copy(
                 os.path.join(subdir, file),
                 os.path.join(subdir, trans_file))
-            app.messenger(_("Create translation file for %s") % row[pos][0])
+            app.messenger(_("Create translation file for {}".formT(row[pos][0])))
             app.update_sitedata(app.sitedata)
             app.get_window_content()
 
@@ -341,7 +366,7 @@ class NiApp:
         # write site data dict to json file
         self.dump_sitedata_file()
         self.app.quit()
-        self.log.info("Application terminated on window close button. Bye.")
+        self.log.info(_("Application terminated on window close button. Bye."))
 
     def on_app_startup(self, app):
         os.chdir(self.user_app_dir)
@@ -403,6 +428,9 @@ class NiApp:
             self.non_config = yaml.load(open(self.conf_file))
             self.messenger(_("Found config to work with..."))
 
+        # add image to menubutton (Glade bug)
+        self.obj("ref_menu_button").add(self.obj("image"))
+
         self.check_nonconf()
 
     def start_console(self, wdir):
@@ -445,7 +473,7 @@ class NiApp:
                     self.obj("menu").remove(i)
         # add menu items for bookmarks
         for b in self.bookmarks:
-            item = Gtk.MenuItem.new_with_label(_("Bookmark: %s" % b))
+            item = Gtk.MenuItem.new_with_label(_("Bookmark: {}").format(b))
             item.connect("activate", self.select_bookmark, self.bookmarks[b])
             self.obj("menu").append(item)
 
@@ -458,7 +486,7 @@ class NiApp:
         # check if last wdir still exists
         try:
             os.chdir(self.wdir)
-            self.messenger(_("Current Nikola folder: %s") % self.wdir)
+            self.messenger(_("Current Nikola folder: {}").format(self.wdir))
             # reload terminal with current wdir
             self.obj("term").reset(True, True)
             self.start_console(self.wdir)
@@ -472,34 +500,34 @@ anymore."), "warning")
             self.non_config["wdir"] = None
             self.obj("choose_conf_file").show_all()
         except TypeError as e:
-            self.messenger(_("Path to working directory malformed or None.", "warning"))
-            self.messenger(_("Error: {}".format(e), "warning"))
+            self.messenger(_("Path to working directory malformed or None."), "warning")
+            self.messenger(_("Error: {}").format(e), "warning")
             self.obj("choose_conf_file").show_all()
 
         try:
             self.get_site_info()
         except:
-            self.messenger(_("I thought we were done here...", "critical"))
+            self.messenger(_("I thought we were done here..."), "critical")
             raise
         try:
             self.get_window_content()
         except:
-            self.messenger(_("It isn't over yet...", "critical"))
+            self.messenger(_("It isn't over yet..."), "critical")
             raise
 
     def add_dialogbuttons(self, dialog):
         # add cancel/apply buttons to dialog to avoid Gtk warning
-        button = Gtk.Button.new_with_label("Cancel")
+        button = Gtk.Button.new_with_label(_("Cancel"))
         button.set_property("can-default", True)
         dialog.add_action_widget(button, Gtk.ResponseType.CANCEL)
 
-        button = Gtk.Button.new_with_label("OK")
+        button = Gtk.Button.new_with_label(_("OK"))
         button.set_property("can-default", True)
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def add_dialogokbutton(self, dialog):
         # add ok button to about dialog to avoid Gtk warning
-        button = Gtk.Button.new_with_label("OK")
+        button = Gtk.Button.new_with_label(_("OK"))
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
@@ -512,7 +540,7 @@ anymore."), "warning")
             try:
                 sitedata = json.load(data)
             except json.decoder.JSONDecodeError:
-                self.messenger(_("Could not read data file.", "error"))
+                self.messenger(_("Could not read data file."), "error")
                 sitedata = self.create_sitedata()
         self.messenger(_("Site data loaded from file."))
         sitedata = self.update_sitedata(sitedata)
@@ -561,7 +589,7 @@ anymore."), "warning")
                 json.dump(self.sitedata, outfile, indent=4)
             self.messenger(_("Write site data to JSON file."))
         except AttributeError:
-            self.messenger(_("Could not write site data to JSON file", "warn"))
+            self.messenger(_("Could not write site data to JSON file"), "warn")
 
     def get_site_info(self):
         # load nikola conf.py as module to gain simple access to variables
@@ -574,8 +602,8 @@ anymore."), "warning")
         self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
         self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
         self.obj("title").set_text(self.siteconf.BLOG_TITLE)
-        self.obj("pathlocal").set_uri("file://%s" % self.wdir)
-        self.obj("pathlocal").set_label("...%s" % self.wdir[-25:])
+        self.obj("pathlocal").set_uri("file://{}".format(self.wdir))
+        self.obj("pathlocal").set_label("...{}".format(self.wdir[-25:]))
         self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
         self.obj("pathremote").set_label(self.siteconf.SITE_URL)
         # detect multilingual sites
@@ -614,6 +642,10 @@ anymore."), "warning")
             self.obj("add_bookmark").set_sensitive(False)
             # TODO set checkmark at open bookmark
             #img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
+
+        # set checkbutton in new page dialog active
+        if "markdown" in app.siteconf.COMPILERS:
+            app.obj("create_md").set_sensitive(True)
 
         # look for JSON data file with sitedata
         # cut home dir in name and leading slash
@@ -708,7 +740,7 @@ anymore."), "warning")
                 self.read_rst_files(subdir, f)
             # detect language
             if len(self.translation_lang) > 0:
-                if f.split(".")[1] == "rst":
+                if f.split(".")[1] == "rst" or f.split(".")[1] == "md":
                     # set empty string because var is used by os.path.join
                     # which throws NameError if var is None
                     lang = ""
@@ -881,7 +913,7 @@ anymore."), "warning")
                                                 dict[key]["sub"],
                                                 ])
                         counter += 1
-            self.obj(store).set_value(row, 0, "%s (%d)" % (item, counter))
+            self.obj(store).set_value(row, 0, "{} ({})".format(item, counter))
             self.obj(store).set_value(row, 4, counter)
 
     def get_tree_data_translations(self, store, dict):
@@ -989,8 +1021,8 @@ anymore."), "warning")
                 else:
                     d[name] = "{} | | x | \n"
             
-            string = """available | local | systemwide | not installed
---- |:---:|:---:|:---:\n"""
+            string = _("""available | local | systemwide | not installed
+--- |:---:|:---:|:---:\n""")
             for line in d:
                 string += d[line].format(line)
 
@@ -1011,8 +1043,8 @@ anymore."), "warning")
                 else:
                     d[name] = "{} | | x | \n"
             
-            string = """available | local | systemwide | not installed
---- |:---:|:---:|:---:\n"""
+            string = _("""available | local | systemwide | not installed
+--- |:---:|:---:|:---:\n""")
             for line in d:
                 string += d[line].format(line)
 
@@ -1026,7 +1058,7 @@ anymore."), "warning")
                     string += "* {}\n".format(item)
                 return string
             except FileNotFoundError:
-                return "> (no custom shortcodes)"
+                return _("> (no custom shortcodes)")
         
         # load template
         with open(os.path.join(self.install_dir,
@@ -1107,7 +1139,7 @@ anymore."), "warning")
         time.sleep(.1)
         while Gtk.events_pending():
             Gtk.main_iteration()
-        logcmd = "self.log.%s(\"%s\")" % (log, message)
+        logcmd = "self.log.{}(\"{}\")".format(log, message)
         exec(logcmd)
 
     def sizeof_fmt(self, num, suffix='B'):

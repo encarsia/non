@@ -12,6 +12,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">help-browser</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkMenu" id="menu">
     <property name="visible">True</property>
@@ -69,6 +70,51 @@
       <object class="GtkSeparatorMenuItem">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMenu" id="ref_menu">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkMenuItem" id="ref_handbook">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open Nikola handbook in web browser</property>
+        <property name="label" translatable="yes">Nikola handbook</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_handbook_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ref_rest_markup">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open reStructuredText Markup Specification in web browser</property>
+        <property name="label" translatable="yes">reStructuredText markup</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_rest_markup_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ref_rest_dir">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser
+</property>
+        <property name="label" translatable="yes">reStructuredText directives</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_rest_dir_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ref_md">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open Mardown basic syntax reference in web browser</property>
+        <property name="label" translatable="yes">Markdown syntax</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_md_activate" swapped="no"/>
       </object>
     </child>
   </object>
@@ -236,7 +282,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Menu</property>
             <property name="popup">menu</property>
             <property name="use_popover">False</property>
             <child>
@@ -265,14 +310,16 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="manual_button">
+          <object class="GtkMenuButton" id="ref_menu_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open Nikola handbook</property>
-            <property name="image">image</property>
-            <property name="always_show_image">True</property>
-            <signal name="clicked" handler="on_manual_button_clicked" swapped="no"/>
+            <property name="tooltip_text" translatable="yes">Get some external help</property>
+            <property name="popup">ref_menu</property>
+            <property name="use_popover">False</property>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="pack_type">end</property>
@@ -691,7 +738,7 @@
                 </child>
                 <child>
                   <object class="GtkLinkButton" id="pathlocal">
-                    <property name="label" translatable="no">button</property>
+                    <property name="label">button</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -730,7 +777,7 @@
                 </child>
                 <child>
                   <object class="GtkLinkButton" id="pathremote">
-                    <property name="label" translatable="no">button</property>
+                    <property name="label">button</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -760,7 +807,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkNotebook">
+              <object class="GtkNotebook" id="notebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
@@ -1464,7 +1511,7 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
     <property name="program_name">Knights of Ni</property>
-    <property name="version">0.4</property>
+    <property name="version">0.5dev</property>
     <property name="website">https://github.com/encarsia/non</property>
     <property name="website_label" translatable="yes">A manager for your Nikola powered website.</property>
     <property name="logo_icon_name">help-about</property>
@@ -1642,6 +1689,8 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
             <property name="margin_top">10</property>
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
@@ -1688,7 +1737,7 @@
             </child>
             <child>
               <object class="GtkCheckButton" id="create_page">
-                <property name="label" translatable="yes">Create a new page</property>
+                <property name="label" translatable="yes">Create new page</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -1696,8 +1745,24 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="create_md">
+                <property name="label" translatable="yes">Write in Markdown</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Markdown support is disabled by default. Consult the Nikola handbook on how to configure it.</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>

@@ -7,9 +7,10 @@
  * have an overview of posts, pages, listings, images, files, translations and site statistics
  * open files from app or load article in a browser on right click
  * keep track of changes made since last build (hint: **bold**)
- * create new posts and pages (in default ReST format)
+ * create new posts and pages
+ * write in default reStructuredText, Markdown is also available if configured
  * build, preview and deploy to GitHub or GitLab or a custom target¹
- * create translation file on right click in the 'Translation' tab
+ * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances (beta feature)
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
@@ -63,18 +64,20 @@
    * `non.log` for the type of persons who stick their noses into everything
  * if you want to edit or delete bookmarks you have to edit the config file (`.non/config.yaml`)
  * the summary page is generated if a ``conf.py`` is loaded for the first time or invoked by the corresponding menu item because the task may take some time; it is a HTML file with [GitHub flavoured css](https://github.com/sindresorhus/github-markdown-css)
+ * if you load data from a Nikola site for the first time the application indexes the content and saves it as a JSON file in the `~/.non` folder and only updates on every next startup; this initial task may take some time depending on the size if the site - just be patient
 
 ### THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.
  * Besides this there are some ideas for further features such like
-    * an integrated ReST editor
+    * an integrated reST editor
     * provide personal article templates
+    * suport multiple authors
+    * if set up using Git: pull from src to imitate cloud sync
  * Roadmap:
     * upgrade GUI to GTK 3.24
     * give the bookmark feature some love
-    * add MarkDown support
-    * add some markup reference links
+
 
 ### WHAT DOES IT LOOK LIKE? 
 

@@ -12,6 +12,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.1.1\n"
 
+msgid "> (no custom shortcodes)"
+msgstr ""
+
 msgid "A manager for your Nikola powered website."
 msgstr ""
 
@@ -21,17 +24,22 @@ msgstr "Lesezeichen hinzufügen"
 msgid "Add new article data for: {}."
 msgstr ""
 
+msgid "Application terminated on window close button. Bye."
+msgstr ""
+
 msgid "Author"
 msgstr "Autor"
 
-#, python-format
-msgid "Bookmark: %s"
+msgid "Bookmark: {}"
 msgstr ""
 
 msgid "Browser preview"
 msgstr "Browser-Vorschau"
 
 msgid "Build"
+msgstr ""
+
+msgid "Cancel"
 msgstr ""
 
 msgid "Categories"
@@ -46,7 +54,6 @@ msgstr "Wähle conf.py"
 msgid "Choose configuration file"
 msgstr "Konfigurationsdatei auswählen"
 
-#, fuzzy
 msgid "Choose configuration file to read"
 msgstr "Konfigurationsdatei auswählen"
 
@@ -65,22 +72,22 @@ msgstr ""
 msgid "Create a new page"
 msgstr "Neue Seite erstellen"
 
+msgid "Create new page"
+msgstr "Neue Seite erstellen"
+
 msgid "Create new post"
 msgstr "Neuen Beitrag erstellen"
 
-#, python-format
-msgid "Create translation file for %s"
+msgid "Create translation file for {}"
 msgstr ""
 
-#, python-format
-msgid "Create translation for %s"
+msgid "Create translation for {}"
 msgstr ""
 
 msgid "Created"
 msgstr "Erstellt"
 
-#, python-format
-msgid "Current Nikola folder: %s"
+msgid "Current Nikola folder: {}"
 msgstr ""
 
 msgid "Date"
@@ -137,16 +144,17 @@ msgstr ""
 msgid "Found summary page. Loading {}"
 msgstr ""
 
-#, fuzzy
 msgid "Found {} bookmark(s)"
-msgstr "Lesezeichen hinzufügen"
+msgstr "{} Lesezeichen gefunden"
 
-#, fuzzy
 msgid "Generate page for summary tab"
-msgstr "Zusammenfassung generieren"
+msgstr "Zusammenfassung in Tab generieren"
 
 msgid "Generate summary"
 msgstr "Zusammenfassung generieren"
+
+msgid "Get some external help"
+msgstr ""
 
 msgid "I thought we were done here..."
 msgstr ""
@@ -169,6 +177,14 @@ msgstr ""
 msgid "Local"
 msgstr "Lokal"
 
+msgid ""
+"Markdown support is disabled by default. Consult the Nikola handbook on how "
+"to configure it."
+msgstr ""
+
+msgid "Markdown syntax"
+msgstr ""
+
 msgid "Menu"
 msgstr "Menü"
 
@@ -177,6 +193,9 @@ msgstr ""
 
 msgid "New post"
 msgstr "Neuer Beitrag"
+
+msgid "Nikola handbook"
+msgstr "Nikola-Handbuch"
 
 msgid "No bookmarks found."
 msgstr ""
@@ -190,11 +209,20 @@ msgstr ""
 msgid "No summary file to load, let's generate one!"
 msgstr ""
 
+msgid "OK"
+msgstr ""
+
 msgid "Open '{}' in web browser"
 msgstr ""
 
 msgid "Open About dialog"
 msgstr ""
+
+msgid "Open Mardown basic syntax reference in web browser"
+msgstr ""
+
+msgid "Open Markdown syntax reference in web browser"
+msgstr "Markdown-Syntaxreferenz im Browser öffnen"
 
 msgid "Open Nikola handbook"
 msgstr "Nikola-Handbuch öffnen"
@@ -221,6 +249,18 @@ msgid "Open post file"
 msgstr ""
 
 msgid "Open preview in standard web browser"
+msgstr ""
+
+msgid "Open reST directives in web browser"
+msgstr "reST-Directives im Browser öffnen"
+
+msgid "Open reST syntax reference in web browser"
+msgstr "reST Syntaxreferenz im Browser öffnen"
+
+msgid "Open reStructuredText Directives in web browser\n"
+msgstr ""
+
+msgid "Open reStructuredText Markup Specification in web browser"
 msgstr ""
 
 msgid "Output folder is set to default 'output'"
@@ -285,6 +325,9 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
+msgid "Title must not be empty."
+msgstr ""
+
 msgid "Title of new post"
 msgstr ""
 
@@ -306,11 +349,24 @@ msgstr ""
 msgid "Update data file for: {}"
 msgstr ""
 
-#, fuzzy
 msgid "Working Nikola configuration required"
-msgstr "Konfigurationsdatei auswählen"
+msgstr "Funktionierende Konfigurationsdatei benötigt"
+
+msgid "Write in Markdown"
+msgstr ""
 
 msgid "Write site data to JSON file."
+msgstr ""
+
+msgid ""
+"available | local | systemwide | not installed\n"
+"--- |:---:|:---:|:---:\n"
+msgstr ""
+
+msgid "reStructuredText directives"
+msgstr ""
+
+msgid "reStructuredText markup"
 msgstr ""
 
 msgid "{} doesn't exist...create..."
