@@ -35,11 +35,31 @@
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
- * [Python-Markdown](https://python-markdown.github.io)
+ * [Python-Markdown](https://python-markdown.github.io/) for Python 3
+ * recommended: Git
+
+#### Preparing  Archlinux and its relatives
+
+``` bash
+$ sudo pacman -S nikola
+```
+#### Preparing Ubuntu 18.04 LTS
+
+``` bash
+$ sudo apt-get install gir1.2-webkit2-4.0 python3-pip
+```
+
+Currently there is no Nikola package in the Ubuntu reposities available so you install via pip which is the recommended install method anyway with all dependencies included:
+
+``` bash
+$ pip3 install Nikola[extras]
+```
 
 ### INSTALLATION
 
  * download and extract or clone repository and change into said folder
+ 
+> FTR: when executing `python` it is Python 3.
  
 ### ARE WE THERE YET?
 
@@ -72,7 +92,7 @@
  * Besides this there are some ideas for further features such like
     * an integrated reST editor
     * provide personal article templates
-    * suport multiple authors
+    * support multiple authors
     * if set up using Git: pull from src to imitate cloud sync
  * Roadmap:
     * upgrade GUI to GTK 3.24

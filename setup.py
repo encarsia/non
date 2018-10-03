@@ -28,7 +28,6 @@ REQUIRES_PYTHON = ">=3.2"
 REQUIRED = [
             "PyGObject",
             "PyYAML",
-            "Markdown",
             ]
 # put desktop and app icon in the right place
 DATAFILES = [

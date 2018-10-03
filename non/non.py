@@ -3,6 +3,11 @@
 
 __version__ = "0.5dev"
 
+try:
+    import nikola
+except ImportError:
+    raise ImportError("You have to install Nikola first.")
+
 import datetime
 import filecmp
 import gettext
@@ -164,7 +169,7 @@ class Handler:
                               "warning")
                 app.obj("config_info").show_all()
         else:
-            app.messenger(_("Working Nikola configuration required", "warning"))
+            app.messenger(_("Working Nikola configuration required"), "warning")
             app.obj("config_info").show_all()
         self.on_window_close(widget)
 
@@ -489,7 +494,6 @@ class NiApp:
             self.messenger(_("Current Nikola folder: {}").format(self.wdir))
             # reload terminal with current wdir
             self.obj("term").reset(True, True)
-            self.start_console(self.wdir)
             # by default set to false to prevent adding None entry
             self.obj("add_bookmark").set_sensitive(True)
             # refresh window
@@ -501,19 +505,13 @@ anymore."), "warning")
             self.obj("choose_conf_file").show_all()
         except TypeError as e:
             self.messenger(_("Path to working directory malformed or None."), "warning")
-            self.messenger(_("Error: {}").format(e), "warning")
+            #self.messenger(_("Error: {}").format(e), "warning")
             self.obj("choose_conf_file").show_all()
+            self.wdir = os.path.expanduser("~")
 
-        try:
-            self.get_site_info()
-        except:
-            self.messenger(_("I thought we were done here..."), "critical")
-            raise
-        try:
-            self.get_window_content()
-        except:
-            self.messenger(_("It isn't over yet..."), "critical")
-            raise
+        self.start_console(self.wdir)
+        self.get_site_info()
+        self.get_window_content()
 
     def add_dialogbuttons(self, dialog):
         # add cancel/apply buttons to dialog to avoid Gtk warning
@@ -593,143 +591,155 @@ anymore."), "warning")
 
     def get_site_info(self):
         # load nikola conf.py as module to gain simple access to variables
-        spec = importlib.util.spec_from_file_location(
-            "siteconf", os.path.join(self.wdir, "conf.py"))
-        self.siteconf = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.siteconf)
-
-        # labels
-        self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
-        self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
-        self.obj("title").set_text(self.siteconf.BLOG_TITLE)
-        self.obj("pathlocal").set_uri("file://{}".format(self.wdir))
-        self.obj("pathlocal").set_label("...{}".format(self.wdir[-25:]))
-        self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
-        self.obj("pathremote").set_label(self.siteconf.SITE_URL)
-        # detect multilingual sites
-        self.default_lang = self.siteconf.DEFAULT_LANG
-        self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS
-                                     if key != self.default_lang])
-        self.obj("lang").set_text(self.default_lang)
-        self.obj("trans_lang").set_text(", ".join(str(s) for s in
-                                                  self.translation_lang
-                                                  if s != self.default_lang))
-        # activate toolbar item if deploy commands for default preset exists
         try:
-            self.deploy_cmd = self.siteconf.DEPLOY_COMMANDS["default"]
-            self.obj("deploy").set_sensitive(True)
-        except AttributeError:
-            self.messenger(_("No deploy commands set, edit conf.py or use \
-'github_deploy'"))
-        # check for output folder, variable not set for GitHub deploy
-        try:
-            self.output_folder = self.siteconf.OUTPUT_FOLDER
-            self.messenger(_("Output folder: '{}'").format(self.output_folder))
-        except AttributeError:
-            self.output_folder = "output"
-            self.messenger(_("Output folder is set to default 'output'"))
+            spec = importlib.util.spec_from_file_location(
+                "siteconf", os.path.join(self.wdir, "conf.py"))
+            self.siteconf = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(self.siteconf)
 
-        # check if folder for files, listings and images exist to avoid
-        # FileNotFoundError, this also has to be done only on startup
-        for subdir in ["files", "listings", "images"]:
-            if not os.path.isdir(os.path.join(self.wdir, subdir)):
-                self.messenger(_("{} doesn't exist...create...").format(subdir))
-                os.mkdir(os.path.join(self.wdir, subdir))
+            # labels
+            self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
+            self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
+            self.obj("title").set_text(self.siteconf.BLOG_TITLE)
+            self.obj("pathlocal").set_uri("file://{}".format(self.wdir))
+            self.obj("pathlocal").set_label("...{}".format(self.wdir[-25:]))
+            self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
+            self.obj("pathremote").set_label(self.siteconf.SITE_URL)
+            # detect multilingual sites
+            self.default_lang = self.siteconf.DEFAULT_LANG
+            self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS
+                                         if key != self.default_lang])
+            self.obj("lang").set_text(self.default_lang)
+            self.obj("trans_lang").set_text(", ".join(str(s) for s in
+                                                      self.translation_lang
+                                                      if s != self.default_lang))
+            # activate toolbar item if deploy commands for default preset exists
+            try:
+                self.deploy_cmd = self.siteconf.DEPLOY_COMMANDS["default"]
+                self.obj("deploy").set_sensitive(True)
+            except AttributeError:
+                self.messenger(_("No deploy commands set, edit conf.py or use \
+    'github_deploy'"))
+            # check for output folder, variable not set for GitHub deploy
+            try:
+                self.output_folder = self.siteconf.OUTPUT_FOLDER
+                self.messenger(_("Output folder: '{}'").format(self.output_folder))
+            except AttributeError:
+                self.output_folder = "output"
+                self.messenger(_("Output folder is set to default 'output'"))
 
-        # set 'add bookmark' menu item inactive if bookmark already
-        # exists for wdir
-        if  self.siteconf.BLOG_TITLE in self.bookmarks:
-            self.obj("add_bookmark").set_sensitive(False)
-            # TODO set checkmark at open bookmark
-            #img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
+            # check if folder for files, listings and images exist to avoid
+            # FileNotFoundError, this also has to be done only on startup
+            for subdir in ["files", "listings", "images"]:
+                if not os.path.isdir(os.path.join(self.wdir, subdir)):
+                    self.messenger(_("{} doesn't exist...create...").format(subdir))
+                    os.mkdir(os.path.join(self.wdir, subdir))
 
-        # set checkbutton in new page dialog active
-        if "markdown" in app.siteconf.COMPILERS:
-            app.obj("create_md").set_sensitive(True)
+            # set 'add bookmark' menu item inactive if bookmark already
+            # exists for wdir
+            if  self.siteconf.BLOG_TITLE in self.bookmarks:
+                self.obj("add_bookmark").set_sensitive(False)
+                # TODO set checkmark at open bookmark
+                #img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
 
-        # look for JSON data file with sitedata
-        # cut home dir in name and leading slash
-        filename = self.wdir.split(os.path.expanduser("~"))[-1][1:]
-        # replace slash by underscore
-        filename = filename.replace("/", "_")
+            # set checkbutton in new page dialog active
+            if "markdown" in app.siteconf.COMPILERS:
+                app.obj("create_md").set_sensitive(True)
 
-        # load or create json data for Nikola site
-        self.datafile = os.path.join(self.user_app_dir, filename + ".json")
-        if os.path.isfile(self.datafile):
-            self.sitedata = self.load_sitedata(self.datafile)
-        else:
-            self.sitedata = self.create_sitedata()
-        
-        # load or create summary page for notebook tab
-        self.summaryfile = os.path.join(self.user_app_dir, filename + ".html")
-        if os.path.isfile(self.summaryfile):
-            self.messenger(_("Found summary page. Loading {}").format(self.summaryfile))
-            self.webview.load_uri("file://" + self.summaryfile)
-        else:
-            self.messenger(_("No summary file to load, let's generate one!"))
-            self.generate_summary()
+            # look for JSON data file with sitedata
+            # cut home dir in name and leading slash
+            filename = self.wdir.split(os.path.expanduser("~"))[-1][1:]
+            # replace slash by underscore
+            filename = filename.replace("/", "_")
+
+            # load or create json data for Nikola site
+            self.datafile = os.path.join(self.user_app_dir, filename + ".json")
+            if os.path.isfile(self.datafile):
+                self.sitedata = self.load_sitedata(self.datafile)
+            else:
+                self.sitedata = self.create_sitedata()
+            
+            # load or create summary page for notebook tab
+            self.summaryfile = os.path.join(self.user_app_dir, filename + ".html")
+            if os.path.isfile(self.summaryfile):
+                self.messenger(_("Found summary page. Loading {}").format(self.summaryfile))
+                self.webview.load_uri("file://" + self.summaryfile)
+            else:
+                self.messenger(_("No summary file to load, let's generate one!"))
+                self.generate_summary()
+
+        except FileNotFoundError:
+            # if no conf.py is given on startup the working directory is set to
+            # user's home and no conf.py will be found, if so ignore the error
+            # and show an empty main application window instead of being caught
+            # in a neverending loop of filechooser dialog
+            # pass
+            self.messenger("Going on without conf.py", "error")
 
     def get_window_content(self):
         """Fill main window with content."""
 
-        # posts/pages are dictionaries
-        # tags/categories are sets to avoid duplicates but can only be stored as list in JSON file
-        self.posts = self.sitedata["posts"]
-        post_tags = set(self.sitedata["post_tags"])
-        post_cats = set(self.sitedata["post_cats"])
-        self.pages = self.sitedata["pages"]
-        page_tags = set(self.sitedata["page_tags"])
-        page_cats = set(self.sitedata["page_cats"])
+        try:
+            # posts/pages are dictionaries
+            # tags/categories are sets to avoid duplicates but can only be stored as list in JSON file
+            self.posts = self.sitedata["posts"]
+            post_tags = set(self.sitedata["post_tags"])
+            post_cats = set(self.sitedata["post_cats"])
+            self.pages = self.sitedata["pages"]
+            page_tags = set(self.sitedata["page_tags"])
+            page_cats = set(self.sitedata["page_cats"])
 
-        self.messenger(_("Refresh window content"))
-        [self.obj(store).clear() for store in ["store_posts",
-                                               "store_pages",
-                                               "store_tags",
-                                               "store_cats",
-                                               "store_listings",
-                                               "store_files",
-                                               "store_images",
-                                               "store_translation",
-                                               ]]
+            self.messenger(_("Refresh window content"))
+            [self.obj(store).clear() for store in ["store_posts",
+                                                   "store_pages",
+                                                   "store_tags",
+                                                   "store_cats",
+                                                   "store_listings",
+                                                   "store_files",
+                                                   "store_images",
+                                                   "store_translation",
+                                                   ]]
 
-        # #### add information to notebook tab datastores #####
-        # posts/pages tabs are based on liststores and created from dict
-        # (see above)
-        self.get_tree_data_rst("store_posts", self.posts)
-        self.get_tree_data_rst("store_pages", self.pages)
-        # files/listings/images are based on treestores, data rows are appended
-        # without dict usage
-        self.get_tree_data("store_listings", "listings", self.output_folder)
-        self.get_tree_data("store_files", "files", self.output_folder)
-        self.get_tree_data("store_images", "images", self.output_folder)
-        # tags/category tab
-        self.get_tree_data_label(self.posts,
-                                 self.pages,
-                                 post_tags,
-                                 page_tags,
-                                 "store_tags",
-                                 "tags",
-                                 )
-        self.get_tree_data_label(self.posts,
-                                 self.pages,
-                                 post_cats,
-                                 page_cats,
-                                 "store_cats",
-                                 "category",
-                                 )
-        # translation tab
-        self.get_tree_data_translations("store_translation", self.posts)
-        self.get_tree_data_translations("store_translation", self.pages)
+            # #### add information to notebook tab datastores #####
+            # posts/pages tabs are based on liststores and created from dict
+            # (see above)
+            self.get_tree_data_rst("store_posts", self.posts)
+            self.get_tree_data_rst("store_pages", self.pages)
+            # files/listings/images are based on treestores, data rows are appended
+            # without dict usage
+            self.get_tree_data("store_listings", "listings", self.output_folder)
+            self.get_tree_data("store_files", "files", self.output_folder)
+            self.get_tree_data("store_images", "images", self.output_folder)
+            # tags/category tab
+            self.get_tree_data_label(self.posts,
+                                     self.pages,
+                                     post_tags,
+                                     page_tags,
+                                     "store_tags",
+                                     "tags",
+                                     )
+            self.get_tree_data_label(self.posts,
+                                     self.pages,
+                                     post_cats,
+                                     page_cats,
+                                     "store_cats",
+                                     "category",
+                                     )
+            # translation tab
+            self.get_tree_data_translations("store_translation", self.posts)
+            self.get_tree_data_translations("store_translation", self.pages)
 
-        # sort tags according to number of occurrences
-        self.obj("store_tags").set_sort_column_id(4, Gtk.SortType.DESCENDING)
-        self.obj("store_cats").set_sort_column_id(4, Gtk.SortType.DESCENDING)
-        self.obj("store_translation").set_sort_column_id(
-            3, Gtk.SortType.DESCENDING)
+            # sort tags according to number of occurrences
+            self.obj("store_tags").set_sort_column_id(4, Gtk.SortType.DESCENDING)
+            self.obj("store_cats").set_sort_column_id(4, Gtk.SortType.DESCENDING)
+            self.obj("store_translation").set_sort_column_id(
+                3, Gtk.SortType.DESCENDING)
 
-        # expands all rows in translation tab
-        self.obj("view_translations").expand_all()
-        
+            # expands all rows in translation tab
+            self.obj("view_translations").expand_all()
+        except AttributeError:
+            self.messenger("Failed to load data, choose another conf.py", "error")        
+
     def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
             files = [x for x in os.listdir(subdir) if not x.startswith(".")]

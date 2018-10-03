@@ -2,7 +2,7 @@
 Name=Knights of Ni
 GenericName=NoN
 Comment=Nikola Site Generator Desktop Client
-Exec=sh -c "cd /path/to/non/non && python non.py"
+Exec=sh -c "cd /path/to/non/non && python3 non.py"
 Icon=../non/ui/duckyou.svg
 Terminal=false
 Type=Application
