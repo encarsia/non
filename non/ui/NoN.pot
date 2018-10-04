@@ -7,7 +7,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: NoN 0.5dev\n"
+"Project-Id-Version: NoN 0.5\n"
 "Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
 "POT-Creation-Date: 2018-09-30 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -135,6 +135,9 @@ msgstr ""
 msgid "Execute Nikola: run deploy to default preset command"
 msgstr ""
 
+msgid "Failed to load data, choose another conf.py"
+msgstr ""
+
 msgid "Filename"
 msgstr ""
 
@@ -142,6 +145,9 @@ msgid "Files"
 msgstr ""
 
 msgid "Found config to work with..."
+msgstr ""
+
+msgid "Found summary page."
 msgstr ""
 
 msgid "Found summary page. Loading {}"
@@ -157,6 +163,9 @@ msgid "Generate summary"
 msgstr ""
 
 msgid "Get some external help"
+msgstr ""
+
+msgid "Going on without conf.py"
 msgstr ""
 
 msgid "I thought we were done here..."
@@ -204,6 +213,9 @@ msgid "No bookmarks found."
 msgstr ""
 
 msgid "No config available..."
+msgstr ""
+
+msgid "No deploy commands set, edit conf.py or use     'github_deploy'"
 msgstr ""
 
 msgid "No deploy commands set, edit conf.py or use 'github_deploy'"

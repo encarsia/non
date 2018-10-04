@@ -23,9 +23,10 @@ EMAIL = "An.Ke@bahnfreikartoffelbrei.de"
 AUTHOR = "Anke K"
 LICENSE = "MIT"
 URL = "https://github.com/encarsia/non"
-VERSION = "0.4"
+VERSION = "0.5"
 REQUIRES_PYTHON = ">=3.2"
 REQUIRED = [
+            "Nikola",
             "PyGObject",
             "PyYAML",
             ]
@@ -39,12 +40,11 @@ PACKAGES = ["non"]
 PACKAGE_DIR = {"non": "non"}
 PACKAGE_DATA = {"non": ["ui/*",
                         "logging.yaml",
-                        "templates/*",
                          ]
                 }
     
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = '\n' + f.read()
+with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
+    long_description = "\n" + f.read()
 
 def _find_install_path():
     if "--user" in sys.argv:
@@ -152,7 +152,7 @@ setup(
     version=VERSION,
     description=DESCRIPTION,
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,

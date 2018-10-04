@@ -38,18 +38,21 @@
  * [Python-Markdown](https://python-markdown.github.io/) for Python 3
  * recommended: Git
 
-#### Preparing  Archlinux and its relatives
+#### PREPARING ARCHLINUX AND ITS RELATIVES
+
+The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and Mate desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
 ``` bash
-$ sudo pacman -S nikola
+$ sudo pacman -S nikola python-yaml
 ```
-#### Preparing Ubuntu 18.04 LTS
+
+#### PREPARING UBUNTU 18.04 LTS
 
 ``` bash
 $ sudo apt-get install gir1.2-webkit2-4.0 python3-pip
 ```
 
-Currently there is no Nikola package in the Ubuntu reposities available so you install via pip which is the recommended install method anyway with all dependencies included:
+Currently there is no Nikola package in the Ubuntu reposities available so you install via pip (which is the recommended install method anyway) with all dependencies included:
 
 ``` bash
 $ pip3 install Nikola[extras]
@@ -59,7 +62,7 @@ $ pip3 install Nikola[extras]
 
  * download and extract or clone repository and change into said folder
  
-> FTR: when executing `python` it is Python 3.
+> FTR: when executing `python` it is Python 3
  
 ### ARE WE THERE YET?
 

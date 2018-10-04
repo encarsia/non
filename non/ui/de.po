@@ -40,7 +40,7 @@ msgid "Build"
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 msgid "Categories"
 msgstr "Kategorien"
@@ -68,9 +68,6 @@ msgstr ""
 
 msgid "Could not write site data to JSON file"
 msgstr ""
-
-msgid "Create a new page"
-msgstr "Neue Seite erstellen"
 
 msgid "Create new page"
 msgstr "Neue Seite erstellen"
@@ -132,6 +129,9 @@ msgstr ""
 msgid "Execute Nikola: run deploy to default preset command"
 msgstr ""
 
+msgid "Failed to load data, choose another conf.py"
+msgstr ""
+
 msgid "Filename"
 msgstr "Dateiname"
 
@@ -139,6 +139,9 @@ msgid "Files"
 msgstr "Dateien"
 
 msgid "Found config to work with..."
+msgstr ""
+
+msgid "Found summary page."
 msgstr ""
 
 msgid "Found summary page. Loading {}"
@@ -154,6 +157,9 @@ msgid "Generate summary"
 msgstr "Zusammenfassung generieren"
 
 msgid "Get some external help"
+msgstr ""
+
+msgid "Going on without conf.py"
 msgstr ""
 
 msgid "I thought we were done here..."
@@ -201,6 +207,9 @@ msgid "No bookmarks found."
 msgstr ""
 
 msgid "No config available..."
+msgstr ""
+
+msgid "No deploy commands set, edit conf.py or use     'github_deploy'"
 msgstr ""
 
 msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
@@ -371,3 +380,6 @@ msgstr ""
 
 msgid "{} doesn't exist...create..."
 msgstr ""
+
+#~ msgid "Create a new page"
+#~ msgstr "Neue Seite erstellen"

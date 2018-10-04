@@ -1,12 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.5dev"
+__version__ = "0.5"
 
 try:
     import nikola
-except ImportError:
-    raise ImportError("You have to install Nikola first.")
+except (ModuleNotFoundError, ImportError) as e:
+    print("You have to install Nikola first.")
+    raise
+
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    gi.require_version('Vte', '2.91')
+    gi.require_version('WebKit2', '4.0')
+    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
+except (ModuleNotFoundError, ImportError) as e:
+    print(_("Unable to load Python bindings for GObject Introspection."))
+    raise
 
 import datetime
 import filecmp
@@ -25,16 +36,6 @@ import time
 import yaml
 
 _ = gettext.gettext
-
-try:
-    import gi
-    gi.require_version('Gtk', '3.0')
-    gi.require_version('Vte', '2.91')
-    gi.require_version('WebKit2', '4.0')
-    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
-except ImportError:
-    print(_("Unable to load Python bindings for GObject Introspection."))
-    raise
 
 
 class Handler:
@@ -619,7 +620,7 @@ anymore."), "warning")
                 self.obj("deploy").set_sensitive(True)
             except AttributeError:
                 self.messenger(_("No deploy commands set, edit conf.py or use \
-    'github_deploy'"))
+'github_deploy'"))
             # check for output folder, variable not set for GitHub deploy
             try:
                 self.output_folder = self.siteconf.OUTPUT_FOLDER
@@ -662,7 +663,7 @@ anymore."), "warning")
             # load or create summary page for notebook tab
             self.summaryfile = os.path.join(self.user_app_dir, filename + ".html")
             if os.path.isfile(self.summaryfile):
-                self.messenger(_("Found summary page. Loading {}").format(self.summaryfile))
+                self.messenger(_("Found summary page."))
                 self.webview.load_uri("file://" + self.summaryfile)
             else:
                 self.messenger(_("No summary file to load, let's generate one!"))
@@ -674,7 +675,7 @@ anymore."), "warning")
             # and show an empty main application window instead of being caught
             # in a neverending loop of filechooser dialog
             # pass
-            self.messenger("Going on without conf.py", "error")
+            self.messenger(_("Going on without conf.py"), "error")
 
     def get_window_content(self):
         """Fill main window with content."""
@@ -738,7 +739,7 @@ anymore."), "warning")
             # expands all rows in translation tab
             self.obj("view_translations").expand_all()
         except AttributeError:
-            self.messenger("Failed to load data, choose another conf.py", "error")        
+            self.messenger(_("Failed to load data, choose another conf.py"), "error")
 
     def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
@@ -1122,7 +1123,12 @@ anymore."), "warning")
 
     def term_cmd(self, command):
         command += "\n"
-        self.obj("term").feed_child(command.encode())
+        try:
+            # Vte v2.91+
+            self.obj("term").feed_child(command.encode())
+        except TypeError:
+            # Vte v2.90-
+            self.obj("term").feed_child(command, len(command))
 
     def run_nikola_build(self):
         self.gui_cmd = True
