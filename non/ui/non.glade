@@ -12,6 +12,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">help-browser</property>
+    <property name="icon_size">1</property>
   </object>
   <object class="GtkMenu" id="menu">
     <property name="visible">True</property>
@@ -35,6 +36,27 @@
       </object>
     </child>
     <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="gen_sum">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Generate summary</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_gen_sum_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="add_bookmark">
         <property name="visible">True</property>
         <property name="sensitive">False</property>
@@ -48,6 +70,51 @@
       <object class="GtkSeparatorMenuItem">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMenu" id="ref_menu">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkMenuItem" id="ref_handbook">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open Nikola handbook in web browser</property>
+        <property name="label" translatable="yes">Nikola handbook</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_handbook_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ref_rest_markup">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open reStructuredText Markup Specification in web browser</property>
+        <property name="label" translatable="yes">reStructuredText markup</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_rest_markup_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ref_rest_dir">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser
+</property>
+        <property name="label" translatable="yes">reStructuredText directives</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_rest_dir_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ref_md">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Open Mardown basic syntax reference in web browser</property>
+        <property name="label" translatable="yes">Markdown syntax</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_ref_md_activate" swapped="no"/>
       </object>
     </child>
   </object>
@@ -232,6 +299,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Show info window about this application</property>
             <property name="use_stock">True</property>
             <property name="always_show_image">True</property>
             <signal name="clicked" handler="on_info_button_clicked" swapped="no"/>
@@ -242,14 +310,16 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="manual_button">
+          <object class="GtkMenuButton" id="ref_menu_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open Nikola handbook</property>
-            <property name="image">image</property>
-            <property name="always_show_image">True</property>
-            <signal name="clicked" handler="on_manual_button_clicked" swapped="no"/>
+            <property name="tooltip_text" translatable="yes">Get some external help</property>
+            <property name="popup">ref_menu</property>
+            <property name="use_popover">False</property>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="pack_type">end</property>
@@ -384,12 +454,12 @@
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">4</property>
+                <property name="margin_right">4</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">5</property>
-                    <property name="margin_right">5</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel">
@@ -406,6 +476,62 @@
                         <property name="position">0</property>
                       </packing>
                     </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkLabel" id="title">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">3</property>
+                    <property name="margin_right">4</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
@@ -440,7 +566,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -450,17 +576,6 @@
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
                     <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="title">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
                     <child>
                       <object class="GtkLabel" id="descr">
                         <property name="visible">True</property>
@@ -485,9 +600,22 @@
                     </child>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">4</property>
+                    <property name="margin_right">4</property>
+                  </object>
+                  <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
                 <child>
@@ -531,7 +659,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">6</property>
                   </packing>
                 </child>
                 <child>
@@ -565,9 +693,9 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">4</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
               </object>
@@ -592,11 +720,12 @@
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="column_homogeneous">True</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
                     <property name="label" translatable="yes">Local</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -608,13 +737,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLinkButton" id="pathlocal">
+                    <property name="label">button</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Remote</property>
-                    <attributes>
-                      <attribute name="weight" value="bold"/>
-                    </attributes>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -622,29 +750,42 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="pathlocal">
-                    <property name="label" translatable="yes">button</property>
+                  <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="relief">none</property>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
+                    <property name="label" translatable="yes">Remote</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkLinkButton" id="pathremote">
-                    <property name="label" translatable="yes">button</property>
+                    <property name="label">button</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="relief">none</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
+                    <property name="left_attach">4</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
               </object>
@@ -666,7 +807,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkNotebook">
+              <object class="GtkNotebook" id="notebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
@@ -748,7 +889,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Categories</property>
+                            <property name="title" translatable="yes">Category</property>
                             <child>
                               <object class="GtkCellRendererText"/>
                               <attributes>
@@ -1285,6 +1426,30 @@
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="html_view">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">8</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Summary</property>
+                  </object>
+                  <packing>
+                    <property name="position">8</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1346,7 +1511,7 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
     <property name="program_name">Knights of Ni</property>
-    <property name="version">0.4</property>
+    <property name="version">0.5</property>
     <property name="website">https://github.com/encarsia/non</property>
     <property name="website_label" translatable="yes">A manager for your Nikola powered website.</property>
     <property name="logo_icon_name">help-about</property>
@@ -1395,6 +1560,7 @@
       <object class="GtkHeaderBar">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="title" translatable="yes">Choose configuration file</property>
         <child>
           <placeholder/>
         </child>
@@ -1523,6 +1689,8 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
             <property name="margin_top">10</property>
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
@@ -1569,7 +1737,7 @@
             </child>
             <child>
               <object class="GtkCheckButton" id="create_page">
-                <property name="label" translatable="yes">Create a new page</property>
+                <property name="label" translatable="yes">Create new page</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -1577,8 +1745,24 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="create_md">
+                <property name="label" translatable="yes">Write in Markdown</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Markdown support is disabled by default. Consult the Nikola handbook on how to configure it.</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>

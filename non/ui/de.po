@@ -1,0 +1,385 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
+"POT-Creation-Date: 2018-09-30 18:18+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "> (no custom shortcodes)"
+msgstr ""
+
+msgid "A manager for your Nikola powered website."
+msgstr ""
+
+msgid "Add bookmark"
+msgstr "Lesezeichen hinzufügen"
+
+msgid "Add new article data for: {}."
+msgstr ""
+
+msgid "Application terminated on window close button. Bye."
+msgstr ""
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Bookmark: {}"
+msgstr ""
+
+msgid "Browser preview"
+msgstr "Browser-Vorschau"
+
+msgid "Build"
+msgstr ""
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Categories"
+msgstr "Kategorien"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Choose conf.py"
+msgstr "Wähle conf.py"
+
+msgid "Choose configuration file"
+msgstr "Konfigurationsdatei auswählen"
+
+msgid "Choose configuration file to read"
+msgstr "Konfigurationsdatei auswählen"
+
+msgid "Collected data for Nikola site."
+msgstr ""
+
+msgid "Console"
+msgstr "Konsole"
+
+msgid "Could not read data file."
+msgstr ""
+
+msgid "Could not write site data to JSON file"
+msgstr ""
+
+msgid "Create new page"
+msgstr "Neue Seite erstellen"
+
+msgid "Create new post"
+msgstr "Neuen Beitrag erstellen"
+
+msgid "Create translation file for {}"
+msgstr ""
+
+msgid "Create translation for {}"
+msgstr ""
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Current Nikola folder: {}"
+msgstr ""
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Default language"
+msgstr "Standardsprache"
+
+msgid "Delete data for: {}."
+msgstr ""
+
+msgid "Deploy"
+msgstr ""
+
+msgid "Deploy site to GitHub/GitLab"
+msgstr ""
+
+msgid "Deploy site to default deploy preset"
+msgstr ""
+
+msgid "Deploy to GitHub"
+msgstr ""
+
+msgid "Deploying to GitHub/GitLab successful."
+msgstr ""
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Empty config created..."
+msgstr ""
+
+msgid "Error: {}"
+msgstr ""
+
+msgid "Execute Nikola: run build process"
+msgstr ""
+
+msgid "Execute Nikola: run deploy to GitHub command"
+msgstr ""
+
+msgid "Execute Nikola: run deploy to default preset command"
+msgstr ""
+
+msgid "Failed to load data, choose another conf.py"
+msgstr ""
+
+msgid "Filename"
+msgstr "Dateiname"
+
+msgid "Files"
+msgstr "Dateien"
+
+msgid "Found config to work with..."
+msgstr ""
+
+msgid "Found summary page."
+msgstr ""
+
+msgid "Found summary page. Loading {}"
+msgstr ""
+
+msgid "Found {} bookmark(s)"
+msgstr "{} Lesezeichen gefunden"
+
+msgid "Generate page for summary tab"
+msgstr "Zusammenfassung in Tab generieren"
+
+msgid "Generate summary"
+msgstr "Zusammenfassung generieren"
+
+msgid "Get some external help"
+msgstr ""
+
+msgid "Going on without conf.py"
+msgstr ""
+
+msgid "I thought we were done here..."
+msgstr ""
+
+msgid "Images"
+msgstr "Bilder"
+
+msgid "It isn't over yet..."
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Listings"
+msgstr ""
+
+msgid "Local"
+msgstr "Lokal"
+
+msgid ""
+"Markdown support is disabled by default. Consult the Nikola handbook on how "
+"to configure it."
+msgstr ""
+
+msgid "Markdown syntax"
+msgstr ""
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "New bookmark for {} added."
+msgstr ""
+
+msgid "New post"
+msgstr "Neuer Beitrag"
+
+msgid "Nikola handbook"
+msgstr "Nikola-Handbuch"
+
+msgid "No bookmarks found."
+msgstr ""
+
+msgid "No config available..."
+msgstr ""
+
+msgid "No deploy commands set, edit conf.py or use     'github_deploy'"
+msgstr ""
+
+msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
+msgstr ""
+
+msgid "No summary file to load, let's generate one!"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Open '{}' in web browser"
+msgstr ""
+
+msgid "Open About dialog"
+msgstr ""
+
+msgid "Open Mardown basic syntax reference in web browser"
+msgstr ""
+
+msgid "Open Markdown syntax reference in web browser"
+msgstr "Markdown-Syntaxreferenz im Browser öffnen"
+
+msgid "Open Nikola handbook"
+msgstr "Nikola-Handbuch öffnen"
+
+msgid "Open Nikola handbook in web browser"
+msgstr "Nikola-Handbuch im Browser öffnen"
+
+msgid "Open conf.py in external editor"
+msgstr ""
+
+msgid "Open current conf.py"
+msgstr "Öffne aktuelle conf.py"
+
+msgid "Open file..."
+msgstr ""
+
+msgid "Open in web browser"
+msgstr ""
+
+msgid "Open page file"
+msgstr ""
+
+msgid "Open post file"
+msgstr ""
+
+msgid "Open preview in standard web browser"
+msgstr ""
+
+msgid "Open reST directives in web browser"
+msgstr "reST-Directives im Browser öffnen"
+
+msgid "Open reST syntax reference in web browser"
+msgstr "reST Syntaxreferenz im Browser öffnen"
+
+msgid "Open reStructuredText Directives in web browser\n"
+msgstr ""
+
+msgid "Open reStructuredText Markup Specification in web browser"
+msgstr ""
+
+msgid "Output folder is set to default 'output'"
+msgstr ""
+
+msgid "Output folder: '{}'"
+msgstr ""
+
+msgid "Overview"
+msgstr "Überblick"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Path to working directory malformed or None."
+msgstr ""
+
+msgid "Posts"
+msgstr "Beiträge"
+
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+msgid "Refresh window content"
+msgstr ""
+
+msgid "Remote"
+msgstr ""
+
+msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
+msgstr ""
+
+msgid "Show info window about this application"
+msgstr ""
+
+msgid "Site data loaded from file."
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Slug"
+msgstr ""
+
+msgid "Stop preview"
+msgstr "Vorschau beenden"
+
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+msgid "Tags"
+msgstr "Schlagworte"
+
+msgid "The chosen Nikola instance isn't here anymore."
+msgstr ""
+
+msgid ""
+"This application will not work without pointing to a local Nikola site "
+"configuration file."
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Title must not be empty."
+msgstr ""
+
+msgid "Title of new post"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation file already exists."
+msgstr ""
+
+msgid "Translations"
+msgstr ""
+
+msgid "Unable to load Python bindings for GObject Introspection."
+msgstr ""
+
+msgid "Update article data for: {}"
+msgstr ""
+
+msgid "Update data file for: {}"
+msgstr ""
+
+msgid "Working Nikola configuration required"
+msgstr "Funktionierende Konfigurationsdatei benötigt"
+
+msgid "Write in Markdown"
+msgstr ""
+
+msgid "Write site data to JSON file."
+msgstr ""
+
+msgid ""
+"available | local | systemwide | not installed\n"
+"--- |:---:|:---:|:---:\n"
+msgstr ""
+
+msgid "reStructuredText directives"
+msgstr ""
+
+msgid "reStructuredText markup"
+msgstr ""
+
+msgid "{} doesn't exist...create..."
+msgstr ""
+
+#~ msgid "Create a new page"
+#~ msgstr "Neue Seite erstellen"

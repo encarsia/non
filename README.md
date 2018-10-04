@@ -4,17 +4,23 @@
  
 ### WHAT CAN I DO WITH IT?
 
- * have an overview of posts, pages, listings, images, files and translations
- * open files from app
+ * have an overview of posts, pages, listings, images, files, translations and site statistics
+ * open files from app or load article in a browser on right click
  * keep track of changes made since last build (hint: **bold**)
  * create new posts and pages
+ * write in default reStructuredText, Markdown is also available if configured
  * build, preview and deploy to GitHub or GitLab or a custom target¹
- * create translation file on right click in the 'Translation' tab
- * bookmark and switch between different Nikola site instances (rudimentary feature)
- * integrated terminal for switching easily between GUI and commandline interface
+ * create translation files on right click in the 'Translation' tab
+ * bookmark and switch between different Nikola site instances (beta feature)
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
+### WHAT ELSE IS THERE TO SEE?
+
+ * integrated terminal for switching easily between GUI and commandline interface
+ * in the 'Summary' tab there are some detailed information about the Nikola site like disk usage, available and installed themes or plugins (beta feature)
+ * this application is ready for localization ([POT file](ui/NoN.pot)); add your translation and open a PR if you like
+ 
 ### WHAT CAN'T I DO WITH IT?
 
  * create a Nikola site
@@ -29,10 +35,34 @@
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
+ * [Python-Markdown](https://python-markdown.github.io/) for Python 3
+ * recommended: Git
+
+#### PREPARING ARCHLINUX AND ITS RELATIVES
+
+The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and Mate desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
+
+``` bash
+$ sudo pacman -S nikola python-yaml
+```
+
+#### PREPARING UBUNTU 18.04 LTS
+
+``` bash
+$ sudo apt-get install gir1.2-webkit2-4.0 python3-pip
+```
+
+Currently there is no Nikola package in the Ubuntu reposities available so you install via pip (which is the recommended install method anyway) with all dependencies included:
+
+``` bash
+$ pip3 install Nikola[extras]
+```
 
 ### INSTALLATION
 
  * download and extract or clone repository and change into said folder
+ 
+> FTR: when executing `python` it is Python 3
  
 ### ARE WE THERE YET?
 
@@ -56,18 +86,32 @@
    * `config.yaml` for current Nikola site and bookmarks, editing or deleting does not affect any actual local Nikola site 
    * `non.log` for the type of persons who stick their noses into everything
  * if you want to edit or delete bookmarks you have to edit the config file (`.non/config.yaml`)
+ * the summary page is generated if a ``conf.py`` is loaded for the first time or invoked by the corresponding menu item because the task may take some time; it is a HTML file with [GitHub flavoured css](https://github.com/sindresorhus/github-markdown-css)
+ * if you load data from a Nikola site for the first time the application indexes the content and saves it as a JSON file in the `~/.non` folder and only updates on every next startup; this initial task may take some time depending on the size if the site - just be patient
 
 ### THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
 
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.
  * Besides this there are some ideas for further features such like
-    * an integrated ReST editor
+    * an integrated reST editor
     * provide personal article templates
+    * support multiple authors
+    * if set up using Git: pull from src to imitate cloud sync
  * Roadmap:
-    * upgrade GUI to GTK 3.22
-    * stats on size/articles/pages/installed themes and plugins
+    * upgrade GUI to GTK 3.24
     * give the bookmark feature some love
+
 
 ### WHAT DOES IT LOOK LIKE? 
 
-<img src="data/non_window.png" width="600">
+#### MAIN WINDOW
+
+![main window](data/screenshot_main.png)
+
+#### INTEGRATED CONSOLE
+
+![integrated console](data/screenshot_console.png)
+
+#### SUMMARY TAB
+
+![main window](data/screenshot_summary.png)
