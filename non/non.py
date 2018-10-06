@@ -29,6 +29,7 @@ import logging
 import logging.config
 import markdown
 import os
+import setproctitle
 import shutil
 import subprocess
 import sys
@@ -192,13 +193,16 @@ class Handler:
                 if app.obj("create_md").get_active():
                     format = "--format=markdown"
                 else:
-                    format = ""
+                    format = "--format=rest"
+
+                #print(["nikola",
                 subprocess.run(["nikola",
                                 new_site_obj,
                                 "--title={}".format(app.obj(
                                     "newpost_entry").get_text()),
                                 format,
                                 ])
+                app.messenger("New post created: {}".format(app.obj("newpost_entry").get_text()))
                 app.update_sitedata(app.sitedata)
                 app.get_window_content()
         else:
@@ -348,6 +352,8 @@ class Handler:
 class NiApp:
 
     def __init__(self):
+
+        setproctitle.setproctitle("NoN")
         self.install_dir = os.getcwd()
         self.user_app_dir = os.path.join(os.path.expanduser("~"),
                                           ".non",
@@ -360,8 +366,12 @@ class NiApp:
             os.makedirs(self.user_app_dir)
 
         # initiate GTK+ application
-        self.app = Gtk.Application.new("app.knights-of-ni",
-                                       Gio.ApplicationFlags(0))
+        GLib.set_prgname("Knights of Ni")
+
+        # GSettings
+        # self.app = Gtk.Application.new("app.knights-of-ni",
+
+        self.app = Gtk.Application.new(None, Gio.ApplicationFlags(0))
         self.app.connect("startup", self.on_app_startup)
         self.app.connect("activate", self.on_app_activate)
         self.app.connect("shutdown", self.on_app_shutdown)
@@ -415,6 +425,10 @@ class NiApp:
         self.obj("html_view").add(self.webview)
 
         window = self.obj("non_window_stack")
+        # application icon doesn't work under Wayland
+        # window.set_icon_from_file(os.path.join(self.install_dir,
+        #                                       "ui",
+        #                                       "duckyou.svg"))
         window.set_application(app)
         window.show_all()
 
