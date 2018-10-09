@@ -83,6 +83,22 @@ class Handler:
         app.update_sitedata(app.sitedata)
         app.get_window_content()
 
+    def on_save_drafts(self, widget):
+        # subprocess
+        # git commit && git push origin src
+        # TODO setting: option to save drafts on application exit
+        print("save drafts")
+        app.drafts_upload()
+
+    def on_get_drafts(self, widget):
+        # subprocess
+        # git diff-tree --oneline --no-commit-id --name-only -r origin/src
+        # src is the source branch, get name from conf.py
+        # returns a list of filenames
+        # show window with titles of changed files, cancel and proceed buttons to handle
+        print("get drafts")
+        app.drafts_download()
+
     # ########### vte terminal ########################
 
     def on_term_contents_changed(self, widget):
@@ -102,7 +118,7 @@ class Handler:
             app.gui_cmd = False
 
     def on_term_child_exited(self, widget, *args):
-        # on exit the console is restarted because it does'n run in a separate
+        # on exit the console is restarted because it doesn't run in a separate
         # window anymore but as a (persistent) GTK stack child
         widget.reset(True, True)
         app.start_console(None)
@@ -219,14 +235,14 @@ class Handler:
         app.messenger(_("Open post file"))
         row, pos = app.obj("selection_post").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][7], row[pos][2])],
+                        os.path.join(app.wdir, row[pos][7], row[pos][2])]
                        )
 
     def on_view_pages_row_activated(self, widget, *args):
         app.messenger(_("Open page file"))
         row, pos = app.obj("selection_page").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][7], row[pos][2])],
+                        os.path.join(app.wdir, row[pos][7], row[pos][2])]
                        )
 
     def on_view_tags_row_activated(self, widget, pos, *args):
@@ -235,7 +251,7 @@ class Handler:
         else:
             row, pos = app.obj("selection_tags").get_selected()
             subprocess.run(['xdg-open',
-                            os.path.join(app.wdir, row[pos][6], row[pos][5])],
+                            os.path.join(app.wdir, row[pos][6], row[pos][5])]
                            )
 
     def on_view_cats_row_activated(self, widget, pos, *args):
@@ -244,32 +260,32 @@ class Handler:
         else:
             row, pos = app.obj("selection_cats").get_selected()
             subprocess.run(['xdg-open',
-                            os.path.join(app.wdir, row[pos][6], row[pos][5])],
+                            os.path.join(app.wdir, row[pos][6], row[pos][5])]
                            )
 
     def on_view_listings_row_activated(self, widget, *args):
         row, pos = app.obj("selection_listings").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "listings", row[pos][0])],
+                        os.path.join(app.wdir, "listings", row[pos][0])]
                        )
 
     def on_view_images_row_activated(self, widget, *args):
         row, pos = app.obj("selection_images").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "images", row[pos][0])],
+                        os.path.join(app.wdir, "images", row[pos][0])]
                        )
 
     def on_view_files_row_activated(self, widget, *args):
         row, pos = app.obj("selection_files").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "files", row[pos][0])],
+                        os.path.join(app.wdir, "files", row[pos][0])]
                        )
 
     def on_view_translations_row_activated(self, widget, *args):
         app.messenger(_("Open file..."))
         row, pos = app.obj("selection_translations").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][6], row[pos][2])],
+                        os.path.join(app.wdir, row[pos][6], row[pos][2])]
                        )
 
     # open context menu for translation options
@@ -307,45 +323,42 @@ class Handler:
     # open context menu on right click to open post/page in browser
 
     def on_view_posts_button_release_event(self, widget, event):
-        popup = Gtk.Menu()
-        item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
-        # selected row already caught by on_treeview_selection_changed function
-        item.connect("activate", self.on_open_post_web)
-        popup.append(item)
-        popup.show_all()
-        # only show on right click
-        if event.button == 3:
-            popup.popup(None, None, None, None, event.button, event.time)
-            return True
+        self.on_pp_right_click(widget, event, "posts")
 
-    def on_open_post_web(self, widget):
+    def on_view_pages_button_release_event(self, widget, event):
+        self.on_pp_right_click(widget, event, "pages")
+
+    def on_pp_right_click(self, widget, event, sub):
         row, pos = app.obj("selection_post").get_selected()
         title = row[pos][0]
         slug = row[pos][1]
-        app.messenger(_("Open '{}' in web browser").format(title))
-        subprocess.run(['xdg-open',
-                        "{}/posts/{}".format(app.siteconf.SITE_URL, slug)],
-                       )
-
-    def on_view_pages_button_release_event(self, widget, event):
+        meta = row[pos][10]
         popup = Gtk.Menu()
         item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
         # selected row already caught by on_treeview_selection_changed function
-        item.connect("activate", self.on_open_page_web)
+        # I don't know what to do with this information but I'm afraid to delete it
+        item.connect("activate", self.on_open_pp_web, title, slug, sub)
         popup.append(item)
+        if meta is not "":
+            item = Gtk.MenuItem.new_with_label(_("Edit meta data file"))
+            item.connect("activate", self.on_open_metafile, meta, sub)
+            popup.append(item)
         popup.show_all()
         # only show on right click
         if event.button == 3:
             popup.popup(None, None, None, None, event.button, event.time)
             return True
 
-    def on_open_page_web(self, widget):
-        row, pos = app.obj("selection_page").get_selected()
-        title = row[pos][0]
-        slug = row[pos][1]
+    def on_open_pp_web(self, widget, title, slug, sub):
         app.messenger(_("Open '{}' in web browser").format(title))
         subprocess.run(['xdg-open',
-                        "{}/pages/{}".format(app.siteconf.SITE_URL, slug)],
+                        "{}/{}/{}".format(app.siteconf.SITE_URL, sub, slug)]
+                       )
+
+    def on_open_metafile(self, widget, meta, sub):
+        app.messenger("Edit metafile: {}".format(meta))
+        subprocess.run(['xdg-open',
+                        os.path.join(app.wdir, sub, meta)]
                        )
 
 
@@ -424,18 +437,15 @@ class NiApp:
         self.webview = WebKit2.WebView()
         self.obj("html_view").add(self.webview)
 
-        window = self.obj("non_window_stack")
-        # application icon doesn't work under Wayland
-        # window.set_icon_from_file(os.path.join(self.install_dir,
-        #                                       "ui",
-        #                                       "duckyou.svg"))
-        window.set_application(app)
-        window.show_all()
-
+        # set buttons inactive unless activated otherwise
         self.obj("build").set_sensitive(False)
 
+        # error if created in Glade
         self.add_dialogbuttons(self.obj("choose_conf_file"))
-        self.add_dialogokbutton(self.obj("about_dialog"))
+        # self.add_dialogokbutton(self.obj("about_dialog"))
+
+        # add image to menubutton (Glade bug)
+        self.obj("ref_menu_button").add(self.obj("image"))
 
         # load config from config.yaml or start with new
         if not os.path.isfile(self.conf_file):
@@ -448,8 +458,14 @@ class NiApp:
             self.non_config = yaml.load(open(self.conf_file))
             self.messenger(_("Found config to work with..."))
 
-        # add image to menubutton (Glade bug)
-        self.obj("ref_menu_button").add(self.obj("image"))
+        # main window
+        window = self.obj("non_window_stack")
+        # application icon doesn't work under Wayland
+        # window.set_icon_from_file(os.path.join(self.install_dir,
+        #                                       "ui",
+        #                                       "duckyou.svg"))
+        window.set_application(app)
+        window.show_all()
 
         self.check_nonconf()
 
@@ -520,7 +536,6 @@ anymore."), "warning")
             self.obj("choose_conf_file").show_all()
         except TypeError as e:
             self.messenger(_("Path to working directory malformed or None."), "warning")
-            #self.messenger(_("Error: {}").format(e), "warning")
             self.obj("choose_conf_file").show_all()
             self.wdir = os.path.expanduser("~")
 
@@ -572,7 +587,7 @@ anymore."), "warning")
         filelist = dict()
         for sub in ["posts", "pages"]:
             filelist[sub] = []
-            for f in [x for x in os.listdir(sub) if not x.startswith(".")]:
+            for f in [x for x in os.listdir(sub) if not (x.startswith(".") or x.endswith(".meta"))]:
                 if f in sitedata[sub].keys():
                     if not sitedata[sub][f]["last_modified"] == os.path.getmtime(os.path.join(sub, f)):
                         filelist[sub].append(f)
@@ -642,6 +657,18 @@ anymore."), "warning")
             except AttributeError:
                 self.output_folder = "output"
                 self.messenger(_("Output folder is set to default 'output'"))
+            # sync drafts with GitHub, activate only if setup in conf.py
+            try:
+                self.gh_src = self.siteconf.GITHUB_SOURCE_BRANCH
+                self.gh_depl = self.siteconf.GITHUB_DEPLOY_BRANCH
+                self.gh_rem = self.siteconf.GITHUB_REMOTE_NAME
+                self.obj("get_drafts").set_sensitive(True)
+                self.obj("save_drafts").set_sensitive(True)
+                self.messenger("Up-/download drafts to/from GitHub is enabled.")
+            except AttributeError:
+                self.obj("save_drafts").set_sensitive(False)
+                self.obj("get_drafts").set_sensitive(False)
+                self.messenger("This site is not configured to use GitHub, up-/downloading drafts is deactivated.")
 
             # check if folder for files, listings and images exist to avoid
             # FileNotFoundError, this also has to be done only on startup
@@ -660,6 +687,12 @@ anymore."), "warning")
             # set checkbutton in new page dialog active
             if "markdown" in app.siteconf.COMPILERS:
                 app.obj("create_md").set_sensitive(True)
+
+            # don't show translation tab if site is not multilingual
+            if self.translation_lang == set():
+                self.obj("tab_transl").hide()
+            else:
+                self.obj("tab_transl").show()
 
             # look for JSON data file with sitedata
             # cut home dir in name and leading slash
@@ -692,6 +725,7 @@ anymore."), "warning")
             self.messenger(_("Going on without conf.py"), "error")
 
     def get_window_content(self):
+
         """Fill main window with content."""
 
         try:
@@ -757,11 +791,11 @@ anymore."), "warning")
 
     def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
-            files = [x for x in os.listdir(subdir) if not x.startswith(".")]
+            files = [x for x in os.listdir(subdir) if not (x.startswith(".") or x.endswith(".meta"))]
         else:
             files = update
         for f in files:
-            title, slug, date, tagstr, tags, catstr, cats = \
+            title, slug, date, tagstr, tags, catstr, cats, metafile = \
                 self.read_rst_files(subdir, f)
             # detect language
             if len(self.translation_lang) > 0:
@@ -813,7 +847,8 @@ anymore."), "warning")
                          "sub": subdir,
                          "lang": lang,
                          "transl": [],
-                         "last_modified": os.path.getmtime(os.path.join(subdir, f))
+                         "last_modified": os.path.getmtime(os.path.join(subdir, f)),
+                         "metafile": metafile,
                          }
         # add available translation to default file entry
         # ex: articlename.lang.rst > lang is added to transl entry of articlename.rst
@@ -825,10 +860,19 @@ anymore."), "warning")
         return d, list(t), list(c)
 
     def read_rst_files(self, subdir, file):
+        # TODO "rst" misleading because input files not limited to reStructuredText (anymore)
         date = datetime.datetime.today().strftime("%Y-%m-%d")
         title, slug, tagstr, tags, catstr, cats = "", "", "", "", "", ""
-        rst = open(os.path.join(subdir, file), "r")
-        for line in rst:
+        try:
+            metafile = file.split(".")[0] + ".meta"
+            with open(os.path.join(subdir, metafile)) as f:
+                content = f.readlines()
+        except FileNotFoundError:
+            with open(os.path.join(subdir, file)) as f:
+                content = f.readlines()
+                metafile = ""
+
+        for line in content:
             if line.startswith(".. title:"):
                 title = line[9:].strip()
             elif line.startswith(".. slug:"):
@@ -842,8 +886,8 @@ anymore."), "warning")
                 catstr = line[12:].strip()
                 cats = [c.strip() for c in catstr.split(",")]
                 break
-        rst.close()
-        return title, slug, date, tagstr, tags, catstr, cats
+
+        return title, slug, date, tagstr, tags, catstr, cats, metafile
 
     def compare_output_dir(self, od, subdir, filename, lang, output):
         try:
@@ -872,6 +916,7 @@ anymore."), "warning")
                                  # gist.github.com/23maverick23/6404685
                                  ",".join(str(s) for s in dict[key]["transl"]),
                                  dict[key]["fontstyle"],
+                                 dict[key]["metafile"],
                                  ]) for key in dict if dict[key]["lang"] == ""]
         self.obj(store).set_sort_column_id(3, Gtk.SortType.DESCENDING)
 
@@ -917,7 +962,7 @@ anymore."), "warning")
 
     def get_tree_data_label(self, post_dict, page_dict,
                             post, page, store, label):
-        # combine labels from posts and pages and remove empty string
+        # combine labels from posts and pages and remove empty strings
         post.update(page)
         post.discard("")
         for item in post:
@@ -1008,11 +1053,7 @@ anymore."), "warning")
 
         def nikola_cmd(subcmd):
             cmd = ["nikola"] + subcmd.split()
-            output = subprocess.run(cmd,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    encoding="utf-8",
-                                    )
+            output = self.subprocess_cmd(cmd)
             return output
         
         def get_diskusage_string(folders):
@@ -1135,6 +1176,14 @@ anymore."), "warning")
         # load file into webview
         self.webview.load_uri("file://" + self.summaryfile)
 
+    def subprocess_cmd(self, command):
+        output = subprocess.run(command,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                encoding="utf-8",
+                                )
+        return output
+
     def term_cmd(self, command):
         command += "\n"
         try:
@@ -1162,6 +1211,12 @@ anymore."), "warning")
         self.gui_cmd = True
         self.messenger(_("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
+
+    def drafts_upload(self):
+        print("upload drafts = push to src")
+
+    def drafts_download(self):
+        print("download drafts = pull from src")
 
     def messenger(self, message, log="info"):
         """Show notifications in statusbar and log file/stream"""

@@ -194,6 +194,8 @@
       <column type="gchararray"/>
       <!-- column-name fontstyle -->
       <column type="gchararray"/>
+      <!-- column-name metafile -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="store_posts">
@@ -217,6 +219,8 @@
       <!-- column-name translation -->
       <column type="gchararray"/>
       <!-- column-name fontstyle -->
+      <column type="gchararray"/>
+      <!-- column-name metafile -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -378,8 +382,18 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Browser preview</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-properties</property>
+                    <property name="icon_name">web-browser</property>
                     <signal name="toggled" handler="on_preview_toggled" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -411,6 +425,47 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-execute</property>
                     <signal name="clicked" handler="on_deploy_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="save_drafts">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Save drafts to GitHub.
+This will only upload source files and not build and deploy the site.</property>
+                    <property name="label" translatable="yes">Save drafts</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-save</property>
+                    <signal name="clicked" handler="on_save_drafts" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="get_drafts">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Get drafts from GitHub</property>
+                    <property name="label" translatable="yes">Get drafts</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">folder-download</property>
+                    <signal name="clicked" handler="on_get_drafts" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1354,7 +1409,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow">
+                  <object class="GtkScrolledWindow" id="tab_transl">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="shadow_type">in</property>
@@ -1518,21 +1573,18 @@
     <property name="license_type">mit-x11</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="spacing">3</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
             <property name="layout_style">center</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -1597,6 +1649,9 @@
     <property name="secondary_text" translatable="yes">Run "Choose conf.py" menu item again or select a bookmark item.</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>

@@ -1,10 +1,11 @@
 [Desktop Entry]
 Name=Knights of Ni
-GenericName=NoN
+GenericName=Nikola GUI
 Comment=Nikola Site Generator Desktop Client
 Exec=sh -c "cd /path/to/non/non && python3 non.py"
 Icon=../non/ui/duckyou.svg
 Terminal=false
 Type=Application
 Categories=Utility;Application;Blog;
+Keywords=NoN;Nikola;Blog
 
