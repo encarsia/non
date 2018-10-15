@@ -92,7 +92,11 @@ class Handler:
 
     def on_get_drafts(self, widget):
         # subprocess
+        # git commands you will need:
+        # git show --stat
         # git diff-tree --oneline --no-commit-id --name-only -r origin/src
+        # git remote update
+        # git diff src:posts/file.rst origin/src:posts/file.rst
         # src is the source branch, get name from conf.py
         # returns a list of filenames
         # show window with titles of changed files, cancel and proceed buttons to handle
@@ -809,8 +813,8 @@ anymore."), "warning")
                 lang = ""
             # check for equal file in output dir, mark bold (loaded by
             # treemodel) when False
-            for od in {slug, f[:-4]}:
-                if self.compare_output_dir(od, subdir, f, lang,
+            for od in {slug, f.split(".")[0]}:
+                if self.compare_output_dir(od, subdir, f, f.split(".")[1], lang,
                                            self.output_folder):
                     fontstyle = "normal"
                     break
@@ -889,14 +893,14 @@ anymore."), "warning")
 
         return title, slug, date, tagstr, tags, catstr, cats, metafile
 
-    def compare_output_dir(self, od, subdir, filename, lang, output):
+    def compare_output_dir(self, od, subdir, filename, ext, lang, output):
         try:
             return filecmp.cmp(os.path.join(subdir, filename),
                                os.path.join(output,
                                             lang,
                                             subdir,
                                             od,
-                                            "index.rst",
+                                            "index.{}".format(ext),
                                             ))
         except FileNotFoundError:
             return False
@@ -1052,8 +1056,8 @@ anymore."), "warning")
             return self.sizeof_fmt(total), counter
 
         def nikola_cmd(subcmd):
-            cmd = ["nikola"] + subcmd.split()
-            output = self.subprocess_cmd(cmd)
+            cmd = "nikola " + subcmd
+            output = self.exec_cmd(cmd)
             return output
         
         def get_diskusage_string(folders):
@@ -1176,23 +1180,6 @@ anymore."), "warning")
         # load file into webview
         self.webview.load_uri("file://" + self.summaryfile)
 
-    def subprocess_cmd(self, command):
-        output = subprocess.run(command,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                encoding="utf-8",
-                                )
-        return output
-
-    def term_cmd(self, command):
-        command += "\n"
-        try:
-            # Vte v2.91+
-            self.obj("term").feed_child(command.encode())
-        except TypeError:
-            # Vte v2.90-
-            self.obj("term").feed_child(command, len(command))
-
     def run_nikola_build(self):
         self.gui_cmd = True
         self.obj("stack").set_visible_child(app.obj("term"))
@@ -1217,6 +1204,24 @@ anymore."), "warning")
 
     def drafts_download(self):
         print("download drafts = pull from src")
+
+    def exec_cmd(self, command):
+        command = command.split()
+        output = subprocess.run(command,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                encoding="utf-8",
+                                )
+        return output
+
+    def term_cmd(self, command):
+        command += "\n"
+        try:
+            # Vte v2.91+
+            self.obj("term").feed_child(command.encode())
+        except TypeError:
+            # Vte v2.90-
+            self.obj("term").feed_child(command, len(command))
 
     def messenger(self, message, log="info"):
         """Show notifications in statusbar and log file/stream"""
