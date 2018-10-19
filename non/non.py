@@ -327,31 +327,41 @@ class Handler:
     # open context menu on right click to open post/page in browser
 
     def on_view_posts_button_release_event(self, widget, event):
-        self.on_pp_right_click(widget, event, "posts")
+        self.on_pp_table_click(widget, event, "posts")
 
     def on_view_pages_button_release_event(self, widget, event):
-        self.on_pp_right_click(widget, event, "pages")
+        self.on_pp_table_click(widget, event, "pages")
 
-    def on_pp_right_click(self, widget, event, sub):
+    def on_pp_table_click(self, widget, event, sub):
         row, pos = app.obj("selection_post").get_selected()
         title = row[pos][0]
         slug = row[pos][1]
+        filename = row[pos][2]
         meta = row[pos][10]
-        popup = Gtk.Menu()
-        item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
-        # selected row already caught by on_treeview_selection_changed function
-        # I don't know what to do with this information but I'm afraid to delete it
-        item.connect("activate", self.on_open_pp_web, title, slug, sub)
-        popup.append(item)
-        if meta is not "":
-            item = Gtk.MenuItem.new_with_label(_("Edit meta data file"))
-            item.connect("activate", self.on_open_metafile, meta, sub)
+        # show info in statusbar on left click
+        if event.button == 1:
+            if meta is not "":
+                has_meta = "yes"
+            else:
+                has_meta = "no"
+            app.messenger("Input file format: {}. Separate metafile: {}.".format(filename.split(".")[1], has_meta))
+        # only generate popup menu on right click
+        elif event.button == 3:
+            popup = Gtk.Menu()
+            item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
+            # selected row already caught by on_treeview_selection_changed function
+            # I don't know what to do with this information but I'm afraid to delete it
+            item.connect("activate", self.on_open_pp_web, title, slug, sub)
             popup.append(item)
-        popup.show_all()
-        # only show on right click
-        if event.button == 3:
+            if meta is not "":
+                item = Gtk.MenuItem.new_with_label(_("Edit meta data file"))
+                item.connect("activate", self.on_open_metafile, meta, sub)
+                popup.append(item)
+            popup.show_all()
             popup.popup(None, None, None, None, event.button, event.time)
             return True
+        else:
+            app.messenger("No function (button event: {}".format(button.event), "debug")
 
     def on_open_pp_web(self, widget, title, slug, sub):
         app.messenger(_("Open '{}' in web browser").format(title))
@@ -1044,6 +1054,7 @@ anymore."), "warning")
         return d
 
     def generate_summary(self):
+        """Collect site data and generate HTML page which is displayed in the summary tab"""
 
         def get_dir_size(folder):
             total = 0
@@ -1055,11 +1066,6 @@ anymore."), "warning")
                     total += os.path.getsize(fp)
             return self.sizeof_fmt(total), counter
 
-        def nikola_cmd(subcmd):
-            cmd = "nikola " + subcmd
-            output = self.exec_cmd(cmd)
-            return output
-        
         def get_diskusage_string(folders):
             string = "Name | Size | Files\n--- | --- | ---\n"
             for name, folder in folders:
@@ -1157,14 +1163,13 @@ anymore."), "warning")
                    ]
 
         infodict["disk_usage"] = get_diskusage_string(folders)
-        infodict["status"] = nikola_cmd("status").stdout.split("\n")[1]
-        infodict["broken_links"] = get_brokenlinks_string(nikola_cmd("check -l"))
+        infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
+        infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd("nikola check -l"))
         infodict["current_theme"] = self.siteconf.THEME
-        infodict["themes"] = get_themes_table(nikola_cmd("theme -l"),
-                                              nikola_cmd("theme --list-installed"))
-        infodict["plugins"] = get_plugins_table(nikola_cmd("plugin -l"),
-                                               nikola_cmd("plugin --list-installed"))
-
+        infodict["themes"] = get_themes_table(self.exec_cmd("nikola theme -l"),
+                                              self.exec_cmd("nikola theme --list-installed"))
+        infodict["plugins"] = get_plugins_table(self.exec_cmd("nikola plugin -l"),
+                                                self.exec_cmd("nikola plugin --list-installed"))
         infodict["shortcodes"] = get_shortcodes("shortcodes")
 
         # template format data strings
@@ -1206,6 +1211,8 @@ anymore."), "warning")
         print("download drafts = pull from src")
 
     def exec_cmd(self, command):
+        """Send command to subprocess
+           Returns subprocess.CompletedProcess value"""
         command = command.split()
         output = subprocess.run(command,
                                 stdout=subprocess.PIPE,
@@ -1215,6 +1222,7 @@ anymore."), "warning")
         return output
 
     def term_cmd(self, command):
+        """Send command to integrated terminal"""
         command += "\n"
         try:
             # Vte v2.91+
