@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.5"
+__version__ = "0.6dev"
 
 try:
     import nikola
@@ -53,7 +53,7 @@ class Handler:
     def on_newpost_clicked(self, widget):
         app.obj("entry_message").set_text("")
         app.obj("newpost_entry").set_text("")
-        app.obj("newpost_dialog").show_all()
+        app.obj("newpost_dialog").run()
 
     def on_preview_toggled(self, widget):
         if widget.get_active():
@@ -84,15 +84,35 @@ class Handler:
         app.get_window_content()
 
     def on_save_drafts(self, widget):
-        # subprocess
         # git commit && git push origin src
         # TODO setting: option to save drafts on application exit
-        print("save drafts")
-        app.drafts_upload()
+        app.exec_cmd("git checkout src")  # just to be sure, should already be on src
+        status = app.exec_cmd("git status")
+        status = status.stdout.split("\n\n")
+        # TODO use English version, see
+        # https://stackoverflow.com/questions/51293480/how-to-call-lc-all-c-sort-from-python-subprocess
+        if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
+            app.messenger("No changes, no upload.")
+        elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n" \
+                or "zum Commit vorgemerkte Änderungen" in status[1]:
+            app.obj("git_changed_files").set_label(status[-2])
+            app.obj("git_push_changes_dialog").run()
+        else:
+            app.messenger("Unknown status: {}".format(status), "warning")
 
     def on_get_drafts(self, widget):
-        # subprocess
-        # git commands you will need:
+        app.exec_cmd("git checkout src")  # just to be sure, should already be on src
+        status = app.exec_cmd("git status")
+        status = status.stdout.split("\n\n")
+        if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
+            app.exec_cmd("git pull origin src")
+            app.messenger("No local changes, pulled changes from origin/src.")
+            self.on_refresh_clicked()
+        elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n":
+            app.obj("git_unstashed_files").set_label(status[-2])
+            app.obj("git_get_changes_dialog").run()
+        else:
+            app.messenger("Unknown status: {}".format(status), "warning")
         # git show --stat
         # git diff-tree --oneline --no-commit-id --name-only -r origin/src
         # git remote update
@@ -100,8 +120,7 @@ class Handler:
         # src is the source branch, get name from conf.py
         # returns a list of filenames
         # show window with titles of changed files, cancel and proceed buttons to handle
-        print("get drafts")
-        app.drafts_download()
+
 
     # ########### vte terminal ########################
 
@@ -131,7 +150,7 @@ class Handler:
 
     def on_info_button_clicked(self, widget):
         app.messenger(_("Open About dialog"))
-        app.obj("about_dialog").show_all()
+        app.obj("about_dialog").run()
 
     # ########## link menu #########################
 
@@ -159,7 +178,7 @@ class Handler:
 
     def on_load_conf_activate(self, widget):
         app.messenger(_("Choose configuration file to read"))
-        app.obj("choose_conf_file").show_all()
+        app.obj("choose_conf_file").run()
 
     def on_add_bookmark_activate(self, widget):
         # add title and location to bookmark dict
@@ -189,15 +208,16 @@ class Handler:
             except AttributeError:
                 app.messenger(_("Working Nikola configuration required"),
                               "warning")
-                app.obj("config_info").show_all()
+                app.obj("config_info").run()
         else:
             app.messenger(_("Working Nikola configuration required"), "warning")
-            app.obj("config_info").show_all()
+            app.obj("config_info").run()
         self.on_window_close(widget)
 
     # ############## new post dialog ############
 
     # TODO catch console output and send some message to log
+    # TODO convert to MessageDialog
     def on_newpost_dialog_response(self, widget, response):
         if response == 0:
             if app.obj("newpost_entry").get_text() == "":
@@ -230,6 +250,44 @@ class Handler:
 
     def on_newpost_entry_activate(self, widget):
         self.on_newpost_dialog_response(app.obj("newpost_dialog"), 0)
+
+    # ############## upload drafts to GitHub dialog ############
+
+    def on_git_push_changes_dialog_response(self, widget, response):
+        if response == -5:
+            #message = app.exec_cmd("git add .")
+            #print(message.stdout)
+            #message = app.exec_cmd("git commit -m \"NoN auto commit\"")
+            #print(message.stdout)
+            app.term_cmd("git add .")
+            app.term_cmd("git commit -m \"NoN auto commit.\"")
+            app.term_cmd("git push origin src")
+            app.messenger("Pushed changes to origin/src")
+        else:
+            app.messenger("Uploading drafts canceled.")
+        self.on_window_close(widget)
+
+    # ############## download drafts from GitHub dialog ############
+
+    def on_git_get_changes_dialog_response(self, widget, response):
+        if response == -3:
+            # TODO stash changes and pull
+            app.messenger("Execute git stash & git pull origin src & git stash pop")
+        elif response == -2:
+            app.exec_cmd("git checkout -- .")
+            app.exec_cmd("git pull origin src")
+            #discard = app.exec_cmd("git checkout -- .")
+            #print(discard.stdout)
+            #print(discard.stderr)
+            #pull_status = app.exec_cmd("git pull")
+            #pull_status = app.exec_cmd("git pull")
+            #app.obj("git_conflict_message").set_text(pull_status.stdout)
+            #app.obj("git_conflict_message_err").set_text(pull_status.stderr)
+            #app.obj("git_conflict_dialog").run()
+            app.messenger("Pulled files from origin/src.")
+        else:
+            app.messenger("Downloading drafts canceled.")
+        self.on_window_close(widget)
 
     # ############### treeview rows activated ###############
 
@@ -547,10 +605,10 @@ class NiApp:
             self.messenger(_("The chosen Nikola instance isn't here \
 anymore."), "warning")
             self.non_config["wdir"] = None
-            self.obj("choose_conf_file").show_all()
+            self.obj("choose_conf_file").run()
         except TypeError as e:
             self.messenger(_("Path to working directory malformed or None."), "warning")
-            self.obj("choose_conf_file").show_all()
+            self.obj("choose_conf_file").run()
             self.wdir = os.path.expanduser("~")
 
         self.start_console(self.wdir)
@@ -1186,26 +1244,41 @@ anymore."), "warning")
         self.webview.load_uri("file://" + self.summaryfile)
 
     def run_nikola_build(self):
-        self.gui_cmd = True
-        self.obj("stack").set_visible_child(app.obj("term"))
+        #self.gui_cmd = True
+        #self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run build process"))
         self.term_cmd("nikola build")
 
     def run_nikola_github_deploy(self):
         self.run_nikola_build()
-        self.gui_cmd = True
-        self.obj("stack").set_visible_child(app.obj("term"))
+        #self.gui_cmd = True
+        #self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run deploy to GitHub command"))
         self.term_cmd("nikola github_deploy")
 
     def run_nikola_deploy(self):
         self.run_nikola_build()
-        self.gui_cmd = True
+        #self.gui_cmd = True
         self.messenger(_("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
 
     def drafts_upload(self):
         print("upload drafts = push to src")
+        self.exec_cmd("git checkout src")   # just to be sure, should already be on src
+        status = self.exec_cmd("git status")
+        status = status.stdout.split("\n\n")
+        # TODO use English version, see
+        # https://stackoverflow.com/questions/51293480/how-to-call-lc-all-c-sort-from-python-subprocess
+        if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
+            print("keine Änderungen")
+        elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n":
+            print("add and commit changes first")
+            #files = status[-2].split("\n")
+            #print(files)
+
+        else:
+            print("Unknown status: {}".format(status))
+
 
     def drafts_download(self):
         print("download drafts = pull from src")
@@ -1223,6 +1296,8 @@ anymore."), "warning")
 
     def term_cmd(self, command):
         """Send command to integrated terminal"""
+        self.gui_cmd = True
+        self.obj("stack").set_visible_child(app.obj("term"))
         command += "\n"
         try:
             # Vte v2.91+
