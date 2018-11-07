@@ -36,20 +36,21 @@
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
  * [Python-Markdown](https://python-markdown.github.io/) for Python 3
- * recommended: Git
+ * recommended: Git (it's probably already installed)
+ * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
 
 #### PREPARING ARCHLINUX AND ITS RELATIVES
 
 The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and Mate desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
 ``` bash
-$ sudo pacman -S nikola python-yaml
+$ sudo pacman -S nikola python-yaml python-setuptools
 ```
 
 #### PREPARING UBUNTU 18.04 LTS
 
 ``` bash
-$ sudo apt-get install gir1.2-webkit2-4.0 python3-pip
+$ sudo apt-get install gir1.2-webkit2-4.0 python3-pip python3-setuptools
 ```
 
 Currently there is no Nikola package in the Ubuntu reposities available so you install via pip (which is the recommended install method anyway) with all dependencies included:

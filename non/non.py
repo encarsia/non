@@ -34,6 +34,7 @@ import shutil
 import subprocess
 import sys
 import time
+import webbrowser
 import yaml
 
 _ = gettext.gettext
@@ -58,13 +59,7 @@ class Handler:
     def on_preview_toggled(self, widget):
         if widget.get_active():
             app.messenger(_("Open preview in standard web browser"))
-            # nikola is affected by a bug in the Python webbrowser
-            # package: https://bugs.python.org/issue34238
-            # TODO: replace subprocess commands with webbrowser package
-            # when package is fixed
-            # use where links are opened
-            self.serve = subprocess.Popen(["nikola", "serve"])
-            subprocess.run(["xdg-open", "http://localhost:8000"])
+            self.serve = subprocess.Popen(["nikola", "serve", "-b"])
         else:
             # stop local server when untoggling button
             app.messenger(_("Stop preview"))
@@ -107,7 +102,7 @@ class Handler:
         if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
             app.exec_cmd("git pull origin src")
             app.messenger("No local changes, pulled changes from origin/src.")
-            self.on_refresh_clicked()
+            self.on_refresh_clicked(None)
         elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n":
             app.obj("git_unstashed_files").set_label(status[-2])
             app.obj("git_get_changes_dialog").run()
@@ -156,19 +151,19 @@ class Handler:
 
     def on_ref_handbook_activate(self, widget):
         app.messenger(_("Open Nikola handbook in web browser"))
-        subprocess.run(['xdg-open', "https://getnikola.com/handbook.html"])
+        webbrowser.open("https://getnikola.com/handbook.html")
 
     def on_ref_rest_markup_activate(self, widget):
         app.messenger(_("Open reST syntax reference in web browser"))
-        subprocess.run(['xdg-open', "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html"])
+        webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html")
 
     def on_ref_rest_dir_activate(self, widget):
         app.messenger(_("Open reST directives in web browser"))
-        subprocess.run(['xdg-open', "http://docutils.sourceforge.net/docs/ref/rst/directives.html"])
+        webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/directives.html")
 
     def on_ref_md_activate(self, widget):
         app.messenger(_("Open Markdown syntax reference in web browser"))
-        subprocess.run(['xdg-open', "https://www.markdownguide.org/basic-syntax"])
+        webbrowser.open("https://www.markdownguide.org/basic-syntax")
 
     # ########### menu #############################
 
@@ -235,7 +230,6 @@ class Handler:
                 else:
                     format = "--format=rest"
 
-                #print(["nikola",
                 subprocess.run(["nikola",
                                 new_site_obj,
                                 "--title={}".format(app.obj(
@@ -255,12 +249,8 @@ class Handler:
 
     def on_git_push_changes_dialog_response(self, widget, response):
         if response == -5:
-            #message = app.exec_cmd("git add .")
-            #print(message.stdout)
-            #message = app.exec_cmd("git commit -m \"NoN auto commit\"")
-            #print(message.stdout)
-            app.term_cmd("git add .")
-            app.term_cmd("git commit -m \"NoN auto commit.\"")
+            app.exec_cmd("git add .")
+            app.exec_cmd("git commit -m \"NoN auto commit.\"")
             app.term_cmd("git push origin src")
             app.messenger("Pushed changes to origin/src")
         else:
@@ -271,9 +261,12 @@ class Handler:
 
     def on_git_get_changes_dialog_response(self, widget, response):
         if response == -3:
-            # TODO stash changes and pull
+            app.exec_cmd("git stash")
+            app.exec_cmd("git pull origin src")
+            app.exec_cmd("git stash pop")           
             app.messenger("Execute git stash & git pull origin src & git stash pop")
         elif response == -2:
+            self.on_window_close(widget)
             app.exec_cmd("git checkout -- .")
             app.exec_cmd("git pull origin src")
             #discard = app.exec_cmd("git checkout -- .")
@@ -286,8 +279,9 @@ class Handler:
             #app.obj("git_conflict_dialog").run()
             app.messenger("Pulled files from origin/src.")
         else:
+            self.on_window_close(widget)
             app.messenger("Downloading drafts canceled.")
-        self.on_window_close(widget)
+        self.on_refresh_clicked(None)
 
     # ############### treeview rows activated ###############
 
@@ -423,9 +417,7 @@ class Handler:
 
     def on_open_pp_web(self, widget, title, slug, sub):
         app.messenger(_("Open '{}' in web browser").format(title))
-        subprocess.run(['xdg-open',
-                        "{}/{}/{}".format(app.siteconf.SITE_URL, sub, slug)]
-                       )
+        webbrowser.open("{}/{}/{}".format(app.siteconf.SITE_URL, sub, slug))
 
     def on_open_metafile(self, widget, meta, sub):
         app.messenger("Edit metafile: {}".format(meta))
@@ -652,6 +644,7 @@ anymore."), "warning")
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts")
         sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages")
         self.messenger(_("Collected data for Nikola site."))
+        # TODO dump to file
         return sitedata
 
     def update_sitedata(self, sitedata):
