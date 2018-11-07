@@ -644,8 +644,8 @@ anymore."), "warning")
     def create_sitedata(self):
         # read all posts/pages and store in sitedata dict
         sitedata = dict()
-        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts")
-        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages")
+        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_src_content("posts")
+        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_src_content("pages")
         self.messenger(_("Collected data for Nikola site."))
         # TODO dump to file
         return sitedata
@@ -663,17 +663,17 @@ anymore."), "warning")
                 else:
                     filelist[sub].append(f)
                     self.messenger(_("Add new article data for: {}.").format(f))
-            # delete dict items of removed rst source files
+            # delete dict items of removed source files
             for p in sitedata[sub].copy():
                 if p not in os.listdir(sub):
                     self.messenger(_("Delete data for: {}.").format(p))
                     del sitedata[sub][p]
 
-        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_rst_content("posts",
+        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_src_content("posts",
                         d=sitedata["posts"],
                         update=filelist["posts"],
                         )
-        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_rst_content("pages",
+        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_src_content("pages",
                         sitedata["pages"],
                         update=filelist["pages"],
                         )
@@ -820,8 +820,8 @@ anymore."), "warning")
             # #### add information to notebook tab datastores #####
             # posts/pages tabs are based on liststores and created from dict
             # (see above)
-            self.get_tree_data_rst("store_posts", self.posts)
-            self.get_tree_data_rst("store_pages", self.pages)
+            self.get_tree_data_src("store_posts", self.posts)
+            self.get_tree_data_src("store_pages", self.pages)
             # files/listings/images are based on treestores, data rows are appended
             # without dict usage
             self.get_tree_data("store_listings", "listings", self.output_folder)
@@ -857,14 +857,14 @@ anymore."), "warning")
         except AttributeError:
             self.messenger(_("Failed to load data, choose another conf.py"), "error")
 
-    def get_rst_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
+    def get_src_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
             files = [x for x in os.listdir(subdir) if not (x.startswith(".") or x.endswith(".meta"))]
         else:
             files = update
         for f in files:
             title, slug, date, tagstr, tags, catstr, cats, metafile = \
-                self.read_rst_files(subdir, f)
+                self.read_src_files(subdir, f)
             # detect language
             if len(self.translation_lang) > 0:
                 if f.split(".")[1] == "rst" or f.split(".")[1] == "md":
@@ -923,12 +923,11 @@ anymore."), "warning")
         for key in d:
             if d[key]["lang"] is not "":
                 lang = d[key]["lang"]
-                default_rst = key.replace(".{}.".format(lang), ".")
-                d[default_rst]["transl"].append(lang)
+                default_src = key.replace(".{}.".format(lang), ".")
+                d[default_src]["transl"].append(lang)
         return d, list(t), list(c)
 
-    def read_rst_files(self, subdir, file):
-        # TODO "rst" misleading because input files not limited to reStructuredText (anymore)
+    def read_src_files(self, subdir, file):
         date = datetime.datetime.today().strftime("%Y-%m-%d")
         title, slug, tagstr, tags, catstr, cats = "", "", "", "", "", ""
         try:
@@ -969,7 +968,7 @@ anymore."), "warning")
         except FileNotFoundError:
             return False
 
-    def get_tree_data_rst(self, store, dict):
+    def get_tree_data_src(self, store, dict):
         # append only default language files to treestore
         [self.obj(store).append([dict[key]["title"],
                                  dict[key]["slug"],
