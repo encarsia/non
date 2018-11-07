@@ -84,12 +84,10 @@ class Handler:
         app.exec_cmd("git checkout src")  # just to be sure, should already be on src
         status = app.exec_cmd("git status")
         status = status.stdout.split("\n\n")
-        # TODO use English version, see
-        # https://stackoverflow.com/questions/51293480/how-to-call-lc-all-c-sort-from-python-subprocess
-        if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
+        if status[-1] == "nothing to commit, working tree clean\n":
             app.messenger("No changes, no upload.")
-        elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n" \
-                or "zum Commit vorgemerkte Änderungen" in status[1]:
+        elif status[-1] == "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n" \
+                or "Changes to be committed" in status[1]:
             app.obj("git_changed_files").set_label(status[-2])
             app.obj("git_push_changes_dialog").run()
         else:
@@ -99,11 +97,11 @@ class Handler:
         app.exec_cmd("git checkout src")  # just to be sure, should already be on src
         status = app.exec_cmd("git status")
         status = status.stdout.split("\n\n")
-        if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
+        if status[-1] == "nothing to commit, working tree clean\n":
             app.exec_cmd("git pull origin src")
             app.messenger("No local changes, pulled changes from origin/src.")
             self.on_refresh_clicked(None)
-        elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n":
+        elif status[-1] == "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n":
             app.obj("git_unstashed_files").set_label(status[-2])
             app.obj("git_get_changes_dialog").run()
         else:
@@ -452,6 +450,11 @@ class NiApp:
         self.app.connect("startup", self.on_app_startup)
         self.app.connect("activate", self.on_app_activate)
         self.app.connect("shutdown", self.on_app_shutdown)
+
+        # set environment to English to receive unlocalized return strings from Git
+        # https://stackoverflow.com/questions/51293480/how-to-call-lc-all-c-sort-from-python-subprocess
+        self.myenv = os.environ.copy()
+        self.myenv["LC_ALL"] = "C"
 
     def on_app_shutdown(self, app):
         # write config to config.yaml in case of changes
@@ -1255,27 +1258,6 @@ anymore."), "warning")
         self.messenger(_("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
 
-    def drafts_upload(self):
-        print("upload drafts = push to src")
-        self.exec_cmd("git checkout src")   # just to be sure, should already be on src
-        status = self.exec_cmd("git status")
-        status = status.stdout.split("\n\n")
-        # TODO use English version, see
-        # https://stackoverflow.com/questions/51293480/how-to-call-lc-all-c-sort-from-python-subprocess
-        if status[-1] == "nichts zu committen, Arbeitsverzeichnis unverändert\n":
-            print("keine Änderungen")
-        elif status[-1] == "keine Änderungen zum Commit vorgemerkt (benutzen Sie \"git add\" und/oder \"git commit -a\")\n":
-            print("add and commit changes first")
-            #files = status[-2].split("\n")
-            #print(files)
-
-        else:
-            print("Unknown status: {}".format(status))
-
-
-    def drafts_download(self):
-        print("download drafts = pull from src")
-
     def exec_cmd(self, command):
         """Send command to subprocess
            Returns subprocess.CompletedProcess value"""
@@ -1284,6 +1266,7 @@ anymore."), "warning")
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 encoding="utf-8",
+                                env=self.myenv,
                                 )
         return output
 
