@@ -209,10 +209,8 @@ class Handler:
 
     # ############## new post dialog ############
 
-    # TODO catch console output and send some message to log
-    # TODO convert to MessageDialog
     def on_newpost_dialog_response(self, widget, response):
-        if response == 0:
+        if response == -5:
             if app.obj("newpost_entry").get_text() == "":
                 app.messenger(_("Create new post"))
                 app.obj("entry_message").set_text(_("Title must not be empty."))
@@ -228,12 +226,12 @@ class Handler:
                 else:
                     format = "--format=rest"
 
-                subprocess.run(["nikola",
-                                new_site_obj,
-                                "--title={}".format(app.obj(
-                                    "newpost_entry").get_text()),
-                                format,
-                                ])
+                # return string maybe of use later so I leave it that way
+                status = app.exec_cmd("nikola {} --title={} {}".format(new_site_obj,
+                                                                       app.obj("newpost_entry").get_text(),
+                                                                       format,
+                                                                       ))
+
                 app.messenger("New post created: {}".format(app.obj("newpost_entry").get_text()))
                 app.update_sitedata(app.sitedata)
                 app.get_window_content()
@@ -647,7 +645,7 @@ anymore."), "warning")
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_src_content("posts")
         sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_src_content("pages")
         self.messenger(_("Collected data for Nikola site."))
-        # TODO dump to file
+        self.dump_sitedata_file()
         return sitedata
 
     def update_sitedata(self, sitedata):
