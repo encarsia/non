@@ -609,14 +609,10 @@ anymore."), "warning")
         self.get_window_content()
 
     def add_dialogbuttons(self, dialog):
-        # add cancel/apply buttons to dialog to avoid Gtk warning
-        button = Gtk.Button.new_with_label(_("Cancel"))
-        button.set_property("can-default", True)
-        dialog.add_action_widget(button, Gtk.ResponseType.CANCEL)
-
-        button = Gtk.Button.new_with_label(_("OK"))
-        button.set_property("can-default", True)
-        dialog.add_action_widget(button, Gtk.ResponseType.OK)
+        # don't ask me why but add_action_widget doesn't work anymore
+        # this is shorter anyway
+        dialog.add_buttons("Cancel", Gtk.ResponseType.CANCEL,
+                           "OK", Gtk.ResponseType.OK)
 
     def add_dialogokbutton(self, dialog):
         # add ok button to about dialog to avoid Gtk warning

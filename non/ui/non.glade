@@ -1608,7 +1608,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="create_folders">False</property>
     <property name="filter">filefilter1</property>
     <property name="preview_widget_active">False</property>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
+    <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>
     <child type="titlebar">
@@ -1794,9 +1794,25 @@ This will only upload source files and not build and deploy the site.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="git_unstashed_files">
+          <object class="GtkScrolledWindow">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="shadow_type">in</property>
+            <property name="min_content_height">100</property>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="git_unstashed_files">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -1844,14 +1860,30 @@ This is done via the "Upload to GitHub" function or when deploying the site.
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="git_changed_files">
+          <object class="GtkScrolledWindow">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="shadow_type">in</property>
+            <property name="min_content_height">100</property>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="git_changed_files">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
