@@ -11,12 +11,13 @@ except (ModuleNotFoundError, ImportError) as e:
 
 try:
     import gi
+
     gi.require_version('Gtk', '3.0')
     gi.require_version('Vte', '2.91')
     gi.require_version('WebKit2', '4.0')
     from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
 except (ModuleNotFoundError, ImportError) as e:
-    print(_("Unable to load Python bindings for GObject Introspection."))
+    print("Unable to load Python bindings for GObject Introspection.")
     raise
 
 import datetime
@@ -79,13 +80,15 @@ class Handler:
         app.get_window_content()
 
     def on_save_drafts(self, widget):
+        # just to be sure, should already be on src
+        app.exec_cmd("git checkout src")
         # git commit && git push origin src
-        app.exec_cmd("git checkout src")  # just to be sure, should already be on src
         status = app.exec_cmd("git status")
         status = status.stdout.split("\n\n")
         if status[-1] == "nothing to commit, working tree clean\n":
             app.messenger(_("No changes, no upload."))
-        elif status[-1] == "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n" \
+        elif status[-1] == "no changes added to commit (use \"git add\" \
+and/or \"git commit -a\")\n" \
                 or "Changes to be committed" in status[1]:
             app.obj("git_changed_files").set_label(status[-2])
             app.obj("git_push_changes_dialog").run()
@@ -93,14 +96,17 @@ class Handler:
             app.messenger(_("Unknown status: {}").format(status), "warning")
 
     def on_get_drafts(self, widget):
-        app.exec_cmd("git checkout src")  # just to be sure, should already be on src
+        # just to be sure, should already be on src
+        app.exec_cmd("git checkout src")
         status = app.exec_cmd("git status")
         status = status.stdout.split("\n\n")
         if status[-1] == "nothing to commit, working tree clean\n":
             app.exec_cmd("git pull origin src")
-            app.messenger(_("No local changes, pulled changes from origin/src."))
+            app.messenger(_("No local changes, pulled changes \
+from origin/src."))
             self.on_refresh_clicked(None)
-        elif status[-1] == "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n":
+        elif status[-1] == "no changes added to commit (use \"git add\" \
+and/or \"git commit -a\")\n":
             app.obj("git_unstashed_files").set_label(status[-2])
             app.obj("git_get_changes_dialog").run()
         else:
@@ -111,8 +117,8 @@ class Handler:
         # git diff src:posts/file.rst origin/src:posts/file.rst
         # src is the source branch, get name from conf.py
         # returns a list of filenames
-        # show window with titles of changed files, cancel and proceed buttons to handle
-
+        # show window with titles of changed files, cancel and proceed
+        # buttons to handle
 
     # ########### vte terminal ########################
 
@@ -152,11 +158,13 @@ class Handler:
 
     def on_ref_rest_markup_activate(self, widget):
         app.messenger(_("Open reST syntax reference in web browser"))
-        webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html")
+        webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/\
+restructuredtext.html")
 
     def on_ref_rest_dir_activate(self, widget):
         app.messenger(_("Open reST directives in web browser"))
-        webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/directives.html")
+        webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/\
+directives.html")
 
     def on_ref_md_activate(self, widget):
         app.messenger(_("Open Markdown syntax reference in web browser"))
@@ -177,7 +185,7 @@ class Handler:
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
         app.bookmarks.update(bookmark)
         app.messenger(_("New bookmark added for {}.").format(
-                                                    app.siteconf.BLOG_TITLE))
+            app.siteconf.BLOG_TITLE))
         app.check_nonconf()
 
     def on_gen_sum_activate(self, widget):
@@ -195,14 +203,16 @@ class Handler:
         if response == -5:
             try:
                 app.dump_sitedata_file()
-                app.non_config["wdir"] = os.path.split(widget.get_filename())[0]
+                app.non_config["wdir"] = os.path.split(
+                                                    widget.get_filename())[0]
                 app.check_nonconf()
             except AttributeError:
                 app.messenger(_("Working Nikola configuration required"),
                               "warning")
                 app.obj("config_info").run()
         else:
-            app.messenger(_("Working Nikola configuration required"), "warning")
+            app.messenger(_("Working Nikola configuration required"),
+                          "warning")
             app.obj("config_info").run()
         self.on_window_close(widget)
 
@@ -212,7 +222,8 @@ class Handler:
         if response == -5:
             if app.obj("newpost_entry").get_text() == "":
                 app.messenger(_("Create new post"))
-                app.obj("entry_message").set_text(_("Title must not be empty."))
+                app.obj("entry_message").set_text(
+                                                _("Title must not be empty."))
                 app.obj("newpost_entry").grab_focus()
             else:
                 self.on_window_close(widget)
@@ -226,12 +237,14 @@ class Handler:
                     format = "--format=rest"
 
                 # return string maybe of use later so I leave it that way
-                status = app.exec_cmd("nikola {} --title={} {}".format(new_site_obj,
-                                                                       app.obj("newpost_entry").get_text(),
-                                                                       format,
-                                                                       ))
+                status = app.exec_cmd("nikola {} --title={} {}".format(
+                                        new_site_obj,
+                                        app.obj("newpost_entry").get_text(),
+                                        format,
+                                       ))
 
-                app.messenger(_("New post created: {}".format(app.obj("newpost_entry")).get_text()))
+                app.messenger(_("New post created: {}").format(
+                                        app.obj("newpost_entry")).get_text())
                 app.update_sitedata(app.sitedata)
                 app.get_window_content()
         else:
@@ -258,17 +271,18 @@ class Handler:
         if response == -3:
             app.exec_cmd("git stash")
             app.exec_cmd("git pull origin src")
-            app.exec_cmd("git stash pop")           
-            app.messenger(_("Execute git stash & git pull origin src & git stash pop"))
+            app.exec_cmd("git stash pop")
+            app.messenger(_("Execute git stash & git pull origin src & git \
+                            stash pop"))
         elif response == -2:
             self.on_window_close(widget)
             app.exec_cmd("git checkout -- .")
             app.exec_cmd("git pull origin src")
-            #discard = app.exec_cmd("git checkout -- .")
-            #pull_status = app.exec_cmd("git pull")
-            #app.obj("git_conflict_message").set_text(pull_status.stdout)
-            #app.obj("git_conflict_message_err").set_text(pull_status.stderr)
-            #app.obj("git_conflict_dialog").run()
+            # discard = app.exec_cmd("git checkout -- .")
+            # pull_status = app.exec_cmd("git pull")
+            # app.obj("git_conflict_message").set_text(pull_status.stdout)
+            # app.obj("git_conflict_message_err").set_text(pull_status.stderr)
+            # app.obj("git_conflict_dialog").run()
             app.messenger(_("Pulled files from origin/src."))
         else:
             self.on_window_close(widget)
@@ -341,7 +355,8 @@ class Handler:
     def on_view_translations_button_release_event(self, widget, event):
         popup = Gtk.Menu()
         for l in app.translation_lang:
-            item = Gtk.MenuItem.new_with_label(_("Create translation for {}".format(l)))
+            item = Gtk.MenuItem.new_with_label(
+                                    _("Create translation for {}".format(l)))
             # selected row already caught by on_treeview_selection_changed func
             item.connect("activate", self.on_create_translation, l)
             popup.append(item)
@@ -364,7 +379,8 @@ class Handler:
             shutil.copy(
                 os.path.join(subdir, file),
                 os.path.join(subdir, trans_file))
-            app.messenger(_("Create translation file for {}").format(row[pos][0]))
+            app.messenger(_("Create translation file for {}").format(
+                                                                row[pos][0]))
             app.update_sitedata(app.sitedata)
             app.get_window_content()
 
@@ -388,13 +404,16 @@ class Handler:
                 has_meta = "yes"
             else:
                 has_meta = "no"
-            app.messenger(_("Input file format: {}. Separate metafile: {}.").format(filename.split("."))[1], has_meta)
+            app.messenger(
+                _("Input file format: {}. Separate metafile: {}.").format(
+                                            filename.split("."))[1], has_meta)
         # only generate popup menu on right click
         elif event.button == 3:
             popup = Gtk.Menu()
             item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
-            # selected row already caught by on_treeview_selection_changed function
-            # I don't know what to do with this information but I'm afraid to delete it
+            # selected row already caught by on_treeview_selection_changed
+            # function. I don't know what to do with this information but I'm
+            # afraid to delete it
             item.connect("activate", self.on_open_pp_web, title, slug, sub)
             popup.append(item)
             if meta is not "":
@@ -405,7 +424,8 @@ class Handler:
             popup.popup(None, None, None, None, event.button, event.time)
             return True
         else:
-            app.messenger(_("No function (button event: {})").format(button.event), "debug")
+            app.messenger(_("No function (button event: {})").format(
+                                                        event.button), "debug")
 
     def on_open_pp_web(self, widget, title, slug, sub):
         app.messenger(_("Open '{}' in web browser").format(title))
@@ -425,7 +445,7 @@ class NiApp:
         setproctitle.setproctitle("NoN")
         self.install_dir = os.getcwd()
         self.user_app_dir = os.path.join(os.path.expanduser("~"),
-                                          ".non",
+                                         ".non",
                                          )
         self.conf_file = os.path.join(self.user_app_dir, "config.yaml")
 
@@ -445,14 +465,17 @@ class NiApp:
         self.app.connect("activate", self.on_app_activate)
         self.app.connect("shutdown", self.on_app_shutdown)
 
-        # set environment to English to receive unlocalized return strings from Git
-        # https://stackoverflow.com/questions/51293480/how-to-call-lc-all-c-sort-from-python-subprocess
+        # set environment to English to receive unlocalized return strings
+        # from Git
+        # https://stackoverflow.com/questions/51293480/
+        # how-to-call-lc-all-c-sort-from-python-subprocess
         self.myenv = os.environ.copy()
         self.myenv["LC_ALL"] = "C"
 
     def on_app_shutdown(self, app):
         # write config to config.yaml in case of changes
-        yaml.dump(self.non_config, open(self.conf_file, "w"), default_flow_style=False)
+        yaml.dump(self.non_config, open(self.conf_file, "w"),
+                  default_flow_style=False)
         # write site data dict to json file
         self.dump_sitedata_file()
         self.app.quit()
@@ -470,8 +493,9 @@ class NiApp:
         self.log.debug("Application version: {}".format(__version__))
         self.log.debug("Application executed from {}".format(self.install_dir))
         self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
-                                                    Gtk.get_minor_version(),
-                                                    Gtk.get_micro_version()))
+                                                       Gtk.get_minor_version(),
+                                                       Gtk.get_micro_version(),
+                                                       ))
         self.loglevels = {"critical": 50,
                           "error": 40,
                           "warning": 30,
@@ -496,7 +520,9 @@ class NiApp:
         GObject.type_register(Vte.Terminal)
 
         builder.set_translation_domain(appname)
-        [builder.add_from_file(os.path.join(self.install_dir, "ui", f)) for f in gladefile_list]
+        [builder.add_from_file(os.path.join(self.install_dir,
+                                            "ui",
+                                            f)) for f in gladefile_list]
         builder.connect_signals(Handler())
         self.obj = builder.get_object
 
@@ -517,7 +543,7 @@ class NiApp:
         # load config from config.yaml or start with new
         if not os.path.isfile(self.conf_file):
             self.messenger(_("No config available..."))
-            self.non_config = {"wdir" : None,
+            self.non_config = {"wdir": None,
                                "bookmarks": dict(),
                                }
             self.messenger(_("Empty config created..."))
@@ -576,7 +602,8 @@ class NiApp:
         # add menu items for bookmarks
         for b in self.bookmarks:
             if self.wdir == self.bookmarks[b]:
-                item = Gtk.MenuItem.new_with_label(_("Bookmark: {} (active)").format(b))
+                item = Gtk.MenuItem.new_with_label(
+                                        _("Bookmark: {} (active)").format(b))
                 item.set_sensitive(False)
             else:
                 item = Gtk.MenuItem.new_with_label(_("Bookmark: {}").format(b))
@@ -599,13 +626,13 @@ class NiApp:
             self.obj("add_bookmark").set_sensitive(True)
             # refresh window
         except FileNotFoundError:
-            raise
             self.messenger(_("The chosen Nikola instance isn't here \
 anymore."), "warning")
             self.non_config["wdir"] = None
             self.obj("choose_conf_file").run()
         except TypeError as e:
-            self.messenger(_("Path to working directory malformed or None."), "warning")
+            self.messenger(_("Path to working directory malformed or None."),
+                           "warning")
             self.obj("choose_conf_file").run()
             self.wdir = os.path.expanduser("~")
 
@@ -643,39 +670,54 @@ anymore."), "warning")
     def create_sitedata(self):
         # read all posts/pages and store in sitedata dict
         sitedata = dict()
-        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_src_content("posts")
-        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_src_content("pages")
+        sitedata["posts"], \
+            sitedata["post_tags"], \
+            sitedata["post_cats"] = self.get_src_content("posts")
+        sitedata["pages"], \
+            sitedata["page_tags"], \
+            sitedata["page_cats"] = self.get_src_content("pages")
         self.messenger(_("Collect data of Nikola site complete."))
         self.dump_sitedata_file()
         return sitedata
 
     def update_sitedata(self, sitedata):
-        self.messenger(_("Update data file for: {}").format(self.siteconf.BLOG_TITLE))
+        self.messenger(_("Update data file for: {}").format(
+                                                    self.siteconf.BLOG_TITLE))
         filelist = dict()
         for sub in ["posts", "pages"]:
             filelist[sub] = []
-            for f in [x for x in os.listdir(sub) if not (x.startswith(".") or x.endswith(".meta"))]:
+            for f in [x for x in os.listdir(sub) if not (x.startswith(".") or
+                                                         x.endswith(".meta"))]:
                 if f in sitedata[sub].keys():
-                    if not sitedata[sub][f]["last_modified"] == os.path.getmtime(os.path.join(sub, f)):
+                    if not sitedata[sub][f]["last_modified"] == \
+                                        os.path.getmtime(os.path.join(sub, f)):
                         filelist[sub].append(f)
-                        self.messenger(_("Update article data for: {}").format(f))
+                        self.messenger(
+                                _("Update article data for: {}").format(f))
                 else:
                     filelist[sub].append(f)
-                    self.messenger(_("Add new article data for: {}.").format(f))
+                    self.messenger(
+                                _("Add new article data for: {}.").format(f))
             # delete dict items of removed source files
             for p in sitedata[sub].copy():
                 if p not in os.listdir(sub):
                     self.messenger(_("Delete data for: {}.").format(p))
                     del sitedata[sub][p]
 
-        sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_src_content("posts",
-                        d=sitedata["posts"],
-                        update=filelist["posts"],
-                        )
-        sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_src_content("pages",
-                        sitedata["pages"],
-                        update=filelist["pages"],
-                        )
+        sitedata["posts"], \
+            sitedata["post_tags"], \
+            sitedata["post_cats"] = self.get_src_content(
+                                                    "posts",
+                                                    d=sitedata["posts"],
+                                                    update=filelist["posts"],
+                                                    )
+        sitedata["pages"], \
+            sitedata["page_tags"], \
+            sitedata["page_cats"] = self.get_src_content(
+                                                    "pages",
+                                                    sitedata["pages"],
+                                                    update=filelist["pages"],
+                                                    )
         return sitedata
 
     def dump_sitedata_file(self):
@@ -704,13 +746,16 @@ anymore."), "warning")
             self.obj("pathremote").set_label(self.siteconf.SITE_URL)
             # detect multilingual sites
             self.default_lang = self.siteconf.DEFAULT_LANG
-            self.translation_lang = set([key for key in self.siteconf.TRANSLATIONS
-                                         if key != self.default_lang])
+            self.translation_lang = set([key for key in
+                                        self.siteconf.TRANSLATIONS
+                                        if key != self.default_lang])
             self.obj("lang").set_text(self.default_lang)
             self.obj("trans_lang").set_text(", ".join(str(s) for s in
                                                       self.translation_lang
-                                                      if s != self.default_lang))
-            # activate toolbar item if deploy commands for default preset exists
+                                                      if s != self.default_lang
+                                                      ))
+            # activate toolbar item if deploy commands for default preset
+            # exists
             try:
                 self.deploy_cmd = self.siteconf.DEPLOY_COMMANDS["default"]
                 self.obj("deploy").set_sensitive(True)
@@ -720,7 +765,8 @@ anymore."), "warning")
             # check for output folder, variable not set for GitHub deploy
             try:
                 self.output_folder = self.siteconf.OUTPUT_FOLDER
-                self.messenger(_("Output folder: '{}'").format(self.output_folder))
+                self.messenger(_("Output folder: '{}'").format(
+                                                        self.output_folder))
             except AttributeError:
                 self.output_folder = "output"
                 self.messenger(_("Output folder is set to default 'output'"))
@@ -731,22 +777,25 @@ anymore."), "warning")
                 self.gh_rem = self.siteconf.GITHUB_REMOTE_NAME
                 self.obj("get_drafts").set_sensitive(True)
                 self.obj("save_drafts").set_sensitive(True)
-                self.messenger(_("Up-/download drafts to/from GitHub is enabled."))
+                self.messenger(_("Up-/download drafts to/from GitHub is \
+enabled."))
             except AttributeError:
                 self.obj("save_drafts").set_sensitive(False)
                 self.obj("get_drafts").set_sensitive(False)
-                self.messenger(_("This site is not configured to use GitHub, up-/downloading drafts is deactivated."))
+                self.messenger(_("This site is not configured to use GitHub, \
+up-/downloading drafts is deactivated."))
 
             # check if folder for files, listings and images exist to avoid
             # FileNotFoundError, this also has to be done only on startup
             for subdir in ["files", "listings", "images"]:
                 if not os.path.isdir(os.path.join(self.wdir, subdir)):
-                    self.messenger(_("{} doesn't exist...create...").format(subdir))
+                    self.messenger(_("{} doesn't exist...create...").format(
+                                                                    subdir))
                     os.mkdir(os.path.join(self.wdir, subdir))
 
             # set 'add bookmark' menu item inactive if bookmark already
             # exists for wdir
-            if  self.siteconf.BLOG_TITLE in self.bookmarks:
+            if self.siteconf.BLOG_TITLE in self.bookmarks:
                 self.obj("add_bookmark").set_sensitive(False)
 
             # set checkbutton in new page dialog active
@@ -771,14 +820,16 @@ anymore."), "warning")
                 self.sitedata = self.load_sitedata(self.datafile)
             else:
                 self.sitedata = self.create_sitedata()
-            
+
             # load or create summary page for notebook tab
-            self.summaryfile = os.path.join(self.user_app_dir, filename + ".html")
+            self.summaryfile = os.path.join(self.user_app_dir,
+                                            filename + ".html")
             if os.path.isfile(self.summaryfile):
                 self.messenger(_("Found summary page."))
                 self.webview.load_uri("file://" + self.summaryfile)
             else:
-                self.messenger(_("No summary file to load, let's generate one!"))
+                self.messenger(_("No summary file to load, let's generate \
+one!"))
                 self.generate_summary()
 
         except FileNotFoundError:
@@ -795,7 +846,8 @@ anymore."), "warning")
 
         try:
             # posts/pages are dictionaries
-            # tags/categories are sets to avoid duplicates but can only be stored as list in JSON file
+            # tags/categories are sets to avoid duplicates but can only be
+            # stored as list in JSON file
             self.posts = self.sitedata["posts"]
             post_tags = set(self.sitedata["post_tags"])
             post_cats = set(self.sitedata["post_cats"])
@@ -819,9 +871,10 @@ anymore."), "warning")
             # (see above)
             self.get_tree_data_src("store_posts", self.posts)
             self.get_tree_data_src("store_pages", self.pages)
-            # files/listings/images are based on treestores, data rows are appended
-            # without dict usage
-            self.get_tree_data("store_listings", "listings", self.output_folder)
+            # files/listings/images are based on treestores, data rows are
+            # appended without dict usage
+            self.get_tree_data("store_listings", "listings",
+                               self.output_folder)
             self.get_tree_data("store_files", "files", self.output_folder)
             self.get_tree_data("store_images", "images", self.output_folder)
             # tags/category tab
@@ -844,19 +897,23 @@ anymore."), "warning")
             self.get_tree_data_translations("store_translation", self.pages)
 
             # sort tags according to number of occurrences
-            self.obj("store_tags").set_sort_column_id(4, Gtk.SortType.DESCENDING)
-            self.obj("store_cats").set_sort_column_id(4, Gtk.SortType.DESCENDING)
+            self.obj("store_tags").set_sort_column_id(4,
+                                                      Gtk.SortType.DESCENDING)
+            self.obj("store_cats").set_sort_column_id(4,
+                                                      Gtk.SortType.DESCENDING)
             self.obj("store_translation").set_sort_column_id(
                 3, Gtk.SortType.DESCENDING)
 
             # expands all rows in translation tab
             self.obj("view_translations").expand_all()
         except AttributeError:
-            self.messenger(_("Failed to load data, choose another conf.py"), "error")
+            self.messenger(_("Failed to load data, choose another conf.py"),
+                           "error")
 
     def get_src_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
         if not update:
-            files = [x for x in os.listdir(subdir) if not (x.startswith(".") or x.endswith(".meta"))]
+            files = [x for x in os.listdir(subdir) if not (x.startswith(".") or
+                     x.endswith(".meta"))]
         else:
             files = update
         for f in files:
@@ -875,8 +932,8 @@ anymore."), "warning")
             # check for equal file in output dir, mark bold (loaded by
             # treemodel) when False
             for od in {slug, f.split(".")[0]}:
-                if self.compare_output_dir(od, subdir, f, f.split(".")[1], lang,
-                                           self.output_folder):
+                if self.compare_output_dir(od, subdir, f, f.split(".")[1],
+                                           lang, self.output_folder):
                     fontstyle = "normal"
                     break
                 else:
@@ -899,24 +956,25 @@ anymore."), "warning")
             # add dictionary entry for file
             # set filename as key for easy file comparison on datafile update
             d[f] = {"title": title,
-                         "slug": slug,
-                         "file": f,
-                         "date": date,
-                         "ger_date": datetime.datetime.strptime(
-                            date, '%Y-%m-%d').strftime('%d.%m.%Y'),
-                         "tags": tags,
-                         "tagstr": tagstr,
-                         "category": cats,
-                         "catstr": catstr,
-                         "fontstyle": fontstyle,
-                         "sub": subdir,
-                         "lang": lang,
-                         "transl": [],
-                         "last_modified": os.path.getmtime(os.path.join(subdir, f)),
-                         "metafile": metafile,
-                         }
+                    "slug": slug,
+                    "file": f,
+                    "date": date,
+                    "ger_date": datetime.datetime.strptime(
+                        date, '%Y-%m-%d').strftime('%d.%m.%Y'),
+                    "tags": tags,
+                    "tagstr": tagstr,
+                    "category": cats,
+                    "catstr": catstr,
+                    "fontstyle": fontstyle,
+                    "sub": subdir,
+                    "lang": lang,
+                    "transl": [],
+                    "last_modified": os.path.getmtime(os.path.join(subdir, f)),
+                    "metafile": metafile,
+                    }
         # add available translation to default file entry
-        # ex: articlename.lang.rst > lang is added to transl entry of articlename.rst
+        # ex: articlename.lang.rst > lang is added to transl entry of
+        # articlename.rst
         for key in d:
             if d[key]["lang"] is not "":
                 lang = d[key]["lang"]
@@ -1076,7 +1134,7 @@ anymore."), "warning")
                                          dict[key]["fontstyle"]])
                  for child in dict if
                  dict[child]["file"].split(".")[0] == dict[key]["file"].split(
-                    ".")[0] and dict[child]["lang"] != ""]
+                     ".")[0] and dict[child]["lang"] != ""]
 
     def get_filelist(self, subdir, output):
         d = {}
@@ -1104,13 +1162,15 @@ anymore."), "warning")
         return d
 
     def generate_summary(self):
-        """Collect site data and generate HTML page which is displayed in the summary tab"""
+        """Collect site data and generate HTML page which is displayed in the
+           summary tab"""
 
         def get_dir_size(folder):
             total = 0
             counter = 0
             for path, dirs, files in os.walk(folder):
-                counter += len([name for name in os.listdir(path) if os.path.isfile(os.path.join(path, name))])
+                counter += len([name for name in os.listdir(path) if
+                                os.path.isfile(os.path.join(path, name))])
                 for f in files:
                     fp = os.path.join(path, f)
                     total += os.path.getsize(fp)
@@ -1127,26 +1187,27 @@ anymore."), "warning")
             string = ""
             for line in output.stderr.split("\n"):
                 if "WARNING: check:" in line:
-                    string += " * {}\n".format(line.split("WARNING: check: ")[1])
+                    string += " * {}\n".format(
+                                            line.split("WARNING: check: ")[1])
             if string == "":
                 return "> (no broken links)"
             else:
                 return string
-        
+
         def get_themes_table(available, installed):
             # chop the output
             available = available.stdout.split("\n")[2:-1]
             installed = installed.stdout.split("\n")[2:-1]
             # generate a dict from a list with string value
             d = dict.fromkeys(available, "{} | | | x\n")
-            
+
             for i in installed:
                 name, path = i.split(" at ")
                 if path.startswith("themes"):
                     d[name] = "{} | x | | \n"
                 else:
                     d[name] = "{} | | x | \n"
-            
+
             string = _("""available | local | systemwide | not installed
 --- |:---:|:---:|:---:\n""")
             for line in d:
@@ -1161,21 +1222,21 @@ anymore."), "warning")
             installed = installed.stdout.split("\n")[2:-4]
             # generate a dict from a list with string value
             d = dict.fromkeys(available, "{} | | | x\n")
-            
+
             for i in installed:
                 name, path = i.split(" at ")
                 if path.startswith("/home"):
                     d[name] = "{} | x | | \n"
                 else:
                     d[name] = "{} | | x | \n"
-            
+
             string = _("""available | local | systemwide | not installed
 --- |:---:|:---:|:---:\n""")
             for line in d:
                 string += d[line].format(line)
 
             return string
-        
+
         def get_shortcodes(folder):
             try:
                 sc = os.listdir(folder)
@@ -1185,13 +1246,12 @@ anymore."), "warning")
                 return string
             except FileNotFoundError:
                 return _("> (no custom shortcodes)")
-        
+
         # load template
         with open(os.path.join(self.install_dir,
-                                "templates",
-                                #"summary.md",
-                                "summary_css.md",)
-                   ) as f:
+                               "templates",
+                               "summary_css.md", )
+                  ) as f:
             template = f.read()
 
         # collect data
@@ -1200,10 +1260,10 @@ anymore."), "warning")
         # css version uses GitHub flavoured css from
         # https://github.com/sindresorhus/github-markdown-css
         infodict["css_file"] = os.path.join(self.install_dir,
-                                           "templates",
-                                           "github-markdown.css",
-                                           )
-        
+                                            "templates",
+                                            "github-markdown.css",
+                                            )
+
         folders = [("Site", "output"),
                    ("Files", "files"),
                    ("Galleries", "galleries"),
@@ -1213,13 +1273,19 @@ anymore."), "warning")
                    ]
 
         infodict["disk_usage"] = get_diskusage_string(folders)
-        infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
-        infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd("nikola check -l"))
+        infodict["status"] = self.exec_cmd("nikola status").stdout.split(
+                                                                    "\n")[1]
+        infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
+                                                            "nikola check -l"))
         infodict["current_theme"] = self.siteconf.THEME
-        infodict["themes"] = get_themes_table(self.exec_cmd("nikola theme -l"),
-                                              self.exec_cmd("nikola theme --list-installed"))
-        infodict["plugins"] = get_plugins_table(self.exec_cmd("nikola plugin -l"),
-                                                self.exec_cmd("nikola plugin --list-installed"))
+        infodict["themes"] = get_themes_table(
+                                self.exec_cmd("nikola theme -l"),
+                                self.exec_cmd("nikola theme --list-installed")
+                                )
+        infodict["plugins"] = get_plugins_table(
+                                self.exec_cmd("nikola plugin -l"),
+                                self.exec_cmd("nikola plugin --list-installed")
+                                )
         infodict["shortcodes"] = get_shortcodes("shortcodes")
 
         # template format data strings
@@ -1227,8 +1293,8 @@ anymore."), "warning")
 
         # convert markdown to html
         html = markdown.markdown(txt, extensions=["markdown.extensions.tables",
-                                                   "markdown.extensions.toc",
-                                                   ])
+                                                  "markdown.extensions.toc",
+                                                  ])
         # dump html to file
         with open(self.summaryfile, "w") as f:
             f.write(html)
@@ -1236,22 +1302,23 @@ anymore."), "warning")
         self.webview.load_uri("file://" + self.summaryfile)
 
     def run_nikola_build(self):
-        #self.gui_cmd = True
-        #self.obj("stack").set_visible_child(app.obj("term"))
+        # self.gui_cmd = True
+        # self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run build process"))
         self.term_cmd("nikola build")
 
     def run_nikola_github_deploy(self):
         self.run_nikola_build()
-        #self.gui_cmd = True
-        #self.obj("stack").set_visible_child(app.obj("term"))
+        # self.gui_cmd = True
+        # self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run deploy to GitHub command"))
         self.term_cmd("nikola github_deploy")
 
     def run_nikola_deploy(self):
         self.run_nikola_build()
-        #self.gui_cmd = True
-        self.messenger(_("Execute Nikola: run deploy to default preset command"))
+        # self.gui_cmd = True
+        self.messenger(
+                    _("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
 
     def exec_cmd(self, command):
