@@ -31,6 +31,7 @@ import logging.config
 import markdown
 import os
 import setproctitle
+import shlex
 import shutil
 import subprocess
 import sys
@@ -237,21 +238,21 @@ directives.html")
                     format = "--format=rest"
 
                 # return string maybe of use later so I leave it that way
-                status = app.exec_cmd("nikola {} --title={} {}".format(
+                status = app.exec_cmd("nikola {} --title=\"{}\" {}".format(
                                         new_site_obj,
                                         app.obj("newpost_entry").get_text(),
                                         format,
                                        ))
 
                 app.messenger(_("New post created: {}").format(
-                                        app.obj("newpost_entry")).get_text())
+                                        app.obj("newpost_entry").get_text()))
                 app.update_sitedata(app.sitedata)
                 app.get_window_content()
         else:
             self.on_window_close(widget)
 
     def on_newpost_entry_activate(self, widget):
-        self.on_newpost_dialog_response(app.obj("newpost_dialog"), 0)
+        self.on_newpost_dialog_response(app.obj("newpost_dialog"), -5)
 
     # ############## upload drafts to GitHub dialog ############
 
@@ -260,7 +261,7 @@ directives.html")
             app.exec_cmd("git add .")
             app.exec_cmd("git commit -m \"NoN auto commit.\"")
             app.term_cmd("git push origin src")
-            app.messenger(_("Pushed changes to origin/src"))
+            app.messenger(_("Pushed changes to origin/src."))
         else:
             app.messenger(_("Uploading drafts canceled."))
         self.on_window_close(widget)
@@ -273,7 +274,7 @@ directives.html")
             app.exec_cmd("git pull origin src")
             app.exec_cmd("git stash pop")
             app.messenger(_("Execute git stash & git pull origin src & git \
-                            stash pop"))
+stash pop"))
         elif response == -2:
             self.on_window_close(widget)
             app.exec_cmd("git checkout -- .")
@@ -401,12 +402,12 @@ directives.html")
         # show info in statusbar on left click
         if event.button == 1:
             if meta is not "":
-                has_meta = "yes"
+                has_meta = _("yes")
             else:
-                has_meta = "no"
+                has_meta = _("no")
             app.messenger(
                 _("Input file format: {}. Separate metafile: {}.").format(
-                                            filename.split("."))[1], has_meta)
+                                            filename.split(".")[1], has_meta))
         # only generate popup menu on right click
         elif event.button == 3:
             popup = Gtk.Menu()
@@ -491,17 +492,19 @@ class NiApp:
 
         # log version info for debugging
         self.log.debug("Application version: {}".format(__version__))
-        self.log.debug("Application executed from {}".format(self.install_dir))
         self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
                                                        Gtk.get_minor_version(),
                                                        Gtk.get_micro_version(),
                                                        ))
+        self.log.debug("Nikola version: {}".format(nikola.__version__))
+        self.log.debug("Application executed from {}".format(self.install_dir))
         self.loglevels = {"critical": 50,
                           "error": 40,
                           "warning": 30,
                           "info": 20,
                           "debug": 10,
                           }
+
 
     def on_app_activate(self, app):
         # setting up localization
@@ -1292,9 +1295,22 @@ one!"))
         txt = template.format(**infodict)
 
         # convert markdown to html
-        html = markdown.markdown(txt, extensions=["markdown.extensions.tables",
+        html_content = markdown.markdown(txt, extensions=["markdown.extensions.tables",
                                                   "markdown.extensions.toc",
                                                   ])
+
+        # wrap content in body
+        html = """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Summary</title>
+</head>
+<body>
+{}
+</body>
+</html>""".format(html_content)
+
         # dump html to file
         with open(self.summaryfile, "w") as f:
             f.write(html)
@@ -1324,7 +1340,7 @@ one!"))
     def exec_cmd(self, command):
         """Send command to subprocess
            Returns subprocess.CompletedProcess value"""
-        command = command.split()
+        command = shlex.split(command)
         output = subprocess.run(command,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,

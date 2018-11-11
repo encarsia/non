@@ -100,8 +100,7 @@
       <object class="GtkMenuItem" id="ref_rest_dir">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser
-</property>
+        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser</property>
         <property name="label" translatable="yes">reStructuredText directives</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_ref_rest_dir_activate" swapped="no"/>
@@ -111,7 +110,7 @@
       <object class="GtkMenuItem" id="ref_md">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open Mardown basic syntax reference in web browser</property>
+        <property name="tooltip_text" translatable="yes">Open Markdown basic syntax reference in web browser</property>
         <property name="label" translatable="yes">Markdown syntax</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_ref_md_activate" swapped="no"/>
@@ -271,7 +270,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="title">Knights of Ni</property>
-        <property name="subtitle">Nikola powered Site Manager</property>
+        <property name="has_subtitle">False</property>
         <property name="spacing">5</property>
         <property name="show_close_button">True</property>
         <child>
@@ -368,7 +367,7 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Build</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-properties</property>
+                    <property name="stock_id">gtk-execute</property>
                     <signal name="clicked" handler="on_build_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -407,7 +406,7 @@
                     <property name="tooltip_text" translatable="yes">Deploy site to GitHub/GitLab</property>
                     <property name="label" translatable="yes">Deploy to GitHub</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-execute</property>
+                    <property name="icon_name">send-to-symbolic</property>
                     <signal name="clicked" handler="on_deploy_git_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -421,9 +420,10 @@
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Deploy site to default deploy preset</property>
+                    <property name="opacity">0.90000000000000002</property>
                     <property name="label" translatable="yes">Deploy</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-execute</property>
+                    <property name="icon_name">send-to-symbolic</property>
                     <signal name="clicked" handler="on_deploy_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -437,9 +437,9 @@
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Save drafts to GitHub.
 This will only upload source files and not build and deploy the site.</property>
-                    <property name="label" translatable="yes">Save drafts</property>
+                    <property name="label" translatable="yes">Upload drafts</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-save</property>
+                    <property name="icon_name">document-send-symbolic.symbolic</property>
                     <signal name="clicked" handler="on_save_drafts" swapped="no"/>
                   </object>
                   <packing>
@@ -454,7 +454,7 @@ This will only upload source files and not build and deploy the site.</property>
                     <property name="tooltip_text" translatable="yes">Get drafts from GitHub</property>
                     <property name="label" translatable="yes">Get drafts</property>
                     <property name="use_underline">True</property>
-                    <property name="icon_name">folder-download</property>
+                    <property name="icon_name">document-save-symbolic</property>
                     <signal name="clicked" handler="on_get_drafts" swapped="no"/>
                   </object>
                   <packing>
@@ -1119,7 +1119,7 @@ This will only upload source files and not build and deploy the site.</property>
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="label_col">
-                            <property name="title" translatable="yes">Label</property>
+                            <property name="title" translatable="yes">Tag</property>
                             <property name="sort_indicator">True</property>
                             <property name="sort_order">descending</property>
                             <property name="sort_column_id">4</property>
@@ -1179,7 +1179,7 @@ This will only upload source files and not build and deploy the site.</property>
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Label</property>
+                            <property name="title" translatable="yes">Category</property>
                             <property name="sort_indicator">True</property>
                             <property name="sort_order">descending</property>
                             <property name="sort_column_id">4</property>
@@ -1834,8 +1834,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="message_type">question</property>
     <property name="buttons">ok-cancel</property>
     <property name="text" translatable="yes">Repository changes</property>
-    <property name="secondary_text" translatable="yes">Changes that have been made since last upload.
-This is done via the "Upload to GitHub" function or when deploying the site.
+    <property name="secondary_text" translatable="yes">Changes that have been made since last upload which is done via the "Upload to GitHub" function or when deploying the site.
 
 &lt;b&gt;Commit and push changed files to the GitHub repository's src branch?&lt;/b&gt;</property>
     <property name="secondary_use_markup">True</property>

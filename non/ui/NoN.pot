@@ -61,9 +61,8 @@ msgid "Category"
 msgstr ""
 
 msgid ""
-"Changes that have been made since last upload.\n"
-"This is done via the \"Upload to GitHub\" function or when deploying the "
-"site.\n"
+"Changes that have been made since last upload which is done via the \"Upload "
+"to GitHub\" function or when deploying the site.\n"
 "\n"
 "<b>Commit and push changed files to the GitHub repository's src branch?</b>"
 msgstr ""
@@ -287,7 +286,10 @@ msgstr ""
 msgid "Open About dialog"
 msgstr ""
 
-msgid "Open Mardown basic syntax reference in web browser"
+msgid "Open Markdown basic syntax reference in web browser"
+msgstr ""
+
+msgid "Open Markdown syntax reference in web browser"
 msgstr ""
 
 msgid "Open Nikola handbook"
@@ -323,7 +325,7 @@ msgstr ""
 msgid "Open reST syntax reference in web browser"
 msgstr ""
 
-msgid "Open reStructuredText Directives in web browser\n"
+msgid "Open reStructuredText Directives in web browser"
 msgstr ""
 
 msgid "Open reStructuredText Markup Specification in web browser"
@@ -371,9 +373,6 @@ msgstr ""
 msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
 msgstr ""
 
-msgid "Save drafts"
-msgstr ""
-
 msgid ""
 "Save drafts to GitHub.\n"
 "This will only upload source files and not build and deploy the site."
@@ -395,6 +394,9 @@ msgid "Stop preview"
 msgstr ""
 
 msgid "Summary"
+msgstr ""
+
+msgid "Tag"
 msgstr ""
 
 msgid "Tags"
@@ -449,6 +451,9 @@ msgstr ""
 msgid "Update data file for: {}"
 msgstr ""
 
+msgid "Upload drafts"
+msgstr ""
+
 msgid "Uploading drafts canceled."
 msgstr ""
 
@@ -466,10 +471,16 @@ msgid ""
 "--- |:---:|:---:|:---:\n"
 msgstr ""
 
+msgid "no"
+msgstr ""
+
 msgid "reStructuredText directives"
 msgstr ""
 
 msgid "reStructuredText markup"
+msgstr ""
+
+msgid "yes"
 msgstr ""
 
 msgid "{} doesn't exist...create..."

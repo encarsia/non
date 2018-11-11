@@ -57,9 +57,8 @@ msgid "Category"
 msgstr "Kategorie"
 
 msgid ""
-"Changes that have been made since last upload.\n"
-"This is done via the \"Upload to GitHub\" function or when deploying the "
-"site.\n"
+"Changes that have been made since last upload which is done via the \"Upload "
+"to GitHub\" function or when deploying the site.\n"
 "\n"
 "<b>Commit and push changed files to the GitHub repository's src branch?</b>"
 msgstr ""
@@ -68,7 +67,7 @@ msgstr ""
 "deployt wird.\n"
 "\n"
 "<b>Sollen die veränderten Dateien in den Branch src des GitHub-Repositorys "
-"commitet und gepusht werden?</b>"
+"committet und gepusht werden?</b>"
 
 msgid "Choose conf.py"
 msgstr "Wähle conf.py"
@@ -191,10 +190,10 @@ msgid "Generate page for summary tab"
 msgstr "Zusammenfassung in Tab generieren"
 
 msgid "Generate summary"
-msgstr "Zusammenfassung generieren"
+msgstr "Generiere Zusammenfassung"
 
 msgid "Get drafts"
-msgstr "Hole Entwürfe"
+msgstr "Entwürfe holen"
 
 msgid "Get drafts from GitHub"
 msgstr "Hole Entwürfe von GitHub"
@@ -276,8 +275,7 @@ msgstr "Keine Konfiguration verfügbar..."
 
 msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
 msgstr ""
-"Kein deploy-Kommando definiert, conf.py editieren oder 'github_deploy' "
-"nutzen"
+"Kein deploy-Kommando definiert, conf.py editieren oder 'github_deploy' nutzen"
 
 msgid "No function (button event: {})"
 msgstr "Keine funktion (Button-Event: {})"
@@ -297,7 +295,10 @@ msgstr "Öffne '{}' im Browser"
 msgid "Open About dialog"
 msgstr "Öffne \"Über\"-Dialog"
 
-msgid "Open Mardown basic syntax reference in web browser"
+msgid "Open Markdown basic syntax reference in web browser"
+msgstr "Öffne Basic Markdown-Syntaxreferenz im Browser"
+
+msgid "Open Markdown syntax reference in web browser"
 msgstr "Öffne Markdown-Syntaxreferenz im Browser"
 
 msgid "Open Nikola handbook"
@@ -333,8 +334,8 @@ msgstr "reST-Directives im Browser öffnen"
 msgid "Open reST syntax reference in web browser"
 msgstr "reST Syntaxreferenz im Browser öffnen"
 
-msgid "Open reStructuredText Directives in web browser\n"
-msgstr "Öffne reStructuredText-Directives im Browser\n"
+msgid "Open reStructuredText Directives in web browser"
+msgstr "Öffne reStructuredText-Directives im Browser"
 
 msgid "Open reStructuredText Markup Specification in web browser"
 msgstr "Öffne reStructuredText-Markup-Spezifikationen im Browser"
@@ -382,16 +383,13 @@ msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
 msgstr ""
 "\"Wähle conf.py\" Menüeintrag erneut aufrufen oder Lesezeichen auswählen."
 
-msgid "Save drafts"
-msgstr "Entwürfe speichern"
-
 msgid ""
 "Save drafts to GitHub.\n"
 "This will only upload source files and not build and deploy the site."
 msgstr ""
 "Entwürfe in GitHub speichern.\n"
-"Dies wird nur die Quelldateien hochladen, die Seite aber nicht erstellen "
-"und deployen."
+"Dies wird nur die Quelldateien hochladen, die Seite aber nicht erstellen und "
+"deployen."
 
 msgid "Show info window about this application"
 msgstr "Zeige Info-Fenster zu dieser Anwendung"
@@ -410,6 +408,9 @@ msgstr "Vorschau beenden"
 
 msgid "Summary"
 msgstr "Zusammenfassung"
+
+msgid "Tag"
+msgstr "Schlagwort"
 
 msgid "Tags"
 msgstr "Schlagworte"
@@ -467,6 +468,9 @@ msgstr "Aktualisiere Artikeldaten für: {}"
 msgid "Update data file for: {}"
 msgstr "Aktualisiere Datendatei für: {}"
 
+msgid "Upload drafts"
+msgstr "Entwürfe hochladen"
+
 msgid "Uploading drafts canceled."
 msgstr "Hochladen der Entwürfe abgebrochen."
 
@@ -486,11 +490,17 @@ msgstr ""
 "verfügbar | lokal | systemweit | nicht installiert\n"
 "--- |:---:|:---:|:---:\n"
 
+msgid "no"
+msgstr "nein"
+
 msgid "reStructuredText directives"
 msgstr "reStructuredText-Directives"
 
 msgid "reStructuredText markup"
 msgstr "reStructuredText-Markup"
+
+msgid "yes"
+msgstr "ja"
 
 msgid "{} doesn't exist...create..."
 msgstr "{} existiert nicht...wird erstellt..."

@@ -1,6 +1,6 @@
 ### WHAT IS THIS?
 
- * a simple GTK+ tool for keeping an eye on your Nikola powered website
+ * a simple GTK+ tool for keeping an eye on your Nikola powered website(s)
  
 ### WHAT CAN I DO WITH IT?
 
@@ -12,7 +12,7 @@
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances
- * push/pull changes to/from GitGub without building and deploying the site so you can edit articles in multiple places/systems
+ * push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
@@ -25,13 +25,12 @@
 ### WHAT CAN'T I DO WITH IT?
 
  * create a Nikola site
- * pretty much anything else, too
 
 ### WHAT DO I NEED TO GET IT WORKING?
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.0.0
+   * latest tested versions are 7.8.15 and 8.0.1
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it 
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
@@ -87,7 +86,9 @@ $ pip3 install Nikola[extras]
  * application related files are stored in `~/.non`:
    * `config.yaml` for current Nikola site and bookmarks, editing or deleting does not affect any actual local Nikola site 
    * `non.log` for the type of persons who stick their noses into everything
- * if you want to edit or delete bookmarks you have to edit the config file (`.non/config.yaml`)
+   * `path_to_nikola_site.json` stores all data (posts/pages with metadata, listings, tags etc. of a site, one file per site
+   * `path_to_nikola_site.html` contains the page shown in the 'Summary' tab, one file per site
+ * if you want to edit or delete bookmarks you have to edit the config file (`~/.non/config.yaml`)
  * the summary page is generated if a ``conf.py`` is loaded for the first time or invoked by the corresponding menu item because the task may take some time; it is a HTML file with [GitHub flavoured css](https://github.com/sindresorhus/github-markdown-css)
  * if you load data from a Nikola site for the first time the application indexes the content and saves it as a JSON file in the `~/.non` folder and only updates on every next startup; this initial task may take some time depending on the size if the site - just be patient
 
