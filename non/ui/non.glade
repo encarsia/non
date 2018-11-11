@@ -8,7 +8,7 @@
       <pattern>conf.py</pattern>
     </patterns>
   </object>
-  <object class="GtkImage" id="image">
+  <object class="GtkImage" id="help_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">help-browser</property>
@@ -327,7 +327,7 @@
           </object>
           <packing>
             <property name="pack_type">end</property>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
@@ -1566,7 +1566,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
     <property name="program_name">Knights of Ni</property>
-    <property name="version">0.6dev</property>
+    <property name="version">0.6</property>
     <property name="website">https://github.com/encarsia/non</property>
     <property name="website_label" translatable="yes">A manager for your Nikola powered website.</property>
     <property name="logo_icon_name">help-about</property>
@@ -1898,7 +1898,7 @@ This is done via the "Upload to GitHub" function or when deploying the site.
     <property name="message_type">question</property>
     <property name="buttons">ok-cancel</property>
     <property name="text" translatable="yes">Title of new post</property>
-    <property name="secondary_text" translatable="yes"> </property>
+    <property name="secondary_text"> </property>
     <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_newpost_dialog_response" swapped="no"/>
     <child internal-child="vbox">

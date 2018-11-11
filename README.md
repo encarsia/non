@@ -11,7 +11,8 @@
  * write in default reStructuredText, Markdown is also available if configured
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation files on right click in the 'Translation' tab
- * bookmark and switch between different Nikola site instances (beta feature)
+ * bookmark and switch between different Nikola site instances
+ * push/pull changes to/from GitGub without building and deploying the site so you can edit articles in multiple places/systems
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
@@ -63,7 +64,7 @@ $ pip3 install Nikola[extras]
 
  * download and extract or clone repository and change into said folder
  
-> FTR: when executing `python` it is Python 3
+> FTR: when executing `python`, it is Python 3
  
 ### ARE WE THERE YET?
 
@@ -95,13 +96,9 @@ $ pip3 install Nikola[extras]
  * My view on this project is quite selfish: I'm trying to improve my skills by writing stuff I intend to use.
  * Besides this there are some ideas for further features such like
     * an integrated reST editor
-    * provide personal article templates
-    * support multiple authors
-    * if set up using Git: pull from src to imitate cloud sync
+    * provide personal article templates by using the ``-i`` option of the ``new_post`` command
  * Roadmap:
-    * upgrade GUI to GTK 3.24
-    * give the bookmark feature some love
-
+    * fix the Vte.Terminal issue
 
 ### WHAT DOES IT LOOK LIKE? 
 

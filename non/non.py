@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.6dev"
+__version__ = "0.6"
 
 try:
     import nikola
@@ -80,18 +80,17 @@ class Handler:
 
     def on_save_drafts(self, widget):
         # git commit && git push origin src
-        # TODO setting: option to save drafts on application exit
         app.exec_cmd("git checkout src")  # just to be sure, should already be on src
         status = app.exec_cmd("git status")
         status = status.stdout.split("\n\n")
         if status[-1] == "nothing to commit, working tree clean\n":
-            app.messenger("No changes, no upload.")
+            app.messenger(_("No changes, no upload."))
         elif status[-1] == "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n" \
                 or "Changes to be committed" in status[1]:
             app.obj("git_changed_files").set_label(status[-2])
             app.obj("git_push_changes_dialog").run()
         else:
-            app.messenger("Unknown status: {}".format(status), "warning")
+            app.messenger(_("Unknown status: {}").format(status), "warning")
 
     def on_get_drafts(self, widget):
         app.exec_cmd("git checkout src")  # just to be sure, should already be on src
@@ -99,13 +98,13 @@ class Handler:
         status = status.stdout.split("\n\n")
         if status[-1] == "nothing to commit, working tree clean\n":
             app.exec_cmd("git pull origin src")
-            app.messenger("No local changes, pulled changes from origin/src.")
+            app.messenger(_("No local changes, pulled changes from origin/src."))
             self.on_refresh_clicked(None)
         elif status[-1] == "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n":
             app.obj("git_unstashed_files").set_label(status[-2])
             app.obj("git_get_changes_dialog").run()
         else:
-            app.messenger("Unknown status: {}".format(status), "warning")
+            app.messenger(_("Unknown status: {}").format(status), "warning")
         # git show --stat
         # git diff-tree --oneline --no-commit-id --name-only -r origin/src
         # git remote update
@@ -177,7 +176,7 @@ class Handler:
         # add title and location to bookmark dict
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
         app.bookmarks.update(bookmark)
-        app.messenger(_("New bookmark for {} added.").format(
+        app.messenger(_("New bookmark added for {}.").format(
                                                     app.siteconf.BLOG_TITLE))
         app.check_nonconf()
 
@@ -232,7 +231,7 @@ class Handler:
                                                                        format,
                                                                        ))
 
-                app.messenger("New post created: {}".format(app.obj("newpost_entry").get_text()))
+                app.messenger(_("New post created: {}".format(app.obj("newpost_entry")).get_text()))
                 app.update_sitedata(app.sitedata)
                 app.get_window_content()
         else:
@@ -248,9 +247,9 @@ class Handler:
             app.exec_cmd("git add .")
             app.exec_cmd("git commit -m \"NoN auto commit.\"")
             app.term_cmd("git push origin src")
-            app.messenger("Pushed changes to origin/src")
+            app.messenger(_("Pushed changes to origin/src"))
         else:
-            app.messenger("Uploading drafts canceled.")
+            app.messenger(_("Uploading drafts canceled."))
         self.on_window_close(widget)
 
     # ############## download drafts from GitHub dialog ############
@@ -260,23 +259,20 @@ class Handler:
             app.exec_cmd("git stash")
             app.exec_cmd("git pull origin src")
             app.exec_cmd("git stash pop")           
-            app.messenger("Execute git stash & git pull origin src & git stash pop")
+            app.messenger(_("Execute git stash & git pull origin src & git stash pop"))
         elif response == -2:
             self.on_window_close(widget)
             app.exec_cmd("git checkout -- .")
             app.exec_cmd("git pull origin src")
             #discard = app.exec_cmd("git checkout -- .")
-            #print(discard.stdout)
-            #print(discard.stderr)
-            #pull_status = app.exec_cmd("git pull")
             #pull_status = app.exec_cmd("git pull")
             #app.obj("git_conflict_message").set_text(pull_status.stdout)
             #app.obj("git_conflict_message_err").set_text(pull_status.stderr)
             #app.obj("git_conflict_dialog").run()
-            app.messenger("Pulled files from origin/src.")
+            app.messenger(_("Pulled files from origin/src."))
         else:
             self.on_window_close(widget)
-            app.messenger("Downloading drafts canceled.")
+            app.messenger(_("Downloading drafts canceled."))
         self.on_refresh_clicked(None)
 
     # ############### treeview rows activated ###############
@@ -368,7 +364,7 @@ class Handler:
             shutil.copy(
                 os.path.join(subdir, file),
                 os.path.join(subdir, trans_file))
-            app.messenger(_("Create translation file for {}".formT(row[pos][0])))
+            app.messenger(_("Create translation file for {}").format(row[pos][0]))
             app.update_sitedata(app.sitedata)
             app.get_window_content()
 
@@ -392,7 +388,7 @@ class Handler:
                 has_meta = "yes"
             else:
                 has_meta = "no"
-            app.messenger("Input file format: {}. Separate metafile: {}.".format(filename.split(".")[1], has_meta))
+            app.messenger(_("Input file format: {}. Separate metafile: {}.").format(filename.split("."))[1], has_meta)
         # only generate popup menu on right click
         elif event.button == 3:
             popup = Gtk.Menu()
@@ -409,14 +405,14 @@ class Handler:
             popup.popup(None, None, None, None, event.button, event.time)
             return True
         else:
-            app.messenger("No function (button event: {}".format(button.event), "debug")
+            app.messenger(_("No function (button event: {})").format(button.event), "debug")
 
     def on_open_pp_web(self, widget, title, slug, sub):
         app.messenger(_("Open '{}' in web browser").format(title))
         webbrowser.open("{}/{}/{}".format(app.siteconf.SITE_URL, sub, slug))
 
     def on_open_metafile(self, widget, meta, sub):
-        app.messenger("Edit metafile: {}".format(meta))
+        app.messenger(_("Edit metafile: {}").format(meta))
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, sub, meta)]
                        )
@@ -476,6 +472,12 @@ class NiApp:
         self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
                                                     Gtk.get_minor_version(),
                                                     Gtk.get_micro_version()))
+        self.loglevels = {"critical": 50,
+                          "error": 40,
+                          "warning": 30,
+                          "info": 20,
+                          "debug": 10,
+                          }
 
     def on_app_activate(self, app):
         # setting up localization
@@ -510,7 +512,7 @@ class NiApp:
         # self.add_dialogokbutton(self.obj("about_dialog"))
 
         # add image to menubutton (Glade bug)
-        self.obj("ref_menu_button").add(self.obj("image"))
+        self.obj("ref_menu_button").add(self.obj("help_image"))
 
         # load config from config.yaml or start with new
         if not os.path.isfile(self.conf_file):
@@ -558,7 +560,6 @@ class NiApp:
     def check_nonconf(self):
         self.wdir = self.non_config["wdir"]
         self.bookmarks = self.non_config["bookmarks"]
-
         # ##### setup bookmarks in menu ######
         # remove generated bookmark menu items, otherwise when
         # appending new bookmark all existing bookmarks are appended
@@ -570,11 +571,15 @@ class NiApp:
             # comparison to exclude the separator or include the
             # menuitems so this works fine
             if isinstance(i, type(self.obj("load_conf"))):
-                if i.get_label().startswith("Bookmark: "):
+                if i.get_label().startswith(_("Bookmark: ")):
                     self.obj("menu").remove(i)
         # add menu items for bookmarks
         for b in self.bookmarks:
-            item = Gtk.MenuItem.new_with_label(_("Bookmark: {}").format(b))
+            if self.wdir == self.bookmarks[b]:
+                item = Gtk.MenuItem.new_with_label(_("Bookmark: {} (active)").format(b))
+                item.set_sensitive(False)
+            else:
+                item = Gtk.MenuItem.new_with_label(_("Bookmark: {}").format(b))
             item.connect("activate", self.select_bookmark, self.bookmarks[b])
             self.obj("menu").append(item)
 
@@ -611,8 +616,8 @@ anymore."), "warning")
     def add_dialogbuttons(self, dialog):
         # don't ask me why but add_action_widget doesn't work anymore
         # this is shorter anyway
-        dialog.add_buttons("Cancel", Gtk.ResponseType.CANCEL,
-                           "OK", Gtk.ResponseType.OK)
+        dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                           _("OK"), Gtk.ResponseType.OK)
 
     def add_dialogokbutton(self, dialog):
         # add ok button to about dialog to avoid Gtk warning
@@ -640,7 +645,7 @@ anymore."), "warning")
         sitedata = dict()
         sitedata["posts"], sitedata["post_tags"], sitedata["post_cats"] = self.get_src_content("posts")
         sitedata["pages"], sitedata["page_tags"], sitedata["page_cats"] = self.get_src_content("pages")
-        self.messenger(_("Collected data for Nikola site."))
+        self.messenger(_("Collect data of Nikola site complete."))
         self.dump_sitedata_file()
         return sitedata
 
@@ -726,11 +731,11 @@ anymore."), "warning")
                 self.gh_rem = self.siteconf.GITHUB_REMOTE_NAME
                 self.obj("get_drafts").set_sensitive(True)
                 self.obj("save_drafts").set_sensitive(True)
-                self.messenger("Up-/download drafts to/from GitHub is enabled.")
+                self.messenger(_("Up-/download drafts to/from GitHub is enabled."))
             except AttributeError:
                 self.obj("save_drafts").set_sensitive(False)
                 self.obj("get_drafts").set_sensitive(False)
-                self.messenger("This site is not configured to use GitHub, up-/downloading drafts is deactivated.")
+                self.messenger(_("This site is not configured to use GitHub, up-/downloading drafts is deactivated."))
 
             # check if folder for files, listings and images exist to avoid
             # FileNotFoundError, this also has to be done only on startup
@@ -743,8 +748,6 @@ anymore."), "warning")
             # exists for wdir
             if  self.siteconf.BLOG_TITLE in self.bookmarks:
                 self.obj("add_bookmark").set_sensitive(False)
-                # TODO set checkmark at open bookmark
-                #img = Gtk.Image.new_from_icon_name(Gtk.STOCK_YES, 1)
 
             # set checkbutton in new page dialog active
             if "markdown" in app.siteconf.COMPILERS:
@@ -1281,8 +1284,11 @@ anymore."), "warning")
         time.sleep(.1)
         while Gtk.events_pending():
             Gtk.main_iteration()
-        logcmd = "self.log.{}(\"{}\")".format(log, message)
-        exec(logcmd)
+        if log in self.loglevels.keys():
+            lvl = self.loglevels[log]
+        else:
+            lvl = 0
+        self.log.log(lvl, message)
 
     def sizeof_fmt(self, num, suffix='B'):
         """File size shown in common units"""

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
-"POT-Creation-Date: 2018-09-30 18:18+0200\n"
+"POT-Creation-Date: 2018-11-10 18:18+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,34 +10,42 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: NoN.pot\n"
 
 msgid "> (no custom shortcodes)"
-msgstr ""
+msgstr "> (keine individuellen Shortcodes)"
 
 msgid "A manager for your Nikola powered website."
-msgstr ""
+msgstr "Ein Manager für Nikola-angetriebene Webseiten."
 
 msgid "Add bookmark"
 msgstr "Lesezeichen hinzufügen"
 
 msgid "Add new article data for: {}."
-msgstr ""
+msgstr "Füge neue Artikeldaten für {} hinzu."
 
 msgid "Application terminated on window close button. Bye."
-msgstr ""
+msgstr "Anwendung wurde beendet. Auf Wiedersehen."
 
 msgid "Author"
 msgstr "Autor"
 
+msgid "Bookmark: "
+msgstr "Lesezeichen: "
+
 msgid "Bookmark: {}"
-msgstr ""
+msgstr "Lesezeichen: {}"
+
+msgid "Bookmark: {} (active)"
+msgstr "Lesezeichen: {} (aktiv)"
 
 msgid "Browser preview"
 msgstr "Browser-Vorschau"
 
 msgid "Build"
-msgstr ""
+msgstr "Build"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -48,6 +56,20 @@ msgstr "Kategorien"
 msgid "Category"
 msgstr "Kategorie"
 
+msgid ""
+"Changes that have been made since last upload.\n"
+"This is done via the \"Upload to GitHub\" function or when deploying the "
+"site.\n"
+"\n"
+"<b>Commit and push changed files to the GitHub repository's src branch?</b>"
+msgstr ""
+"Seit dem letzten Upload wurden Änderungen vorgenommen.\n"
+"Dies passiert mittels \"Zu GitHub hochladen\"-Funktion oder wenn die Seite "
+"deployt wird.\n"
+"\n"
+"<b>Sollen die veränderten Dateien in den Branch src des GitHub-Repositorys "
+"commitet und gepusht werden?</b>"
+
 msgid "Choose conf.py"
 msgstr "Wähle conf.py"
 
@@ -57,17 +79,17 @@ msgstr "Konfigurationsdatei auswählen"
 msgid "Choose configuration file to read"
 msgstr "Konfigurationsdatei auswählen"
 
-msgid "Collected data for Nikola site."
-msgstr ""
+msgid "Collect data of Nikola site complete."
+msgstr "Daten von Nikola-Seite sammeln fertig."
 
 msgid "Console"
 msgstr "Konsole"
 
 msgid "Could not read data file."
-msgstr ""
+msgstr "Konnte Seitendaten-Datei nicht lesen."
 
 msgid "Could not write site data to JSON file"
-msgstr ""
+msgstr "Konnte Seitendaten nicht in JSON-Datei schreiben."
 
 msgid "Create new page"
 msgstr "Neue Seite erstellen"
@@ -76,16 +98,16 @@ msgid "Create new post"
 msgstr "Neuen Beitrag erstellen"
 
 msgid "Create translation file for {}"
-msgstr ""
+msgstr "Erstelle Übersetzungsdatei für {}"
 
 msgid "Create translation for {}"
-msgstr ""
+msgstr "Erstelle Übersetzung {}"
 
 msgid "Created"
 msgstr "Erstellt"
 
 msgid "Current Nikola folder: {}"
-msgstr ""
+msgstr "Aktuelles Nikola-Verzeichnis: {}"
 
 msgid "Date"
 msgstr "Datum"
@@ -94,43 +116,58 @@ msgid "Default language"
 msgstr "Standardsprache"
 
 msgid "Delete data for: {}."
-msgstr ""
+msgstr "Lösche Daten für: {}."
 
 msgid "Deploy"
-msgstr ""
+msgstr "Deploy"
 
 msgid "Deploy site to GitHub/GitLab"
-msgstr ""
+msgstr "Deploy Seite zu GitHub/GitLab"
 
 msgid "Deploy site to default deploy preset"
-msgstr ""
+msgstr "Deploy Seite zu Standard-Voreinstellung"
 
 msgid "Deploy to GitHub"
-msgstr ""
+msgstr "Deploy zu GitHub"
 
 msgid "Deploying to GitHub/GitLab successful."
-msgstr ""
+msgstr "Deployment zu GitHub/GitLab erfolgt."
 
 msgid "Description"
 msgstr "Beschreibung"
 
+msgid "Discard changes"
+msgstr "Änderungen verwerfen"
+
+msgid "Downloading drafts canceled."
+msgstr "Herunterladen der Entwürfe abgebrochen."
+
+msgid "Edit meta data file"
+msgstr "Metadaten-Datei bearbeiten"
+
+msgid "Edit metafile: {}"
+msgstr "Metafile bearbeiten: {}"
+
 msgid "Empty config created..."
-msgstr ""
+msgstr "Leere Konfiguration erstellt..."
 
 msgid "Error: {}"
-msgstr ""
+msgstr "Fehler: {}"
 
 msgid "Execute Nikola: run build process"
-msgstr ""
+msgstr "Nikola ausführen: build-Prozess"
 
 msgid "Execute Nikola: run deploy to GitHub command"
-msgstr ""
+msgstr "Nikola ausführen: Deployment zu GitHub"
 
 msgid "Execute Nikola: run deploy to default preset command"
-msgstr ""
+msgstr "Nikola ausführen: voreingestellte Deployment-Konfiguration"
+
+msgid "Execute git stash & git pull origin src & git stash pop"
+msgstr "Ausführen von git stash & git pull origin src & git stash pop"
 
 msgid "Failed to load data, choose another conf.py"
-msgstr ""
+msgstr "Laden der Daten gescheitert, eine andere conf.py auswählen"
 
 msgid "Filename"
 msgstr "Dateiname"
@@ -139,13 +176,13 @@ msgid "Files"
 msgstr "Dateien"
 
 msgid "Found config to work with..."
-msgstr ""
+msgstr "Konfiguration gefunden..."
 
 msgid "Found summary page."
-msgstr ""
+msgstr "Zusammenfassung gefunden."
 
 msgid "Found summary page. Loading {}"
-msgstr ""
+msgstr "Zusammenfassung gefunden. Lade {}"
 
 msgid "Found {} bookmark(s)"
 msgstr "{} Lesezeichen gefunden"
@@ -156,109 +193,139 @@ msgstr "Zusammenfassung in Tab generieren"
 msgid "Generate summary"
 msgstr "Zusammenfassung generieren"
 
+msgid "Get drafts"
+msgstr "Hole Entwürfe"
+
+msgid "Get drafts from GitHub"
+msgstr "Hole Entwürfe von GitHub"
+
 msgid "Get some external help"
-msgstr ""
+msgstr "Externe Hilfe"
 
 msgid "Going on without conf.py"
-msgstr ""
+msgstr "Fahre ohne conf.py fort"
 
 msgid "I thought we were done here..."
-msgstr ""
+msgstr "Ich dachte, wir wären hier fertig..."
 
 msgid "Images"
 msgstr "Bilder"
 
-msgid "It isn't over yet..."
-msgstr ""
+msgid "Input file format: {}. Separate metafile: {}."
+msgstr "Rohdateiformat: {}. Separates Metafile: {}."
 
-msgid "Label"
-msgstr ""
+msgid "It isn't over yet..."
+msgstr "Das ist noch nicht vorbei..."
+
+msgid "Keep changes"
+msgstr "Änderungen beibehalten"
 
 msgid "Language"
 msgstr "Sprache"
 
 msgid "Listings"
-msgstr ""
+msgstr "Listings"
 
 msgid "Local"
 msgstr "Lokal"
 
 msgid ""
+"Local files have been changed.\n"
+"\n"
+"<b>Keep local changes and try to pull from origin or discard changes and "
+"just pull from origin?</b>"
+msgstr ""
+"Lokale Dateien wurden geändert.\n"
+"\n"
+"<b>Lokale Änderungen behalten und versuchen, von origin zu pullen oder "
+"Änderungen verwerfen und nur von origin pullen?</b>"
+
+msgid ""
 "Markdown support is disabled by default. Consult the Nikola handbook on how "
 "to configure it."
 msgstr ""
+"Markdown-Unterstützung is standardmäßig deaktiviert. Konsultiere das Nikola-"
+"Handbuch zur Konfiguration."
 
 msgid "Markdown syntax"
-msgstr ""
+msgstr "Markdown-Syntax"
 
 msgid "Menu"
 msgstr "Menü"
 
-msgid "New bookmark for {} added."
-msgstr ""
+msgid "New bookmark added for {}."
+msgstr "Neues Lesezeichen angelegt für {}."
 
 msgid "New post"
 msgstr "Neuer Beitrag"
+
+msgid "New post created: {}"
+msgstr "Neuer Post angelegt: {}"
 
 msgid "Nikola handbook"
 msgstr "Nikola-Handbuch"
 
 msgid "No bookmarks found."
-msgstr ""
+msgstr "Keine Lesezeichen gefunden."
+
+msgid "No changes, no upload."
+msgstr "Keine Änderungen, kein Upload."
 
 msgid "No config available..."
-msgstr ""
-
-msgid "No deploy commands set, edit conf.py or use     'github_deploy'"
-msgstr ""
+msgstr "Keine Konfiguration verfügbar..."
 
 msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
 msgstr ""
+"Kein deploy-Kommando definiert, conf.py editieren oder 'github_deploy' "
+"nutzen"
+
+msgid "No function (button event: {})"
+msgstr "Keine funktion (Button-Event: {})"
+
+msgid "No local changes, pulled changes from origin/src."
+msgstr "Keine lokalen Änderungen, Änderungen von origin/src gepullt."
 
 msgid "No summary file to load, let's generate one!"
-msgstr ""
+msgstr "Keine Datei mit Zusammenfassung gefunden, lasst uns eine erstellen!"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Open '{}' in web browser"
-msgstr ""
+msgstr "Öffne '{}' im Browser"
 
 msgid "Open About dialog"
-msgstr ""
+msgstr "Öffne \"Über\"-Dialog"
 
 msgid "Open Mardown basic syntax reference in web browser"
-msgstr ""
-
-msgid "Open Markdown syntax reference in web browser"
-msgstr "Markdown-Syntaxreferenz im Browser öffnen"
+msgstr "Öffne Markdown-Syntaxreferenz im Browser"
 
 msgid "Open Nikola handbook"
-msgstr "Nikola-Handbuch öffnen"
+msgstr "Öffne Nikola-Handbuch"
 
 msgid "Open Nikola handbook in web browser"
 msgstr "Nikola-Handbuch im Browser öffnen"
 
 msgid "Open conf.py in external editor"
-msgstr ""
+msgstr "Öffne conf.py in externem Editor"
 
 msgid "Open current conf.py"
 msgstr "Öffne aktuelle conf.py"
 
 msgid "Open file..."
-msgstr ""
+msgstr "Öffne Datei..."
 
 msgid "Open in web browser"
-msgstr ""
+msgstr "Öffne in Browser"
 
 msgid "Open page file"
-msgstr ""
+msgstr "Öffne Seiten-Datei"
 
 msgid "Open post file"
-msgstr ""
+msgstr "Öffne Post-Datei"
 
 msgid "Open preview in standard web browser"
-msgstr ""
+msgstr "Öffne Vorschau in Standard-Browser"
 
 msgid "Open reST directives in web browser"
 msgstr "reST-Directives im Browser öffnen"
@@ -267,16 +334,16 @@ msgid "Open reST syntax reference in web browser"
 msgstr "reST Syntaxreferenz im Browser öffnen"
 
 msgid "Open reStructuredText Directives in web browser\n"
-msgstr ""
+msgstr "Öffne reStructuredText-Directives im Browser\n"
 
 msgid "Open reStructuredText Markup Specification in web browser"
-msgstr ""
+msgstr "Öffne reStructuredText-Markup-Spezifikationen im Browser"
 
 msgid "Output folder is set to default 'output'"
-msgstr ""
+msgstr "Ausgabeverzeichnis is auf den Standard 'output' gesetzt"
 
 msgid "Output folder: '{}'"
-msgstr ""
+msgstr "Ausgabeverzeichnis: '{}'"
 
 msgid "Overview"
 msgstr "Überblick"
@@ -285,34 +352,58 @@ msgid "Pages"
 msgstr "Seiten"
 
 msgid "Path to working directory malformed or None."
-msgstr ""
+msgstr "Pfad zum Arbeitsverzeichnis fehlerhaft oder None."
 
 msgid "Posts"
 msgstr "Beiträge"
+
+msgid "Pulled files from origin/src."
+msgstr "Dateien von origin/src gepullt."
+
+msgid "Pushed changes to origin/src."
+msgstr "Änderungen nach origin/src gepusht."
 
 msgid "Refresh"
 msgstr "Aktualisieren"
 
 msgid "Refresh window content"
-msgstr ""
+msgstr "Fensterinhalt aktualisieren"
 
 msgid "Remote"
-msgstr ""
+msgstr "Remote"
+
+msgid "Repository changes"
+msgstr "Repository-Änderungen"
+
+msgid "Resolve conflicts!"
+msgstr "Konflikte auflösen!"
 
 msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
 msgstr ""
+"\"Wähle conf.py\" Menüeintrag erneut aufrufen oder Lesezeichen auswählen."
+
+msgid "Save drafts"
+msgstr "Entwürfe speichern"
+
+msgid ""
+"Save drafts to GitHub.\n"
+"This will only upload source files and not build and deploy the site."
+msgstr ""
+"Entwürfe in GitHub speichern.\n"
+"Dies wird nur die Quelldateien hochladen, die Seite aber nicht erstellen "
+"und deployen."
 
 msgid "Show info window about this application"
-msgstr ""
+msgstr "Zeige Info-Fenster zu dieser Anwendung"
 
 msgid "Site data loaded from file."
-msgstr ""
+msgstr "Seitendaten aus Datei geladen."
 
 msgid "Size"
-msgstr ""
+msgstr "Größe"
 
 msgid "Slug"
-msgstr ""
+msgstr "Slug"
 
 msgid "Stop preview"
 msgstr "Vorschau beenden"
@@ -324,62 +415,85 @@ msgid "Tags"
 msgstr "Schlagworte"
 
 msgid "The chosen Nikola instance isn't here anymore."
-msgstr ""
+msgstr "Die gewählte Nikola-Instanz ist hier nicht mehr."
+
+msgid "There are conflicts trying to pull from GitHub."
+msgstr "Es gibt Konflikte beim Versuch von GitHub zu pullen."
 
 msgid ""
 "This application will not work without pointing to a local Nikola site "
 "configuration file."
 msgstr ""
+"Diese Anwendung funktioniert nicht ohne eine lokale Nikola-"
+"Konfigurationsdatei."
+
+msgid ""
+"This site is not configured to use GitHub, up-/downloading drafts is "
+"deactivated."
+msgstr ""
+"Diese Seite ist nicht für GitHub konfiguriert, Hoch-/Herunterladen von "
+"Entwürfen ist deaktiviert."
 
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgid "Title must not be empty."
-msgstr ""
+msgstr "Titel darf nicht leer sein."
 
 msgid "Title of new post"
-msgstr ""
+msgstr "Titel des neuen Posts"
 
 msgid "Translation"
-msgstr ""
+msgstr "Übersetzung"
 
 msgid "Translation file already exists."
-msgstr ""
+msgstr "Übersetzungsdatei existiert bereits."
 
 msgid "Translations"
-msgstr ""
+msgstr "Übersetzungen"
 
 msgid "Unable to load Python bindings for GObject Introspection."
-msgstr ""
+msgstr "Nicht möglich, Python bindings für GObject Introspection zu laden."
+
+msgid "Unknown status: {}"
+msgstr "Unbekannter Status: {}"
+
+msgid "Up-/download drafts to/from GitHub is enabled."
+msgstr "Hoch-/Herunterladen von Entwürfen zu/von GitHub ist aktiviert."
 
 msgid "Update article data for: {}"
-msgstr ""
+msgstr "Aktualisiere Artikeldaten für: {}"
 
 msgid "Update data file for: {}"
-msgstr ""
+msgstr "Aktualisiere Datendatei für: {}"
+
+msgid "Uploading drafts canceled."
+msgstr "Hochladen der Entwürfe abgebrochen."
 
 msgid "Working Nikola configuration required"
 msgstr "Funktionierende Konfigurationsdatei benötigt"
 
 msgid "Write in Markdown"
-msgstr ""
+msgstr "Schreibe in Markdown"
 
 msgid "Write site data to JSON file."
-msgstr ""
+msgstr "Schreibe Seitendaten in JSON-Datei."
 
 msgid ""
 "available | local | systemwide | not installed\n"
 "--- |:---:|:---:|:---:\n"
 msgstr ""
+"verfügbar | lokal | systemweit | nicht installiert\n"
+"--- |:---:|:---:|:---:\n"
 
 msgid "reStructuredText directives"
-msgstr ""
+msgstr "reStructuredText-Directives"
 
 msgid "reStructuredText markup"
-msgstr ""
+msgstr "reStructuredText-Markup"
 
 msgid "{} doesn't exist...create..."
-msgstr ""
+msgstr "{} existiert nicht...wird erstellt..."
 
 #~ msgid "Create a new page"
 #~ msgstr "Neue Seite erstellen"
