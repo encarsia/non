@@ -7,9 +7,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: NoN 0.5\n"
+"Project-Id-Version: NoN 0.6\n"
 "Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
-"POT-Creation-Date: 2018-09-30 18:18+0200\n"
+"POT-Creation-Date: 2018-11-10 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,13 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
+msgid "Bookmark: "
+msgstr ""
+
 msgid "Bookmark: {}"
+msgstr ""
+
+msgid "Bookmark: {} (active)"
 msgstr ""
 
 msgid "Browser preview"
@@ -54,6 +60,13 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
+msgid ""
+"Changes that have been made since last upload which is done via the \"Upload "
+"to GitHub\" function or when deploying the site.\n"
+"\n"
+"<b>Commit and push changed files to the GitHub repository's src branch?</b>"
+msgstr ""
+
 msgid "Choose conf.py"
 msgstr ""
 
@@ -63,7 +76,7 @@ msgstr ""
 msgid "Choose configuration file to read"
 msgstr ""
 
-msgid "Collected data for Nikola site."
+msgid "Collect data of Nikola site complete."
 msgstr ""
 
 msgid "Console"
@@ -120,6 +133,18 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+msgid "Discard changes"
+msgstr ""
+
+msgid "Downloading drafts canceled."
+msgstr ""
+
+msgid "Edit meta data file"
+msgstr ""
+
+msgid "Edit metafile: {}"
+msgstr ""
+
 msgid "Empty config created..."
 msgstr ""
 
@@ -133,6 +158,9 @@ msgid "Execute Nikola: run deploy to GitHub command"
 msgstr ""
 
 msgid "Execute Nikola: run deploy to default preset command"
+msgstr ""
+
+msgid "Execute git stash & git pull origin src & git stash pop"
 msgstr ""
 
 msgid "Failed to load data, choose another conf.py"
@@ -162,6 +190,12 @@ msgstr ""
 msgid "Generate summary"
 msgstr ""
 
+msgid "Get drafts"
+msgstr ""
+
+msgid "Get drafts from GitHub"
+msgstr ""
+
 msgid "Get some external help"
 msgstr ""
 
@@ -174,10 +208,13 @@ msgstr ""
 msgid "Images"
 msgstr ""
 
+msgid "Input file format: {}. Separate metafile: {}."
+msgstr ""
+
 msgid "It isn't over yet..."
 msgstr ""
 
-msgid "Label"
+msgid "Keep changes"
 msgstr ""
 
 msgid "Language"
@@ -187,6 +224,13 @@ msgid "Listings"
 msgstr ""
 
 msgid "Local"
+msgstr ""
+
+msgid ""
+"Local files have been changed.\n"
+"\n"
+"<b>Keep local changes and try to pull from origin or discard changes and "
+"just pull from origin?</b>"
 msgstr ""
 
 msgid ""
@@ -200,10 +244,13 @@ msgstr ""
 msgid "Menu"
 msgstr ""
 
-msgid "New bookmark for {} added."
+msgid "New bookmark added for {}."
 msgstr ""
 
 msgid "New post"
+msgstr ""
+
+msgid "New post created: {}"
 msgstr ""
 
 msgid "Nikola handbook"
@@ -212,13 +259,19 @@ msgstr ""
 msgid "No bookmarks found."
 msgstr ""
 
+msgid "No changes, no upload."
+msgstr ""
+
 msgid "No config available..."
 msgstr ""
 
-msgid "No deploy commands set, edit conf.py or use     'github_deploy'"
+msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
 msgstr ""
 
-msgid "No deploy commands set, edit conf.py or use 'github_deploy'"
+msgid "No function (button event: {})"
+msgstr ""
+
+msgid "No local changes, pulled changes from origin/src."
 msgstr ""
 
 msgid "No summary file to load, let's generate one!"
@@ -233,7 +286,7 @@ msgstr ""
 msgid "Open About dialog"
 msgstr ""
 
-msgid "Open Mardown basic syntax reference in web browser"
+msgid "Open Markdown basic syntax reference in web browser"
 msgstr ""
 
 msgid "Open Markdown syntax reference in web browser"
@@ -272,7 +325,7 @@ msgstr ""
 msgid "Open reST syntax reference in web browser"
 msgstr ""
 
-msgid "Open reStructuredText Directives in web browser\n"
+msgid "Open reStructuredText Directives in web browser"
 msgstr ""
 
 msgid "Open reStructuredText Markup Specification in web browser"
@@ -296,6 +349,12 @@ msgstr ""
 msgid "Posts"
 msgstr ""
 
+msgid "Pulled files from origin/src."
+msgstr ""
+
+msgid "Pushed changes to origin/src."
+msgstr ""
+
 msgid "Refresh"
 msgstr ""
 
@@ -305,7 +364,18 @@ msgstr ""
 msgid "Remote"
 msgstr ""
 
+msgid "Repository changes"
+msgstr ""
+
+msgid "Resolve conflicts!"
+msgstr ""
+
 msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
+msgstr ""
+
+msgid ""
+"Save drafts to GitHub.\n"
+"This will only upload source files and not build and deploy the site."
 msgstr ""
 
 msgid "Show info window about this application"
@@ -326,15 +396,26 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
+msgid "Tag"
+msgstr ""
+
 msgid "Tags"
 msgstr ""
 
 msgid "The chosen Nikola instance isn't here anymore."
 msgstr ""
 
+msgid "There are conflicts trying to pull from GitHub."
+msgstr ""
+
 msgid ""
 "This application will not work without pointing to a local Nikola site "
 "configuration file."
+msgstr ""
+
+msgid ""
+"This site is not configured to use GitHub, up-/downloading drafts is "
+"deactivated."
 msgstr ""
 
 msgid "Title"
@@ -358,10 +439,22 @@ msgstr ""
 msgid "Unable to load Python bindings for GObject Introspection."
 msgstr ""
 
+msgid "Unknown status: {}"
+msgstr ""
+
+msgid "Up-/download drafts to/from GitHub is enabled."
+msgstr ""
+
 msgid "Update article data for: {}"
 msgstr ""
 
 msgid "Update data file for: {}"
+msgstr ""
+
+msgid "Upload drafts"
+msgstr ""
+
+msgid "Uploading drafts canceled."
 msgstr ""
 
 msgid "Working Nikola configuration required"
@@ -378,10 +471,16 @@ msgid ""
 "--- |:---:|:---:|:---:\n"
 msgstr ""
 
+msgid "no"
+msgstr ""
+
 msgid "reStructuredText directives"
 msgstr ""
 
 msgid "reStructuredText markup"
+msgstr ""
+
+msgid "yes"
 msgstr ""
 
 msgid "{} doesn't exist...create..."

@@ -8,7 +8,7 @@
       <pattern>conf.py</pattern>
     </patterns>
   </object>
-  <object class="GtkImage" id="image">
+  <object class="GtkImage" id="help_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">help-browser</property>
@@ -100,8 +100,7 @@
       <object class="GtkMenuItem" id="ref_rest_dir">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser
-</property>
+        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser</property>
         <property name="label" translatable="yes">reStructuredText directives</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_ref_rest_dir_activate" swapped="no"/>
@@ -111,7 +110,7 @@
       <object class="GtkMenuItem" id="ref_md">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open Mardown basic syntax reference in web browser</property>
+        <property name="tooltip_text" translatable="yes">Open Markdown basic syntax reference in web browser</property>
         <property name="label" translatable="yes">Markdown syntax</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_ref_md_activate" swapped="no"/>
@@ -194,6 +193,8 @@
       <column type="gchararray"/>
       <!-- column-name fontstyle -->
       <column type="gchararray"/>
+      <!-- column-name metafile -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="store_posts">
@@ -217,6 +218,8 @@
       <!-- column-name translation -->
       <column type="gchararray"/>
       <!-- column-name fontstyle -->
+      <column type="gchararray"/>
+      <!-- column-name metafile -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -267,7 +270,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="title">Knights of Ni</property>
-        <property name="subtitle">Nikola powered Site Manager</property>
+        <property name="has_subtitle">False</property>
         <property name="spacing">5</property>
         <property name="show_close_button">True</property>
         <child>
@@ -323,7 +326,7 @@
           </object>
           <packing>
             <property name="pack_type">end</property>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
@@ -364,7 +367,7 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Build</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-properties</property>
+                    <property name="stock_id">gtk-execute</property>
                     <signal name="clicked" handler="on_build_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -378,8 +381,18 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Browser preview</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-properties</property>
+                    <property name="icon_name">web-browser</property>
                     <signal name="toggled" handler="on_preview_toggled" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -393,7 +406,7 @@
                     <property name="tooltip_text" translatable="yes">Deploy site to GitHub/GitLab</property>
                     <property name="label" translatable="yes">Deploy to GitHub</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-execute</property>
+                    <property name="icon_name">send-to-symbolic</property>
                     <signal name="clicked" handler="on_deploy_git_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -407,10 +420,52 @@
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Deploy site to default deploy preset</property>
+                    <property name="opacity">0.90000000000000002</property>
                     <property name="label" translatable="yes">Deploy</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-execute</property>
+                    <property name="icon_name">send-to-symbolic</property>
                     <signal name="clicked" handler="on_deploy_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="save_drafts">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Save drafts to GitHub.
+This will only upload source files and not build and deploy the site.</property>
+                    <property name="label" translatable="yes">Upload drafts</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">document-send-symbolic.symbolic</property>
+                    <signal name="clicked" handler="on_save_drafts" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="get_drafts">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Get drafts from GitHub</property>
+                    <property name="label" translatable="yes">Get drafts</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">document-save-symbolic</property>
+                    <signal name="clicked" handler="on_get_drafts" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1064,7 +1119,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="label_col">
-                            <property name="title" translatable="yes">Label</property>
+                            <property name="title" translatable="yes">Tag</property>
                             <property name="sort_indicator">True</property>
                             <property name="sort_order">descending</property>
                             <property name="sort_column_id">4</property>
@@ -1124,7 +1179,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Label</property>
+                            <property name="title" translatable="yes">Category</property>
                             <property name="sort_indicator">True</property>
                             <property name="sort_order">descending</property>
                             <property name="sort_column_id">4</property>
@@ -1354,7 +1409,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow">
+                  <object class="GtkScrolledWindow" id="tab_transl">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="shadow_type">in</property>
@@ -1511,21 +1566,21 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
     <property name="program_name">Knights of Ni</property>
-    <property name="version">0.5</property>
+    <property name="version">0.6</property>
     <property name="website">https://github.com/encarsia/non</property>
     <property name="website_label" translatable="yes">A manager for your Nikola powered website.</property>
     <property name="logo_icon_name">help-about</property>
     <property name="license_type">mit-x11</property>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
+    <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="spacing">3</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
@@ -1553,7 +1608,7 @@
     <property name="create_folders">False</property>
     <property name="filter">filefilter1</property>
     <property name="preview_widget_active">False</property>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
+    <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>
     <child type="titlebar">
@@ -1630,17 +1685,16 @@
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="newpost_dialog">
-    <property name="width_request">300</property>
+  <object class="GtkMessageDialog" id="git_conflict_dialog">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Create new post</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">non_window_stack</property>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
-    <signal name="response" handler="on_newpost_dialog_response" swapped="no"/>
-    <child>
-      <placeholder/>
-    </child>
+    <property name="message_type">warning</property>
+    <property name="buttons">ok</property>
+    <property name="text" translatable="yes">Resolve conflicts!</property>
+    <property name="secondary_text" translatable="yes">There are conflicts trying to pull from GitHub.</property>
+    <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="response" handler="on_window_close" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -1649,28 +1703,69 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="git_conflict_message">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="git_conflict_message_err">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="git_get_changes_dialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">non_window_stack</property>
+    <property name="message_type">question</property>
+    <property name="buttons">cancel</property>
+    <property name="text" translatable="yes">Repository changes</property>
+    <property name="secondary_text" translatable="yes">Local files have been changed.
+
+&lt;b&gt;Keep local changes and try to pull from origin or discard changes and just pull from origin?&lt;/b&gt;</property>
+    <property name="secondary_use_markup">True</property>
+    <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="response" handler="on_git_get_changes_dialog_response" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="newpost_cancel">
-                <property name="label">gtk-cancel</property>
+              <object class="GtkButton" id="button2">
+                <property name="label" translatable="yes">Discard changes</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="newpost_ok">
-                <property name="label">gtk-apply</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1678,37 +1773,157 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label" translatable="yes">Keep changes</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="shadow_type">in</property>
+            <property name="min_content_height">100</property>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="git_unstashed_files">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-2">button2</action-widget>
+      <action-widget response="-3">button1</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkMessageDialog" id="git_push_changes_dialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">non_window_stack</property>
+    <property name="message_type">question</property>
+    <property name="buttons">ok-cancel</property>
+    <property name="text" translatable="yes">Repository changes</property>
+    <property name="secondary_text" translatable="yes">Changes that have been made since last upload which is done via the "Upload to GitHub" function or when deploying the site.
+
+&lt;b&gt;Commit and push changed files to the GitHub repository's src branch?&lt;/b&gt;</property>
+    <property name="secondary_use_markup">True</property>
+    <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="response" handler="on_git_push_changes_dialog_response" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="homogeneous">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="shadow_type">in</property>
+            <property name="min_content_height">100</property>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="git_changed_files">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="newpost_dialog">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Create new post</property>
+    <property name="default_width">300</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">non_window_stack</property>
+    <property name="message_type">question</property>
+    <property name="buttons">ok-cancel</property>
+    <property name="text" translatable="yes">Title of new post</property>
+    <property name="secondary_text"> </property>
+    <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="response" handler="on_newpost_dialog_response" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
-            <property name="margin_top">10</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
             <property name="orientation">vertical</property>
-            <property name="spacing">6</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Title of new post</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
+            <property name="spacing">5</property>
             <child>
               <object class="GtkEntry" id="newpost_entry">
                 <property name="visible">True</property>
@@ -1741,6 +1956,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <property name="halign">start</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
@@ -1757,6 +1973,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
                 <property name="tooltip_text" translatable="yes">Markdown support is disabled by default. Consult the Nikola handbook on how to configure it.</property>
+                <property name="halign">start</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
@@ -1769,14 +1986,10 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="1">newpost_cancel</action-widget>
-      <action-widget response="0">newpost_ok</action-widget>
-    </action-widgets>
   </object>
 </interface>
