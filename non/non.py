@@ -12,9 +12,9 @@ except (ModuleNotFoundError, ImportError) as e:
 try:
     import gi
 
-    gi.require_version('Gtk', '3.0')
-    gi.require_version('Vte', '2.91')
-    gi.require_version('WebKit2', '4.0')
+    gi.require_version("Gtk", "3.0")
+    gi.require_version("Vte", "2.91")
+    gi.require_version("WebKit2", "4.0")
     from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
 except (ModuleNotFoundError, ImportError) as e:
     print("Unable to load Python bindings for GObject Introspection.")
@@ -23,6 +23,7 @@ except (ModuleNotFoundError, ImportError) as e:
 import datetime
 import filecmp
 import gettext
+import glob
 import importlib
 import json
 import locale
@@ -77,7 +78,10 @@ class Handler:
         app.run_nikola_deploy()
 
     def on_refresh_clicked(self, widget):
-        app.update_sitedata(app.sitedata)
+        try:
+            app.update_sitedata(app.sitedata)
+        except AttributeError:
+            app.create_sitedata()
         app.get_window_content()
 
     def on_save_drafts(self, widget):
@@ -298,14 +302,14 @@ stash pop"))
         app.messenger(_("Open post file"))
         row, pos = app.obj("selection_post").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][7], row[pos][2])]
+                        os.path.join(app.wdir, row[pos][2])]
                        )
 
     def on_view_pages_row_activated(self, widget, *args):
         app.messenger(_("Open page file"))
         row, pos = app.obj("selection_page").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][7], row[pos][2])]
+                        os.path.join(app.wdir, row[pos][2])]
                        )
 
     def on_view_tags_row_activated(self, widget, pos, *args):
@@ -388,16 +392,21 @@ stash pop"))
     # open context menu on right click to open post/page in browser
 
     def on_view_posts_button_release_event(self, widget, event):
-        self.on_pp_table_click(widget, event, "posts")
+        row, pos = app.obj("selection_post").get_selected()
+        self.on_pp_table_click(event, row, pos)
 
     def on_view_pages_button_release_event(self, widget, event):
-        self.on_pp_table_click(widget, event, "pages")
+        row, pos = app.obj("selection_page").get_selected()
+        self.on_pp_table_click(event, row, pos)
 
-    def on_pp_table_click(self, widget, event, sub):
-        row, pos = app.obj("selection_post").get_selected()
+    def on_pp_table_click(self, event, row, pos):
         title = row[pos][0]
         slug = row[pos][1]
         filename = row[pos][2]
+        # if slug is not set the output path is generated from the filename without file extension
+        if slug == "":
+            slug = filename.split("/")[-1].split(".")[0]
+        path = os.path.join(*filename.split("/")[:-1])
         meta = row[pos][10]
         # show info in statusbar on left click
         if event.button == 1:
@@ -415,11 +424,11 @@ stash pop"))
             # selected row already caught by on_treeview_selection_changed
             # function. I don't know what to do with this information but I'm
             # afraid to delete it
-            item.connect("activate", self.on_open_pp_web, title, slug, sub)
+            item.connect("activate", self.on_open_pp_web, title, path, slug)
             popup.append(item)
             if meta is not "":
                 item = Gtk.MenuItem.new_with_label(_("Edit meta data file"))
-                item.connect("activate", self.on_open_metafile, meta, sub)
+                item.connect("activate", self.on_open_metafile, meta)
                 popup.append(item)
             popup.show_all()
             popup.popup(None, None, None, None, event.button, event.time)
@@ -428,14 +437,14 @@ stash pop"))
             app.messenger(_("No function (button event: {})").format(
                                                         event.button), "debug")
 
-    def on_open_pp_web(self, widget, title, slug, sub):
+    def on_open_pp_web(self, widget, title, path, slug):
         app.messenger(_("Open '{}' in web browser").format(title))
-        webbrowser.open("{}/{}/{}".format(app.siteconf.SITE_URL, sub, slug))
+        webbrowser.open("{}{}/{}".format(app.siteconf.SITE_URL, path, slug))
 
-    def on_open_metafile(self, widget, meta, sub):
+    def on_open_metafile(self, widget, meta):
         app.messenger(_("Edit metafile: {}").format(meta))
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, sub, meta)]
+                        os.path.join(app.wdir, meta)]
                        )
 
 
@@ -478,7 +487,7 @@ class NiApp:
         yaml.dump(self.non_config, open(self.conf_file, "w"),
                   default_flow_style=False)
         # write site data dict to json file
-        self.dump_sitedata_file()
+        self.dump_sitedata_file(self.sitedata)
         self.app.quit()
         self.log.info(_("Application terminated on window close button. Bye."))
 
@@ -490,6 +499,13 @@ class NiApp:
             config = yaml.load(f)
             logging.config.dictConfig(config)
 
+        self.loglevels = {"critical": 50,
+                          "error": 40,
+                          "warning": 30,
+                          "info": 20,
+                          "debug": 10,
+                          }
+
         # log version info for debugging
         self.log.debug("Application version: {}".format(__version__))
         self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
@@ -498,14 +514,7 @@ class NiApp:
                                                        ))
         self.log.debug("Nikola version: {}".format(nikola.__version__))
         self.log.debug("Application executed from {}".format(self.install_dir))
-        self.loglevels = {"critical": 50,
-                          "error": 40,
-                          "warning": 30,
-                          "info": 20,
-                          "debug": 10,
-                          }
-
-
+        
     def on_app_activate(self, app):
         # setting up localization
         locales_dir = os.path.join(self.install_dir, "ui", "locale")
@@ -655,7 +664,7 @@ anymore."), "warning")
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
-        self.dump_sitedata_file()
+        self.dump_sitedata_file(self.sitedata)
         self.non_config["wdir"] = path
         self.check_nonconf()
 
@@ -675,12 +684,12 @@ anymore."), "warning")
         sitedata = dict()
         sitedata["posts"], \
             sitedata["post_tags"], \
-            sitedata["post_cats"] = self.get_src_content("posts")
+            sitedata["post_cats"] = self.get_src_content("posts", d=dict(), t=set(), c=set())
         sitedata["pages"], \
             sitedata["page_tags"], \
-            sitedata["page_cats"] = self.get_src_content("pages")
+            sitedata["page_cats"] = self.get_src_content("pages", d=dict(), t=set(), c=set())
         self.messenger(_("Collect data of Nikola site complete."))
-        self.dump_sitedata_file()
+        self.dump_sitedata_file(sitedata)
         return sitedata
 
     def update_sitedata(self, sitedata):
@@ -688,22 +697,20 @@ anymore."), "warning")
                                                     self.siteconf.BLOG_TITLE))
         filelist = dict()
         for sub in ["posts", "pages"]:
-            filelist[sub] = []
-            for f in [x for x in os.listdir(sub) if not (x.startswith(".") or
-                                                         x.endswith(".meta"))]:
-                if f in sitedata[sub].keys():
-                    if not sitedata[sub][f]["last_modified"] == \
-                                        os.path.getmtime(os.path.join(sub, f)):
+            filelist[sub] = self.get_src_filelist(sub)
+            for f in filelist[sub]:
+                 if f in sitedata[sub].keys():
+                    if not sitedata[sub][f]["last_modified"] == os.path.getmtime(f):
                         filelist[sub].append(f)
                         self.messenger(
-                                _("Update article data for: {}").format(f))
-                else:
-                    filelist[sub].append(f)
-                    self.messenger(
-                                _("Add new article data for: {}.").format(f))
-            # delete dict items of removed source files
+                                _("Update article data for: {}").format(sitedata[sub][f]["title"]))
+                 else:
+                     filelist[sub].append(f)
+                     self.messenger(
+                            _("Add new article data for: {}.").format(sitedata[sub][f]["title"]))
+            # delete dict items of removed or renamed source files
             for p in sitedata[sub].copy():
-                if p not in os.listdir(sub):
+                if p not in filelist[sub]:
                     self.messenger(_("Delete data for: {}.").format(p))
                     del sitedata[sub][p]
 
@@ -712,6 +719,8 @@ anymore."), "warning")
             sitedata["post_cats"] = self.get_src_content(
                                                     "posts",
                                                     d=sitedata["posts"],
+                                                    t=set(sitedata["post_tags"]),
+                                                    c=set(sitedata["post_cats"]),
                                                     update=filelist["posts"],
                                                     )
         sitedata["pages"], \
@@ -719,14 +728,16 @@ anymore."), "warning")
             sitedata["page_cats"] = self.get_src_content(
                                                     "pages",
                                                     sitedata["pages"],
+                                                    t=set(sitedata["page_tags"]),
+                                                    c=set(sitedata["page_cats"]),
                                                     update=filelist["pages"],
                                                     )
         return sitedata
 
-    def dump_sitedata_file(self):
+    def dump_sitedata_file(self, sitedata):
         try:
             with open(self.datafile, "w") as outfile:
-                json.dump(self.sitedata, outfile, indent=4)
+                json.dump(sitedata, outfile, indent=4)
             self.messenger(_("Write site data to JSON file."))
         except AttributeError:
             self.messenger(_("Could not write site data to JSON file"), "warn")
@@ -840,7 +851,6 @@ one!"))
             # user's home and no conf.py will be found, if so ignore the error
             # and show an empty main application window instead of being caught
             # in a neverending loop of filechooser dialog
-            # pass
             self.messenger(_("Going on without conf.py"), "error")
 
     def get_window_content(self):
@@ -913,15 +923,22 @@ one!"))
             self.messenger(_("Failed to load data, choose another conf.py"),
                            "error")
 
-    def get_src_content(self, subdir, d=dict(), t=set(), c=set(), update=None):
+    def get_src_filelist(self, sub):
+        filelist = glob.glob(sub + "/**/*.rst", recursive=True)
+        for n, f in enumerate(filelist.copy()):
+            if f.endswith(".meta") or "/." in f:
+                del filelist[n]
+        return filelist
+
+    def get_src_content(self, subdir, d, t, c, update=None):
         if not update:
-            files = [x for x in os.listdir(subdir) if not (x.startswith(".") or
-                     x.endswith(".meta"))]
+            files = self.get_src_filelist(subdir)
         else:
             files = update
+
         for f in files:
             title, slug, date, tagstr, tags, catstr, cats, metafile = \
-                self.read_src_files(subdir, f)
+                self.read_src_files(f)
             # detect language
             if len(self.translation_lang) > 0:
                 if f.split(".")[1] == "rst" or f.split(".")[1] == "md":
@@ -934,14 +951,11 @@ one!"))
                 lang = ""
             # check for equal file in output dir, mark bold (loaded by
             # treemodel) when False
-            for od in {slug, f.split(".")[0]}:
-                if self.compare_output_dir(od, subdir, f, f.split(".")[1],
-                                           lang, self.output_folder):
-                    fontstyle = "normal"
-                    break
-                else:
-                    fontstyle = "bold"
-                    self.obj("build").set_sensitive(True)
+            if self.compare_output_dir(slug, f, lang, self.output_folder):
+                fontstyle = "normal"
+            else:
+                fontstyle = "bold"
+                self.obj("build").set_sensitive(True)
             # add new found tags/categories to set
             t.update(tags)
             c.update(cats)
@@ -949,7 +963,7 @@ one!"))
             # filename instead)
             if title == "":
                 if slug == "":
-                    title = f
+                    title = f.split("/")[-1]
                 else:
                     title = slug
                 if fontstyle == "bold":
@@ -972,7 +986,7 @@ one!"))
                     "sub": subdir,
                     "lang": lang,
                     "transl": [],
-                    "last_modified": os.path.getmtime(os.path.join(subdir, f)),
+                    "last_modified": os.path.getmtime(f),
                     "metafile": metafile,
                     }
         # add available translation to default file entry
@@ -985,18 +999,17 @@ one!"))
                 d[default_src]["transl"].append(lang)
         return d, list(t), list(c)
 
-    def read_src_files(self, subdir, file):
+    def read_src_files(self, file):
         date = datetime.datetime.today().strftime("%Y-%m-%d")
         title, slug, tagstr, tags, catstr, cats = "", "", "", "", "", ""
         try:
             metafile = file.split(".")[0] + ".meta"
-            with open(os.path.join(subdir, metafile)) as f:
+            with open(metafile, encoding="utf-8-sig") as f:
                 content = f.readlines()
         except FileNotFoundError:
-            with open(os.path.join(subdir, file)) as f:
+            with open(file, encoding="utf-8-sig") as f:
                 content = f.readlines()
                 metafile = ""
-
         for line in content:
             if line.startswith(".. title:"):
                 title = line[9:].strip()
@@ -1014,14 +1027,16 @@ one!"))
 
         return title, slug, date, tagstr, tags, catstr, cats, metafile
 
-    def compare_output_dir(self, od, subdir, filename, ext, lang, output):
+    def compare_output_dir(self, slug, filename, lang, output):
+        if slug == "":
+            slug = filename.split("/")[-1].split(".")[0]
         try:
-            return filecmp.cmp(os.path.join(subdir, filename),
+            return filecmp.cmp(os.path.join(filename),
                                os.path.join(output,
                                             lang,
-                                            subdir,
-                                            od,
-                                            "index.{}".format(ext),
+                                            *filename.split("/")[:-1], # path to file
+                                            slug,
+                                            "index.{}".format(filename.split(".")[1]), #file extension
                                             ))
         except FileNotFoundError:
             return False
@@ -1362,7 +1377,8 @@ one!"))
             self.obj("term").feed_child(command, len(command))
 
     def messenger(self, message, log="info"):
-        """Show notifications in statusbar and log file/stream"""
+        """Show notifications in statusbar and log file/stream
+           Default logging level is info."""
         self.obj("statusbar").push(1, message)
         time.sleep(.1)
         while Gtk.events_pending():
