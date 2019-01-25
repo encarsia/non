@@ -696,18 +696,20 @@ anymore."), "warning")
         self.messenger(_("Update data file for: {}").format(
                                                     self.siteconf.BLOG_TITLE))
         filelist = dict()
+        new_files = dict()
         for sub in ["posts", "pages"]:
             filelist[sub] = self.get_src_filelist(sub)
+            new_files[sub] = []
             for f in filelist[sub]:
                  if f in sitedata[sub].keys():
                     if not sitedata[sub][f]["last_modified"] == os.path.getmtime(f):
-                        filelist[sub].append(f)
+                        new_files[sub].append(f)
                         self.messenger(
                                 _("Update article data for: {}").format(sitedata[sub][f]["title"]))
                  else:
-                     filelist[sub].append(f)
+                     new_files[sub].append(f)
                      self.messenger(
-                            _("Add new article data for: {}.").format(sitedata[sub][f]["title"]))
+                            _("Add new article data for: {}.").format(f))
             # delete dict items of removed or renamed source files
             for p in sitedata[sub].copy():
                 if p not in filelist[sub]:
@@ -721,7 +723,7 @@ anymore."), "warning")
                                                     d=sitedata["posts"],
                                                     t=set(sitedata["post_tags"]),
                                                     c=set(sitedata["post_cats"]),
-                                                    update=filelist["posts"],
+                                                    update=new_files["posts"],
                                                     )
         sitedata["pages"], \
             sitedata["page_tags"], \
@@ -730,7 +732,7 @@ anymore."), "warning")
                                                     sitedata["pages"],
                                                     t=set(sitedata["page_tags"]),
                                                     c=set(sitedata["page_cats"]),
-                                                    update=filelist["pages"],
+                                                    update=new_files["pages"],
                                                     )
         return sitedata
 
