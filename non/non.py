@@ -207,7 +207,7 @@ directives.html")
     def on_choose_conf_file_response(self, widget, response):
         if response == -5:
             try:
-                app.dump_sitedata_file()
+                app.dump_sitedata_file(app.sitedata)
                 app.non_config["wdir"] = os.path.split(
                                                     widget.get_filename())[0]
                 app.check_nonconf()
@@ -664,7 +664,10 @@ anymore."), "warning")
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
-        self.dump_sitedata_file(self.sitedata)
+        try:
+            self.dump_sitedata_file(self.sitedata)
+        except AttributeError:
+            pass
         self.non_config["wdir"] = path
         self.check_nonconf()
 
@@ -926,10 +929,8 @@ one!"))
                            "error")
 
     def get_src_filelist(self, sub):
-        filelist = glob.glob(sub + "/**/*.rst", recursive=True)
-        for n, f in enumerate(filelist.copy()):
-            if f.endswith(".meta") or "/." in f:
-                del filelist[n]
+        filelist = glob.glob(sub + "/**/*.*", recursive=True)
+        filelist = [x for x in filelist if not (x.endswith(".meta") or "/." in filelist)]
         return filelist
 
     def get_src_content(self, subdir, d, t, c, update=None):
