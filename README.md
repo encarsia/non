@@ -41,7 +41,7 @@
 
 #### PREPARING ARCHLINUX AND ITS RELATIVES
 
-The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and Mate desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
+The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
 ``` bash
 $ sudo pacman -S nikola python-yaml python-setuptools
@@ -50,10 +50,10 @@ $ sudo pacman -S nikola python-yaml python-setuptools
 #### PREPARING UBUNTU 18.04 LTS
 
 ``` bash
-$ sudo apt-get install gir1.2-webkit2-4.0 python3-pip python3-setuptools
+$ sudo apt-get install python3-gi gir1.2-webkit2-4.0 gir1.2-vte-2.91 python3-pip python3-setuptools
 ```
 
-Currently there is no Nikola package in the Ubuntu reposities available so you install via pip (which is the recommended install method anyway) with all dependencies included:
+Currently there is no Nikola package in the Ubuntu repositories available so you install via pip (which is the recommended install method anyway) with all dependencies included:
 
 ``` bash
 $ pip3 install Nikola[extras]
@@ -68,7 +68,7 @@ $ pip3 install Nikola[extras]
 ### ARE WE THERE YET?
 
  * change into the `non` folder and execute `non.py`
- * if you intend to use the desktop icon, edit `data/non.desktop` and customize path of "Exec", and "Icon" and copy file to `~/.local/share/applications/`
+ * if you intend to use the desktop icon, edit `data/KnightsOfNi.desktop` and customize path of "Exec", and "Icon" and copy file to `~/.local/share/applications/`
 
 ### I'M LAZY!
 
@@ -114,3 +114,9 @@ $ pip3 install Nikola[extras]
 #### SUMMARY TAB
 
 ![main window](data/screenshot_summary.png)
+
+### SOURCES AND LICENSES
+
+* application: [The MIT License](LICENSE.md)
+
+* icon: [Ducky icon](https://openclipart.org/detail/22535/ducky-icon), released into the [Public Domain](https://openclipart.org/share)

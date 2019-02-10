@@ -74,7 +74,7 @@ class CustomInstall(install):
             if line.startswith("Exec="):
                 line = line.replace("/path/to/non", install_path)
             elif line.startswith("Icon="):
-                line = line.replace("../non/ui", icon_path)
+                line = line.replace("../non/ui/", "")
             content_new += line
         with open("data/non.desktop", "w") as f:
             f.writelines(content_new) 
