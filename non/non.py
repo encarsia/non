@@ -827,6 +827,18 @@ up-/downloading drafts is deactivated."))
             else:
                 self.obj("tab_transl").show()
 
+            # get paths and filetypes for posts/pages source files
+            self.src_files_paths = {"pages": self.siteconf.PAGES,
+                              "posts": self.siteconf.POSTS,
+                              }
+            self.src_files_ext = set()
+            for key in self.src_files_paths:
+                _paths = set()
+                for val in  self.src_files_paths[key]:
+                    _paths.add(val[0].split("/*.")[0])
+                    self.src_files_ext.add(val[0].split("/*.")[1])
+                self.src_files_paths[key] = _paths
+
             # look for JSON data file with sitedata
             # cut home dir in name and leading slash
             filename = self.wdir.split(os.path.expanduser("~"))[-1][1:]
@@ -929,8 +941,10 @@ one!"))
                            "error")
 
     def get_src_filelist(self, sub):
-        filelist = glob.glob(sub + "/**/*.*", recursive=True)
-        filelist = [x for x in filelist if not (x.endswith(".meta") or "/." in filelist)]
+        filelist = list()
+        for path in self.src_files_paths[sub]:
+            _allfiles = glob.glob(path + "/**/*.*", recursive=True)
+            filelist += [x for x in _allfiles if not (x.endswith(".meta") or "/." in _allfiles)]
         return filelist
 
     def get_src_content(self, subdir, d, t, c, update=None):
@@ -944,7 +958,7 @@ one!"))
                 self.read_src_files(f)
             # detect language
             if len(self.translation_lang) > 0:
-                if f.split(".")[1] == "rst" or f.split(".")[1] == "md":
+                if f.split(".")[1] in self.src_files_ext:
                     # set empty string because var is used by os.path.join
                     # which throws NameError if var is None
                     lang = ""
