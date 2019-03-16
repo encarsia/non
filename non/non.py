@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.6"
+# TODO: convert submenus (GtkMenu) into popover menus
+# TODO: search function
+
+__version__ = "0.7"
 
 try:
     import nikola
@@ -139,7 +142,7 @@ and/or \"git commit -a\")\n":
         if app.gui_cmd is True and last_line == app.prompt:
             time.sleep(2)
             app.obj("stack").set_visible_child(app.obj("gui"))
-            app.update_sitedata(app.sitedata)
+            sd = app.update_sitedata(app.sitedata)
             app.get_window_content()
             app.gui_cmd = False
 
@@ -318,7 +321,7 @@ stash pop"))
         else:
             row, pos = app.obj("selection_tags").get_selected()
             subprocess.run(['xdg-open',
-                            os.path.join(app.wdir, row[pos][6], row[pos][5])]
+                            os.path.join(app.wdir, row[pos][5])]
                            )
 
     def on_view_cats_row_activated(self, widget, pos, *args):
@@ -327,7 +330,7 @@ stash pop"))
         else:
             row, pos = app.obj("selection_cats").get_selected()
             subprocess.run(['xdg-open',
-                            os.path.join(app.wdir, row[pos][6], row[pos][5])]
+                            os.path.join(app.wdir, row[pos][5])]
                            )
 
     def on_view_listings_row_activated(self, widget, *args):
@@ -352,7 +355,7 @@ stash pop"))
         app.messenger(_("Open file..."))
         row, pos = app.obj("selection_translations").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][6], row[pos][2])]
+                        os.path.join(app.wdir, row[pos][2])]
                        )
 
     # open context menu for translation options
@@ -1350,21 +1353,16 @@ one!"))
         self.webview.load_uri("file://" + self.summaryfile)
 
     def run_nikola_build(self):
-        # self.gui_cmd = True
-        # self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run build process"))
         self.term_cmd("nikola build")
 
     def run_nikola_github_deploy(self):
         self.run_nikola_build()
-        # self.gui_cmd = True
-        # self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run deploy to GitHub command"))
         self.term_cmd("nikola github_deploy")
 
     def run_nikola_deploy(self):
         self.run_nikola_build()
-        # self.gui_cmd = True
         self.messenger(
                     _("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
