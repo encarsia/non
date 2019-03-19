@@ -3,6 +3,7 @@
 
 # TODO: convert submenus (GtkMenu) into popover menus
 # TODO: search function
+# TODO: return message if post cannot be created
 
 __version__ = "0.7"
 
@@ -14,7 +15,6 @@ except (ModuleNotFoundError, ImportError) as e:
 
 try:
     import gi
-
     gi.require_version("Gtk", "3.0")
     gi.require_version("Vte", "2.91")
     gi.require_version("WebKit2", "4.0")
@@ -33,6 +33,7 @@ import locale
 import logging
 import logging.config
 import markdown
+import multiprocessing
 import os
 import setproctitle
 import shlex
@@ -157,6 +158,31 @@ and/or \"git commit -a\")\n":
     def on_info_button_clicked(self, widget):
         app.messenger(_("Open About dialog"))
         app.obj("about_dialog").run()
+
+    def on_search_button_toggled(self, widget):
+        if widget.get_active():
+            app.obj("gui").set_visible_child(app.obj("search"))
+            app.obj("search_entry").grab_focus()
+        else:
+            app.obj("gui").set_visible_child(app.obj("main_gui"))
+
+    # ########## searchbar #########################
+
+    def on_search_comboboxtext_changed(self, widget):
+        txt = widget.get_active_text()
+        if not  txt == "":
+            try:
+                self.sp.terminate()
+                time.sleep(.01)
+                self.sp.close()
+                app.messenger("Stop search process", "debug")
+            except AttributeError:
+                app.messenger("No search process here to stop", "debug")
+            self.sp = app.start_search(txt)
+            app.messenger("Search started: {}".format(txt))
+
+    def on_search_entry_icon_press(self, widget, *args):
+        widget.set_text("")
 
     # ########## link menu #########################
 
@@ -551,9 +577,6 @@ class NiApp:
         # error if created in Glade
         self.add_dialogbuttons(self.obj("choose_conf_file"))
         # self.add_dialogokbutton(self.obj("about_dialog"))
-
-        # add image to menubutton (Glade bug)
-        self.obj("ref_menu_button").add(self.obj("help_image"))
 
         # load config from config.yaml or start with new
         if not os.path.isfile(self.conf_file):
@@ -1127,7 +1150,7 @@ one!"))
         post.discard("")
         for item in post:
             counter = 0
-            # row = title,gerdate,date,weight,counter
+            # row = title, gerdate, date, weight, counter
             row = self.obj(store).append(
                 None, [None, None, None, 800, None, None, None])
             for dict in (post_dict, page_dict):
@@ -1143,8 +1166,21 @@ one!"))
                                                 dict[key]["sub"],
                                                 ])
                         counter += 1
-            self.obj(store).set_value(row, 0, "{} ({})".format(item, counter))
-            self.obj(store).set_value(row, 4, counter)
+            if counter > 0:
+                self.obj(store).set_value(row, 0, "{} ({})".format(item, counter))
+                self.obj(store).set_value(row, 4, counter)
+            else:
+                # do not append row if occurence is zero and delete from sitedata dict
+                self.obj(store).remove(row)
+                print("delete", item)
+                for list in (self.sitedata["post_tags"],
+                             self.sitedata["page_tags"],
+                             self.sitedata["post_cats"],
+                             self.sitedata["page_cats"]):
+                    try:
+                        list.remove(item)
+                    except ValueError:
+                        pass    # do nothing if item is not in list
 
     def get_tree_data_translations(self, store, dict):
         for key in dict:
@@ -1351,6 +1387,17 @@ one!"))
             f.write(html)
         # load file into webview
         self.webview.load_uri("file://" + self.summaryfile)
+
+    def start_search(self, pattern):
+        # start search as multiprocessing process/thread so it is interruptable when the search pattern is changed
+        p = multiprocessing.Process(target=self.search_files, args=(pattern,))
+        p.start()
+        return p
+
+    def search_files(self, pattern):
+        # TODO search posts, pages and listings
+        print("find", pattern)
+        time.sleep(10)
 
     def run_nikola_build(self):
         self.messenger(_("Execute Nikola: run build process"))
