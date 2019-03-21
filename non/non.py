@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 # TODO: convert submenus (GtkMenu) into popover menus
-# TODO: search function
+# TODO: index listings and add to search function
 # TODO: return message if post cannot be created
+# TODO: stop preview when changin to another instance
+# TODO: generate summary in multiprocessing process to avoid mainloop blocking
 
 __version__ = "0.7"
 
@@ -168,9 +170,10 @@ and/or \"git commit -a\")\n":
 
     # ########## searchbar #########################
 
-    def on_search_comboboxtext_changed(self, widget):
-        txt = widget.get_active_text()
+    def on_search_entry_activate(self, widget):
+        txt = app.obj("search_comboboxtext").get_active_text()
         if not  txt == "":
+            # stop search process if there is running any
             try:
                 self.sp.terminate()
                 time.sleep(.01)
@@ -178,11 +181,44 @@ and/or \"git commit -a\")\n":
                 app.messenger("Stop search process", "debug")
             except AttributeError:
                 app.messenger("No search process here to stop", "debug")
-            self.sp = app.start_search(txt)
             app.messenger("Search started: {}".format(txt))
+            self.sp = app.start_search(txt)
+            # wait until search is done before showing results
+            while self.sp.is_alive():
+                time.sleep(.1)
 
-    def on_search_entry_icon_press(self, widget, *args):
-        widget.set_text("")
+            # load results into TreeView
+            store = app.obj("store_search")
+            store.clear()
+
+            for r in app.search_result:
+                # row = title, file, weight, line, counter, preview
+                row = store.append(None, [r[0], None, 800, None, r[1], ""])
+                for f in r[2]:
+                    store.append(row, [f[0], f[1], 400, None, f[2], f[3]])
+
+            app.obj("view_search").expand_all()
+
+    def on_search_entry_icon_press(self, widget, icon_pos, *args):
+        if icon_pos == 1:
+            widget.set_text("")
+        else:
+            self.on_search_entry_activate()
+
+    def on_view_search_row_activated(self, widget, *args):
+        app.messenger(_("Open file"))
+        row, pos = app.obj("selection_search").get_selected()
+        subprocess.run(['xdg-open',
+                        os.path.join(app.wdir, row[pos][1])]
+                       )
+
+    # show search results in TextView
+    def on_selection_search_changed(self, widget, *args):
+        row, pos = app.obj("selection_search").get_selected()
+        try:
+            app.obj("search_result_textbuffer").set_text(row[pos][5], len(row[pos][5]))
+        except TypeError:
+            pass
 
     # ########## link menu #########################
 
@@ -475,6 +511,7 @@ stash pop"))
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, meta)]
                        )
+
 
 
 class NiApp:
@@ -952,7 +989,11 @@ one!"))
             self.get_tree_data_translations("store_translation", self.posts)
             self.get_tree_data_translations("store_translation", self.pages)
 
-            # sort tags according to number of occurrences
+            # sort tags/categories by number of occurrences and then by date
+            self.obj("store_tags").set_sort_column_id(2,
+                                                      Gtk.SortType.DESCENDING)
+            self.obj("store_cats").set_sort_column_id(2,
+                                                      Gtk.SortType.DESCENDING)
             self.obj("store_tags").set_sort_column_id(4,
                                                       Gtk.SortType.DESCENDING)
             self.obj("store_cats").set_sort_column_id(4,
@@ -960,8 +1001,10 @@ one!"))
             self.obj("store_translation").set_sort_column_id(
                 3, Gtk.SortType.DESCENDING)
 
-            # expands all rows in translation tab
+            # expand all rows in translation tab/search results
             self.obj("view_translations").expand_all()
+            self.obj("view_search").expand_all()
+
         except AttributeError:
             self.messenger(_("Failed to load data, choose another conf.py"),
                            "error")
@@ -1172,7 +1215,6 @@ one!"))
             else:
                 # do not append row if occurence is zero and delete from sitedata dict
                 self.obj(store).remove(row)
-                print("delete", item)
                 for list in (self.sitedata["post_tags"],
                              self.sitedata["page_tags"],
                              self.sitedata["post_cats"],
@@ -1389,15 +1431,52 @@ one!"))
         self.webview.load_uri("file://" + self.summaryfile)
 
     def start_search(self, pattern):
+        # store search results as shared variable between mainloop and multiprocessing thread
+        self.search_result = multiprocessing.Manager().list()
+
         # start search as multiprocessing process/thread so it is interruptable when the search pattern is changed
-        p = multiprocessing.Process(target=self.search_files, args=(pattern,))
+        p = multiprocessing.Process(target=self.search_files, args=(pattern, self.search_result))
         p.start()
         return p
 
-    def search_files(self, pattern):
-        # TODO search posts, pages and listings
-        print("find", pattern)
-        time.sleep(10)
+    def search_files(self, pattern, result):
+
+        # search results are stored as list and read when search is finished
+        # the treeview then is updated by the mainloop because Gtk
+        # variable structure:
+        #       ("Posts", res_counter, [(file1, title1, res_counter, preview_string),
+        #                               (file2, ...),
+        #                              ]),
+        #       ("Pages", ...),
+        #       ("Listings", ...)
+
+        subdirs = [("Posts", self.sitedata["posts"]),
+                   ("Pages", self.sitedata["pages"]),
+                   # ("Listings", self.sitedata["listings"]),
+                  ]
+
+        for s in subdirs:
+
+            match = []
+            counter_sub = 0
+
+            for f in s[1]:
+                counter = 0
+                preview = ""
+                with open(s[1][f]["file"]) as txt:
+                    for no, line in enumerate(txt):
+                        if pattern.lower() in line.lower():     # do not search case-sensitive
+                            counter += 1
+                            # print(no, line)
+                            preview += "Line {}:\n\n{}\n-----------\n".format(no + 1, line)
+                if counter > 0:
+                    counter_sub += 1
+                    match.append((s[1][f]["title"],
+                                  s[1][f]["file"],
+                                  counter,
+                                  preview)
+                                 )
+            result.append((s[0], counter_sub, match))
 
     def run_nikola_build(self):
         self.messenger(_("Execute Nikola: run build process"))
