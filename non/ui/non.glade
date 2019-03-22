@@ -13,107 +13,190 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-find</property>
   </object>
-  <object class="GtkMenu" id="menu">
-    <property name="visible">True</property>
+  <object class="GtkPopoverMenu" id="menu">
     <property name="can_focus">False</property>
+    <property name="margin_left">5</property>
+    <property name="margin_right">5</property>
+    <property name="margin_top">5</property>
+    <property name="margin_bottom">5</property>
+    <property name="position">bottom</property>
     <child>
-      <object class="GtkMenuItem" id="load_conf">
+      <object class="GtkBox" id="menu_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Choose conf.py</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_load_conf_activate" swapped="no"/>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="load_conf">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Choose conf.py</property>
+            <signal name="clicked" handler="on_load_conf_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="open_conf">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Open current conf.py</property>
+            <signal name="clicked" handler="on_open_conf_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="gen_sum">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Generate summary</property>
+            <signal name="clicked" handler="on_gen_sum_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="add_bookmark">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Add bookmark</property>
+            <signal name="clicked" handler="on_add_bookmark_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">6</property>
+          </packing>
+        </child>
       </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="open_conf">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Open current conf.py</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_open_conf_activate" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="gen_sum">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Generate summary</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_gen_sum_activate" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="add_bookmark">
-        <property name="visible">True</property>
-        <property name="sensitive">False</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Add bookmark</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_add_bookmark_activate" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
     </child>
   </object>
-  <object class="GtkMenu" id="ref_menu">
-    <property name="visible">True</property>
+  <object class="GtkPopoverMenu" id="references">
     <property name="can_focus">False</property>
     <child>
-      <object class="GtkMenuItem" id="ref_handbook">
+      <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open Nikola handbook in web browser</property>
-        <property name="label" translatable="yes">Nikola handbook</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_ref_handbook_activate" swapped="no"/>
+        <property name="margin_left">5</property>
+        <property name="margin_right">5</property>
+        <property name="margin_top">5</property>
+        <property name="margin_bottom">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="ref_handbook">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Open Nikola handbook in web browser</property>
+            <property name="text" translatable="yes">Nikola handbook</property>
+            <signal name="clicked" handler="on_ref_handbook_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="ref_rest_markup">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Open reStructuredText Markup Specification in web browser</property>
+            <property name="text" translatable="yes">reStructuredText markup</property>
+            <signal name="clicked" handler="on_ref_rest_markup_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="ref_rest_dir">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser</property>
+            <property name="text" translatable="yes">reStructuredText directives</property>
+            <signal name="clicked" handler="on_ref_rest_dir_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="ref_md">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Open Markdown basic syntax reference in web browser</property>
+            <property name="text" translatable="yes">Markdown syntax</property>
+            <signal name="clicked" handler="on_ref_md_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
       </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="ref_rest_markup">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open reStructuredText Markup Specification in web browser</property>
-        <property name="label" translatable="yes">reStructuredText markup</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_ref_rest_markup_activate" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="ref_rest_dir">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser</property>
-        <property name="label" translatable="yes">reStructuredText directives</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_ref_rest_dir_activate" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="ref_md">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Open Markdown basic syntax reference in web browser</property>
-        <property name="label" translatable="yes">Markdown syntax</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_ref_md_activate" swapped="no"/>
-      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
     </child>
   </object>
   <object class="GtkTextBuffer" id="search_result_textbuffer"/>
@@ -302,10 +385,14 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="popup">menu</property>
-            <property name="use_popover">False</property>
+            <property name="tooltip_text" translatable="yes">Preferences</property>
+            <property name="popover">menu</property>
             <child>
-              <placeholder/>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">open-menu-symbolic</property>
+              </object>
             </child>
           </object>
           <packing>
@@ -335,8 +422,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="tooltip_text" translatable="yes">Get some external help</property>
-            <property name="popup">ref_menu</property>
-            <property name="use_popover">False</property>
+            <property name="popover">references</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
@@ -355,6 +441,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Find in files</property>
             <property name="image">image2</property>
             <property name="always_show_image">True</property>
             <signal name="toggled" handler="on_search_button_toggled" swapped="no"/>

@@ -8,10 +8,11 @@
  * open files from app or load article in a browser on right click
  * keep track of changes made since last build (hint: **bold**)
  * create new posts and pages
- * write in default reStructuredText, Markdown is also available if configured
+ * if configured the applicaion detects different input markup (reStructuredText, Markdown, ...)
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances
+ * search for strings in posts, pages and listings
  * push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
@@ -30,7 +31,7 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.0.1
+   * latest tested versions are 7.8.15 and 8.0.2
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it 
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
@@ -39,7 +40,7 @@
  * recommended: Git (it's probably already installed)
  * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
 
-#### PREPARING ARCHLINUX AND ITS RELATIVES
+#### PREPARE ARCHLINUX AND ITS RELATIVES
 
 The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
@@ -47,7 +48,7 @@ The PyGObject Introspection bindings are probably already installed (tested with
 $ sudo pacman -S nikola python-yaml python-setuptools
 ```
 
-#### PREPARING UBUNTU 18.04 LTS
+#### PREPARE UBUNTU 18.04 LTS
 
 ``` bash
 $ sudo apt-get install python3-gi gir1.2-webkit2-4.0 gir1.2-vte-2.91 python3-pip python3-setuptools

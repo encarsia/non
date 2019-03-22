@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: convert submenus (GtkMenu) into popover menus
+# TODO: convert right click submenus into popovers
 # TODO: index listings and add to search function
 # TODO: return message if post cannot be created
-# TODO: stop preview when changin to another instance
+# TODO: stop preview when changing to another instance
 # TODO: generate summary in multiprocessing process to avoid mainloop blocking
 
 __version__ = "0.7"
@@ -192,7 +192,7 @@ and/or \"git commit -a\")\n":
             store.clear()
 
             for r in app.search_result:
-                # row = title, file, weight, line, counter, preview
+                # row = title, file, weight, line (currently not used), counter, preview
                 row = store.append(None, [r[0], None, 800, None, r[1], ""])
                 for f in r[2]:
                     store.append(row, [f[0], f[1], 400, None, f[2], f[3]])
@@ -222,35 +222,35 @@ and/or \"git commit -a\")\n":
 
     # ########## link menu #########################
 
-    def on_ref_handbook_activate(self, widget):
+    def on_ref_handbook_clicked(self, widget):
         app.messenger(_("Open Nikola handbook in web browser"))
         webbrowser.open("https://getnikola.com/handbook.html")
 
-    def on_ref_rest_markup_activate(self, widget):
+    def on_ref_rest_markup_clicked(self, widget):
         app.messenger(_("Open reST syntax reference in web browser"))
         webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/\
 restructuredtext.html")
 
-    def on_ref_rest_dir_activate(self, widget):
+    def on_ref_rest_dir_clicked(self, widget):
         app.messenger(_("Open reST directives in web browser"))
         webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/\
 directives.html")
 
-    def on_ref_md_activate(self, widget):
+    def on_ref_md_clicked(self, widget):
         app.messenger(_("Open Markdown syntax reference in web browser"))
         webbrowser.open("https://www.markdownguide.org/basic-syntax")
 
     # ########### menu #############################
 
-    def on_open_conf_activate(self, widget):
+    def on_open_conf_clicked(self, widget):
         app.messenger(_("Open conf.py in external editor"))
         subprocess.run(['xdg-open', os.path.join(app.wdir, "conf.py")])
 
-    def on_load_conf_activate(self, widget):
+    def on_load_conf_clicked(self, widget):
         app.messenger(_("Choose configuration file to read"))
         app.obj("choose_conf_file").run()
 
-    def on_add_bookmark_activate(self, widget):
+    def on_add_bookmark_clicked(self, widget):
         # add title and location to bookmark dict
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
         app.bookmarks.update(bookmark)
@@ -258,7 +258,7 @@ directives.html")
             app.siteconf.BLOG_TITLE))
         app.check_nonconf()
 
-    def on_gen_sum_activate(self, widget):
+    def on_gen_sum_clicked(self, widget):
         app.messenger(_("Generate page for summary tab"))
         app.generate_summary()
         # change to tab when finished
@@ -633,9 +633,8 @@ class NiApp:
         #                                       "ui",
         #                                       "duckyou.svg"))
         window.set_application(app)
-        window.show_all()
-
         self.check_nonconf()
+        window.show_all()
 
     def start_console(self, wdir):
         # spawn_sync is deprecated and spawn_async doesn't exist anymore
@@ -665,32 +664,31 @@ class NiApp:
         # remove generated bookmark menu items, otherwise when
         # appending new bookmark all existing bookmarks are appended
         # repeatedly
-        for i in self.obj("menu").get_children():
-            # the separator item is stretched vertically when applying
-            # get_label function (which does not return any value but
-            # no error either) but I don't know how to do a GTK class
-            # comparison to exclude the separator or include the
-            # menuitems so this works fine
-            if isinstance(i, type(self.obj("load_conf"))):
-                if i.get_label().startswith(_("Bookmark: ")):
-                    self.obj("menu").remove(i)
+        for i in self.obj("menu_box"):
+            if isinstance(i, Gtk.ModelButton) and i.get_property("text").startswith(_("Bookmark: ")):
+                self.obj("menu_box").remove(i)
         # add menu items for bookmarks
-        for b in self.bookmarks:
-            if self.wdir == self.bookmarks[b]:
-                item = Gtk.MenuItem.new_with_label(
-                                        _("Bookmark: {} (active)").format(b))
-                item.set_sensitive(False)
-            else:
-                item = Gtk.MenuItem.new_with_label(_("Bookmark: {}").format(b))
-            item.connect("activate", self.select_bookmark, self.bookmarks[b])
-            self.obj("menu").append(item)
-
-        self.obj("menu").show_all()
         if len(self.bookmarks) > 0:
-            self.messenger(_("Found {} bookmark(s)").format(
-                len(self.bookmarks)))
+            self.messenger(_("Found {} bookmark(s)").format(len(self.bookmarks)))
+            for b in self.bookmarks:
+                item = Gtk.ModelButton()
+                item.set_property("text", _("Bookmark: {}").format(b))
+                self.obj("menu_box").add(item)
+                if self.wdir == self.bookmarks[b]:
+                    #mb = Gtk.ModelButton.new()
+                    #item = Gtk.Button.new_with_label(
+                    #                        _("Bookmark: {} (active)").format(b))
+                    item.set_property("text", _("Bookmark: {} (active)").format(b))
+                    item.set_sensitive(False)
+                    #mb.add(item)
+                #else:
+                #    print("other bookmark")
+                    #item = Gtk.ModelButton.new_with_label(_("Bookmark: {}").format(b))
+                item.connect("clicked", self.select_bookmark, self.bookmarks[b])
+            self.obj("menu").show_all()
         else:
             self.messenger(_("No bookmarks found."))
+
         # check if last wdir still exists
         try:
             os.chdir(self.wdir)
