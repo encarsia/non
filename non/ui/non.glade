@@ -3,6 +3,19 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="vte-2.91" version="0.46"/>
+  <object class="GtkPopover">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox" id="popover_box">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkFileFilter" id="filefilter1">
     <patterns>
       <pattern>conf.py</pattern>
@@ -363,6 +376,8 @@
   <object class="GtkApplicationWindow" id="non_window_stack">
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
+    <property name="default_width">600</property>
+    <property name="default_height">600</property>
     <property name="icon">duckyou.svg</property>
     <child type="titlebar">
       <object class="GtkHeaderBar">
@@ -996,6 +1011,7 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
+                                <property name="fixed_width">250</property>
                                 <property name="title" translatable="yes">Title</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
@@ -1012,10 +1028,11 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
+                                <property name="fixed_width">150</property>
                                 <property name="title" translatable="yes">Slug</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort_column_id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1043,6 +1060,8 @@ This will only upload source files and not build and deploy the site.</property>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn">
+                                <property name="resizable">True</property>
+                                <property name="fixed_width">150</property>
                                 <property name="title" translatable="yes">Tags</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
@@ -1055,7 +1074,10 @@ This will only upload source files and not build and deploy the site.</property>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn">
+                                <property name="resizable">True</property>
                                 <property name="title" translatable="yes">Category</property>
+                                <property name="sort_indicator">True</property>
+                                <property name="sort_column_id">6</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1116,6 +1138,7 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
+                                <property name="fixed_width">250</property>
                                 <property name="title" translatable="yes">Title</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
@@ -1132,10 +1155,11 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
+                                <property name="fixed_width">150</property>
                                 <property name="title" translatable="yes">Slug</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort_column_id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1162,6 +1186,8 @@ This will only upload source files and not build and deploy the site.</property>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn">
+                                <property name="resizable">True</property>
+                                <property name="fixed_width">150</property>
                                 <property name="title" translatable="yes">Tags</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
@@ -1174,7 +1200,10 @@ This will only upload source files and not build and deploy the site.</property>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn">
+                                <property name="resizable">True</property>
                                 <property name="title" translatable="yes">Category</property>
+                                <property name="sort_indicator">True</property>
+                                <property name="sort_column_id">6</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>

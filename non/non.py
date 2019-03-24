@@ -145,7 +145,7 @@ and/or \"git commit -a\")\n":
         if app.gui_cmd is True and last_line == app.prompt:
             time.sleep(2)
             app.obj("stack").set_visible_child(app.obj("gui"))
-            sd = app.update_sitedata(app.sitedata)
+            app.update_sitedata(app.sitedata)
             app.get_window_content()
             app.gui_cmd = False
 
@@ -218,6 +218,8 @@ and/or \"git commit -a\")\n":
         try:
             app.obj("search_result_textbuffer").set_text(row[pos][5], len(row[pos][5]))
         except TypeError:
+            # signal is triggered if widget outside the TreeView is activated so we do not need any action here until
+            # clicked on a search result again
             pass
 
     # ########## link menu #########################
@@ -458,11 +460,14 @@ stash pop"))
 
     def on_view_posts_button_release_event(self, widget, event):
         row, pos = app.obj("selection_post").get_selected()
-        self.on_pp_table_click(event, row, pos)
+        # signal is emitted on clicking on the table header (sorting) so no selection is possible
+        if pos is not None:
+            self.on_pp_table_click(event, row, pos)
 
     def on_view_pages_button_release_event(self, widget, event):
         row, pos = app.obj("selection_page").get_selected()
-        self.on_pp_table_click(event, row, pos)
+        if pos is not None:
+            self.on_pp_table_click(event, row, pos)
 
     def on_pp_table_click(self, event, row, pos):
         title = row[pos][0]
@@ -674,16 +679,10 @@ class NiApp:
                 item = Gtk.ModelButton()
                 item.set_property("text", _("Bookmark: {}").format(b))
                 self.obj("menu_box").add(item)
+                # mark current Nikola site and deactivate button
                 if self.wdir == self.bookmarks[b]:
-                    #mb = Gtk.ModelButton.new()
-                    #item = Gtk.Button.new_with_label(
-                    #                        _("Bookmark: {} (active)").format(b))
                     item.set_property("text", _("Bookmark: {} (active)").format(b))
                     item.set_sensitive(False)
-                    #mb.add(item)
-                #else:
-                #    print("other bookmark")
-                    #item = Gtk.ModelButton.new_with_label(_("Bookmark: {}").format(b))
                 item.connect("clicked", self.select_bookmark, self.bookmarks[b])
             self.obj("menu").show_all()
         else:
