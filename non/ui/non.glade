@@ -228,6 +228,8 @@
       <column type="gchararray"/>
       <!-- column-name weight -->
       <column type="gint"/>
+      <!-- column-name filepath -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkTreeStore" id="store_images">
@@ -240,6 +242,8 @@
       <column type="gchararray"/>
       <!-- column-name weight -->
       <column type="gint"/>
+      <!-- column-name filepath -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkTreeStore" id="store_listings">
@@ -252,6 +256,8 @@
       <column type="gchararray"/>
       <!-- column-name weight -->
       <column type="gint"/>
+      <!-- column-name filepath -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="store_pages">

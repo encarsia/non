@@ -398,19 +398,19 @@ stash pop"))
     def on_view_listings_row_activated(self, widget, *args):
         row, pos = app.obj("selection_listings").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "listings", row[pos][0])]
+                        os.path.join(app.wdir, row[pos][4])]
                        )
 
     def on_view_images_row_activated(self, widget, *args):
         row, pos = app.obj("selection_images").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "images", row[pos][0])]
+                        os.path.join(app.wdir, row[pos][4])]
                        )
 
     def on_view_files_row_activated(self, widget, *args):
         row, pos = app.obj("selection_files").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "files", row[pos][0])]
+                        os.path.join(app.wdir, row[pos][4])]
                        )
 
     def on_view_translations_row_activated(self, widget, *args):
@@ -971,10 +971,18 @@ one!"))
             self.get_tree_data_src("store_pages", self.pages)
             # files/listings/images are based on treestores, data rows are
             # appended without dict usage
-            self.get_tree_data("store_listings", "listings",
-                               self.output_folder)
-            self.get_tree_data("store_files", "files", self.output_folder)
-            self.get_tree_data("store_images", "images", self.output_folder)
+            self.get_tree_data("store_listings",
+                               "listings",
+                               self.output_folder,
+                               )
+            self.get_tree_data("store_files",
+                               "files",
+                               self.output_folder,
+                               )
+            self.get_tree_data("store_images",
+                               "images",
+                               self.output_folder,
+                               )
             # tags/category tab
             self.get_tree_data_label(self.posts,
                                      self.pages,
@@ -1177,6 +1185,7 @@ one!"))
                                         self.sizeof_fmt(os.path.getsize(
                                             os.path.join(subdir, item))),
                                         weight,
+                                        os.path.join(subdir, item),
                                         ])
             elif os.path.isdir(os.path.join(subdir, item)):
                 # TODO size of folder
@@ -1186,7 +1195,12 @@ one!"))
                     weight = 800
                     self.obj("build").set_sensitive(True)
                 row = self.obj(store).append(parent,
-                                             [item, None, None, weight])
+                                             [item,
+                                              None,
+                                              None,
+                                              weight,
+                                              os.path.join(subdir, item),
+                                              ])
                 subsubdir = os.path.join(subdir, item)
                 # read subdirs as child rows
                 self.get_tree_data(store, subsubdir, output, row)
