@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: convert right click submenus into popovers
 # TODO: index listings and add to search function
 # TODO: return message if post cannot be created
 # TODO: stop preview when changing to another instance
@@ -426,7 +425,7 @@ stash pop"))
 
     def on_view_translations_button_release_event(self, widget, event):
         if event.button == 3:   # only show on right click
-            popover = self.refresh_popover(widget)
+            popover = self.refresh_popover(widget, event)
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             popover.add(box)
             for l in app.translation_lang:
@@ -434,12 +433,6 @@ stash pop"))
                 item.set_property("text", _("Create translation for {}".format(l)))
                 box.add(item)
                 item.connect("clicked", self.on_create_translation, l)
-                # open popover at mouse position
-                rect = Gdk.Rectangle()
-                rect.x = event.x
-                rect.y = event.y + 25 # additional vertical space because popover is not positioned exactly
-                rect.width = rect.height = 1
-                popover.set_pointing_to(rect)
                 popover.show_all()
                 popover.popup()
 
@@ -466,14 +459,14 @@ stash pop"))
         row, pos = app.obj("selection_post").get_selected()
         # signal is emitted on clicking on the table header (sorting) so no selection is possible
         if pos is not None:
-            self.on_pp_table_click(event, row, pos)
+            self.on_pp_table_click(event, row, pos, widget)
 
     def on_view_pages_button_release_event(self, widget, event):
         row, pos = app.obj("selection_page").get_selected()
         if pos is not None:
-            self.on_pp_table_click(event, row, pos)
+            self.on_pp_table_click(event, row, pos, widget)
 
-    def on_pp_table_click(self, event, row, pos):
+    def on_pp_table_click(self, event, row, pos, widget):
         title = row[pos][0]
         slug = row[pos][1]
         filename = row[pos][2]
@@ -493,20 +486,20 @@ stash pop"))
                                             filename.split(".")[1], has_meta))
         # only generate popup menu on right click
         elif event.button == 3:
-            popup = Gtk.Menu()
-            item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
-            # selected row already caught by on_treeview_selection_changed
-            # function. I don't know what to do with this information but I'm
-            # afraid to delete it
-            item.connect("activate", self.on_open_pp_web, title, path, slug)
-            popup.append(item)
-            if meta is not "":
-                item = Gtk.MenuItem.new_with_label(_("Edit meta data file"))
-                item.connect("activate", self.on_open_metafile, meta)
-                popup.append(item)
-            popup.show_all()
-            popup.popup(None, None, None, None, event.button, event.time)
-            return True
+            popover = self.refresh_popover(widget, event)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            popover.add(box)
+            item = Gtk.ModelButton()
+            item.set_property("text", _("Open in web browser"))
+            box.add(item)
+            item.connect("clicked", self.on_open_pp_web, title, path, slug)
+            if meta is not "": # create button if metafile exists
+                item = Gtk.ModelButton()
+                item.set_property("text", _("Edit meta data file"))
+                item.connect("clicked", self.on_open_metafile, meta)
+                box.add(item)
+            popover.show_all()
+            popover.popup()
         else:
             app.messenger(_("No function (button event: {})").format(
                                                         event.button), "debug")
@@ -521,8 +514,14 @@ stash pop"))
                         os.path.join(app.wdir, meta)]
                        )
 
-    def refresh_popover(self, widget):
+    def refresh_popover(self, widget, event):
         popover = Gtk.Popover()
+        # open popover at mouse position
+        rect = Gdk.Rectangle()
+        rect.x = event.x
+        rect.y = event.y + 25  # additional vertical space because popover is not positioned exactly
+        rect.width = rect.height = 1
+        popover.set_pointing_to(rect)
         popover.set_position(Gtk.PositionType.RIGHT)
         popover.set_relative_to(widget)
         return popover
