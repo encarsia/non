@@ -1875,6 +1875,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="logo_icon_name">help-about</property>
     <property name="license_type">mit-x11</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
@@ -1912,6 +1913,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="filter">filefilter1</property>
     <property name="preview_widget_active">False</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>
     <child type="titlebar">
@@ -1997,6 +1999,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="text" translatable="yes">Resolve conflicts!</property>
     <property name="secondary_text" translatable="yes">There are conflicts trying to pull from GitHub.</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -2052,6 +2055,7 @@ This will only upload source files and not build and deploy the site.</property>
 &lt;b&gt;Keep local changes and try to pull from origin or discard changes and just pull from origin?&lt;/b&gt;</property>
     <property name="secondary_use_markup">True</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_git_get_changes_dialog_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -2142,6 +2146,7 @@ This will only upload source files and not build and deploy the site.</property>
 &lt;b&gt;Commit and push changed files to the GitHub repository's src branch?&lt;/b&gt;</property>
     <property name="secondary_use_markup">True</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_git_push_changes_dialog_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -2202,6 +2207,7 @@ This will only upload source files and not build and deploy the site.</property>
     <property name="text" translatable="yes">Title of new post</property>
     <property name="secondary_text"> </property>
     <signal name="close" handler="on_window_close" swapped="no"/>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_newpost_dialog_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">

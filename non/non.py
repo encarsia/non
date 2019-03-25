@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # TODO: return message if post cannot be created
-# TODO: stop preview when changing to another instance
 # TODO: generate summary in multiprocessing process to avoid mainloop blocking
 
 __version__ = "0.7"
@@ -59,6 +58,7 @@ class Handler:
     # ########### toolbar ##########################
 
     def on_newpost_clicked(self, widget):
+        self.stop_preview()
         app.obj("entry_message").set_text("")
         app.obj("newpost_entry").set_text("")
         app.obj("newpost_dialog").run()
@@ -73,12 +73,15 @@ class Handler:
             self.serve.kill()
 
     def on_build_clicked(self, widget):
+        self.stop_preview()
         app.run_nikola_build()
 
     def on_deploy_git_clicked(self, widget):
+        self.stop_preview()
         app.run_nikola_github_deploy()
 
     def on_deploy_clicked(self, widget):
+        self.stop_preview()
         app.run_nikola_deploy()
 
     def on_refresh_clicked(self, widget):
@@ -89,6 +92,7 @@ class Handler:
         app.get_window_content()
 
     def on_save_drafts(self, widget):
+        self.stop_preview()
         # just to be sure, should already be on src
         app.exec_cmd("git checkout src")
         # git commit && git push origin src
@@ -105,6 +109,7 @@ and/or \"git commit -a\")\n" \
             app.messenger(_("Unknown status: {}").format(status), "warning")
 
     def on_get_drafts(self, widget):
+        self.stop_preview()
         # just to be sure, should already be on src
         app.exec_cmd("git checkout src")
         status = app.exec_cmd("git status")
@@ -525,6 +530,11 @@ stash pop"))
         popover.set_relative_to(widget)
         return popover
 
+    def stop_preview(self):
+        if app.obj("preview").get_active():
+            app.obj("preview").set_active(False)
+
+
 class NiApp:
 
     def __init__(self):
@@ -730,6 +740,7 @@ anymore."), "warning")
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
+        Handler().stop_preview()
         try:
             self.dump_sitedata_file(self.sitedata)
         except AttributeError:
