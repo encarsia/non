@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: index listings and add to search function
 # TODO: return message if post cannot be created
 # TODO: stop preview when changing to another instance
 # TODO: generate summary in multiprocessing process to avoid mainloop blocking
@@ -804,6 +803,8 @@ anymore."), "warning")
                                                     c=set(sitedata["page_cats"]),
                                                     update=new_files["pages"],
                                                     )
+        sitedata["listings"] = glob.glob("listings/**/*.*", recursive=True)
+
         return sitedata
 
     def dump_sitedata_file(self, sitedata):
@@ -1456,7 +1457,7 @@ one!"))
 
         subdirs = [("Posts", self.sitedata["posts"]),
                    ("Pages", self.sitedata["pages"]),
-                   # ("Listings", self.sitedata["listings"]),
+                   ("Listings", self.sitedata["listings"]),
                   ]
 
         for s in subdirs:
@@ -1465,21 +1466,32 @@ one!"))
             counter_sub = 0
 
             for f in s[1]:
+                if s[0] == "Listings":
+                    filename = f
+                else:
+                    filename = s[1][f]["file"]
                 counter = 0
                 preview = ""
-                with open(s[1][f]["file"]) as txt:
-                    for no, line in enumerate(txt):
-                        if pattern.lower() in line.lower():     # do not search case-sensitive
-                            counter += 1
-                            # print(no, line)
-                            preview += "Line {}:\n\n{}\n-----------\n".format(no + 1, line)
+                with open(filename) as txt:
+                    try:
+                        for no, line in enumerate(txt):
+                            if pattern.lower() in line.lower():     # do not search case-sensitive
+                                counter += 1
+                                # print(no, line)
+                                preview += "Line {}:\n\n{}\n-----------\n".format(no + 1, line)
+                    except UnicodeDecodeError:
+                        # ignore if line cannot be read
+                        pass
                 if counter > 0:
                     counter_sub += 1
-                    match.append((s[1][f]["title"],
-                                  s[1][f]["file"],
-                                  counter,
-                                  preview)
-                                 )
+                    if s[0] == "Listings":
+                        match.append((filename, filename, counter, preview))
+                    else:
+                        match.append((s[1][f]["title"],
+                                      s[1][f]["file"],
+                                      counter,
+                                      preview)
+                                     )
             result.append((s[0], counter_sub, match))
 
     def run_nikola_build(self):
