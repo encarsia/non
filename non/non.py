@@ -20,7 +20,7 @@ try:
     gi.require_version("Gtk", "3.0")
     gi.require_version("Vte", "2.91")
     gi.require_version("WebKit2", "4.0")
-    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
+    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2, Gdk
 except (ModuleNotFoundError, ImportError) as e:
     print("Unable to load Python bindings for GObject Introspection.")
     raise
@@ -425,32 +425,36 @@ stash pop"))
     # open context menu for translation options
 
     def on_view_translations_button_release_event(self, widget, event):
-        popup = Gtk.Menu()
-        for l in app.translation_lang:
-            item = Gtk.MenuItem.new_with_label(
-                                    _("Create translation for {}".format(l)))
-            # selected row already caught by on_treeview_selection_changed func
-            item.connect("activate", self.on_create_translation, l)
-            popup.append(item)
-        popup.show_all()
-        # only show on right click
-        if event.button == 3:
-            popup.popup(None, None, None, None, event.button, event.time)
-            return True
+        if event.button == 3:   # only show on right click
+            popover = self.refresh_popover(widget)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            popover.add(box)
+            for l in app.translation_lang:
+                item = Gtk.ModelButton()
+                item.set_property("text", _("Create translation for {}".format(l)))
+                box.add(item)
+                item.connect("clicked", self.on_create_translation, l)
+                # open popover at mouse position
+                rect = Gdk.Rectangle()
+                rect.x = event.x
+                rect.y = event.y + 25 # additional vertical space because popover is not positioned exactly
+                rect.width = rect.height = 1
+                popover.set_pointing_to(rect)
+                popover.show_all()
+                popover.popup()
 
     def on_create_translation(self, widget, lang):
         row, pos = app.obj("selection_translations").get_selected()
-        subdir = row[pos][6]
         file = row[pos][2]
         file_base = file.split(".")[0]
         file_ext = file.split(".")[-1]
         trans_file = "{}.{}.{}".format(file_base, lang, file_ext)
-        if os.path.isfile(os.path.join(subdir, trans_file)):
+        if os.path.isfile(os.path.join(trans_file)):
             app.messenger(_("Translation file already exists."), "warning")
         else:
             shutil.copy(
-                os.path.join(subdir, file),
-                os.path.join(subdir, trans_file))
+                os.path.join(file),
+                os.path.join(trans_file))
             app.messenger(_("Create translation file for {}").format(
                                                                 row[pos][0]))
             app.update_sitedata(app.sitedata)
@@ -517,7 +521,11 @@ stash pop"))
                         os.path.join(app.wdir, meta)]
                        )
 
-
+    def refresh_popover(self, widget):
+        popover = Gtk.Popover()
+        popover.set_position(Gtk.PositionType.RIGHT)
+        popover.set_relative_to(widget)
+        return popover
 
 class NiApp:
 
