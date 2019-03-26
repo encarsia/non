@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: return message if post cannot be created
-# TODO: generate summary in multiprocessing process to avoid mainloop blocking
-
 __version__ = "0.7"
 
 try:
@@ -185,7 +182,7 @@ and/or \"git commit -a\")\n":
             except AttributeError:
                 app.messenger("No search process here to stop", "debug")
             app.messenger("Search started: {}".format(txt))
-            self.sp = app.start_search(txt)
+            self.sp = app.process_search(txt)
             # wait until search is done before showing results
             while self.sp.is_alive():
                 time.sleep(.1)
@@ -301,7 +298,6 @@ directives.html")
                                                 _("Title must not be empty."))
                 app.obj("newpost_entry").grab_focus()
             else:
-                self.on_window_close(widget)
                 if app.obj("create_page").get_active():
                     new_site_obj = "new_page"
                 else:
@@ -317,11 +313,17 @@ directives.html")
                                         app.obj("newpost_entry").get_text(),
                                         format,
                                        ))
-
-                app.messenger(_("New post created: {}").format(
+                if "ERROR" in str(status.stderr):
+                    app.messenger("Failed to create post.", "error")
+                    # show Nikola error message
+                    app.obj("entry_message").set_text(str(status.stderr).split("ERROR: Nikola: ")[1].split("\n")[0])
+                    app.obj("newpost_entry").grab_focus()
+                else:
+                    self.on_window_close(widget)
+                    app.messenger(_("New post created: {}").format(
                                         app.obj("newpost_entry").get_text()))
-                app.update_sitedata(app.sitedata)
-                app.get_window_content()
+                    app.update_sitedata(app.sitedata)
+                    app.get_window_content()
         else:
             self.on_window_close(widget)
 
@@ -517,6 +519,9 @@ stash pop"))
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, meta)]
                        )
+
+    def on_status_reload_clicked(self):
+        app.get_status()
 
     def refresh_popover(self, widget, event):
         popover = Gtk.Popover()
@@ -1025,9 +1030,13 @@ one!"))
             self.obj("store_translation").set_sort_column_id(
                 3, Gtk.SortType.DESCENDING)
 
-            # expand all rows in translation tab/search results
+            # expand rows in some tabs
             self.obj("view_translations").expand_all()
-            self.obj("view_search").expand_all()
+            self.obj("view_images").expand_all()
+            self.obj("view_files").expand_all()
+
+            # populate status popover
+            self.get_status()
 
         except AttributeError:
             self.messenger(_("Failed to load data, choose another conf.py"),
@@ -1419,8 +1428,11 @@ one!"))
                    ]
 
         infodict["disk_usage"] = get_diskusage_string(folders)
-        infodict["status"] = self.exec_cmd("nikola status").stdout.split(
-                                                                    "\n")[1]
+        try:
+            infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
+        except IndexError:
+            self.messenger("Could not fetch site status. See 'Status' messages and solve errors", "error")
+            return
         infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
                                                             "nikola check -l"))
         infodict["current_theme"] = self.siteconf.THEME
@@ -1460,7 +1472,7 @@ one!"))
         # load file into webview
         self.webview.load_uri("file://" + self.summaryfile)
 
-    def start_search(self, pattern):
+    def process_search(self, pattern):
         # store search results as shared variable between mainloop and multiprocessing thread
         self.search_result = multiprocessing.Manager().list()
 
@@ -1518,6 +1530,32 @@ one!"))
                                       preview)
                                      )
             result.append((s[0], counter_sub, match))
+
+    def get_status(self):
+        output = self.exec_cmd("nikola status")
+        output = output.stderr.split("\n")
+        #for no, l in output:
+        #    print(no, l)
+        attention = False
+        for s in ("error", "warning", "info"):
+            self.obj("textbuffer_{}".format(s)).set_text("")
+            txt = ""
+            counter = 0
+            for line in output:
+                try:
+                    message = line.split("{}: Nikola: ".format(s.upper()))[1]
+                    counter += 1
+                    txt += """    ({}) {}
+                    
+""".format(counter, message)
+                    attention = True
+                except IndexError:
+                    pass
+            self.obj("textbuffer_{}".format(s)).set_text(txt)
+        if attention:
+            self.obj("status_button_label").set_text("Status (!)")
+        else:
+            self.obj("status_button_label").set_text("Status")
 
     def run_nikola_build(self):
         self.messenger(_("Execute Nikola: run build process"))
