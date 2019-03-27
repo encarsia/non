@@ -186,10 +186,10 @@ and/or \"git commit -a\")\n":
                 self.sp.terminate()
                 time.sleep(.01)
                 self.sp.close()
-                app.messenger("Stop search process", "debug")
+                app.messenger(_("Stop search process"), "debug")
             except AttributeError:
-                app.messenger("No search process here to stop", "debug")
-            app.messenger("Search started: {}".format(txt))
+                app.messenger(_("No search process here to stop"), "debug")
+            app.messenger(_("Search started: {}").format(txt))
             self.sp = app.process_search(txt)
             # wait until search is done before showing results
             while self.sp.is_alive():
@@ -264,6 +264,10 @@ directives.html")
         app.messenger(_("Choose configuration file to read"))
         app.obj("choose_conf_file").run()
 
+    def on_open_non_conf_clicked(self, widget):
+        app.messenger(_("Open NoN config file in external editor"))
+        subprocess.run(['xdg-open', app.conf_file])
+
     def on_add_bookmark_clicked(self, widget):
         # add title and location to bookmark dict
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
@@ -326,7 +330,7 @@ directives.html")
                                         format,
                                        ))
                 if "ERROR" in str(status.stderr):
-                    app.messenger("Failed to create post.", "error")
+                    app.messenger(_("Failed to create post."), "error")
                     # show Nikola error message
                     app.obj("entry_message").set_text(str(status.stderr).split(
                                         "ERROR: Nikola: ")[1].split("\n")[0])
@@ -536,7 +540,7 @@ stash pop"))
                         os.path.join(app.wdir, meta)]
                        )
 
-    def on_status_reload_clicked(self):
+    def on_status_reload_clicked(self, widget):
         app.get_status()
 
     def refresh_popover(self, widget, event):
@@ -751,9 +755,7 @@ anymore."), "warning")
             self.obj("choose_conf_file").run()
             self.wdir = os.path.expanduser("~")
 
-        # populate status popover
         self.get_status()
-
         self.start_console(self.wdir)
         self.get_site_info()
         self.get_window_content()
@@ -1469,8 +1471,8 @@ one!"))
         try:
             infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
         except IndexError:
-            self.messenger("Could not fetch site status. See 'Status' \
-messages and solve errors", "error")
+            self.messenger(_("Could not fetch site status. See 'Status' \
+messages and solve errors"), "error")
             return
         infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
                                                             "nikola check -l"))
@@ -1598,6 +1600,7 @@ messages and solve errors", "error")
             self.obj("status_button_label").set_text("Status (!)")
         else:
             self.obj("status_button_label").set_text("Status (ok)")
+        self.messenger(_("Messages in 'Status' popover updated."))
 
     def run_nikola_build(self):
         self.messenger(_("Execute Nikola: run build process"))

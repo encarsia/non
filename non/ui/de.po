@@ -10,14 +10,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: NoN.pot\n"
 
 msgid "> (no custom shortcodes)"
 msgstr "> (keine individuellen Shortcodes)"
 
-msgid "A manager for your Nikola powered website."
+msgid "A manager for Nikola powered websites."
 msgstr "Ein Manager für Nikola-angetriebene Webseiten."
 
 msgid "Add bookmark"
@@ -69,6 +69,9 @@ msgstr ""
 "<b>Sollen die veränderten Dateien in den Branch src des GitHub-Repositorys "
 "committet und gepusht werden?</b>"
 
+msgid "Choose another Nikola instance's conf.py to load into the application."
+msgstr "Mit conf.py einer anderen Nikola-Instanz fortfahren."
+
 msgid "Choose conf.py"
 msgstr "Wähle conf.py"
 
@@ -83,6 +86,11 @@ msgstr "Daten von Nikola-Seite sammeln fertig."
 
 msgid "Console"
 msgstr "Konsole"
+
+msgid "Could not fetch site status. See 'Status' messages and solve errors"
+msgstr ""
+"Konnte Seitenstatus nicht ermitteln. Siehe 'Status'-Nachrichten, um Fehler "
+"zu beheben"
 
 msgid "Could not read data file."
 msgstr "Konnte Seitendaten-Datei nicht lesen."
@@ -153,6 +161,9 @@ msgstr "Leere Konfiguration erstellt..."
 msgid "Error: {}"
 msgstr "Fehler: {}"
 
+msgid "Errors"
+msgstr "Fehler"
+
 msgid "Execute Nikola: run build process"
 msgstr "Nikola ausführen: build-Prozess"
 
@@ -165,14 +176,23 @@ msgstr "Nikola ausführen: voreingestellte Deployment-Konfiguration"
 msgid "Execute git stash & git pull origin src & git stash pop"
 msgstr "Ausführen von git stash & git pull origin src & git stash pop"
 
+msgid "Failed to create post."
+msgstr "Anlegen des neuen Beitrags gescheitert."
+
 msgid "Failed to load data, choose another conf.py"
 msgstr "Laden der Daten gescheitert, eine andere conf.py auswählen"
+
+msgid "File"
+msgstr "Datei"
 
 msgid "Filename"
 msgstr "Dateiname"
 
 msgid "Files"
 msgstr "Dateien"
+
+msgid "Find in files"
+msgstr "Finde in Dateien"
 
 msgid "Found config to work with..."
 msgstr "Konfiguration gefunden..."
@@ -209,6 +229,9 @@ msgstr "Ich dachte, wir wären hier fertig..."
 
 msgid "Images"
 msgstr "Bilder"
+
+msgid "Info"
+msgstr "Info"
 
 msgid "Input file format: {}. Separate metafile: {}."
 msgstr "Rohdateiformat: {}. Separates Metafile: {}."
@@ -249,8 +272,14 @@ msgstr ""
 msgid "Markdown syntax"
 msgstr "Markdown-Syntax"
 
+msgid "Matches"
+msgstr "Treffer"
+
 msgid "Menu"
 msgstr "Menü"
+
+msgid "Messages in 'Status' popover updated."
+msgstr "Meldungen im 'Status'-Popover aktualisiert."
 
 msgid "New bookmark added for {}."
 msgstr "Neues Lesezeichen angelegt für {}."
@@ -283,6 +312,9 @@ msgstr "Keine funktion (Button-Event: {})"
 msgid "No local changes, pulled changes from origin/src."
 msgstr "Keine lokalen Änderungen, Änderungen von origin/src gepullt."
 
+msgid "No search process here to stop"
+msgstr "Kein Suchauftrag hier anzuhalten"
+
 msgid "No summary file to load, let's generate one!"
 msgstr "Keine Datei mit Zusammenfassung gefunden, lasst uns eine erstellen!"
 
@@ -307,11 +339,20 @@ msgstr "Öffne Nikola-Handbuch"
 msgid "Open Nikola handbook in web browser"
 msgstr "Nikola-Handbuch im Browser öffnen"
 
+msgid "Open NoN config file"
+msgstr "Öffne NoN-Konfigurationsdatei"
+
+msgid "Open NoN config file in external editor"
+msgstr "Öffne NoN-Konfigurationsdatei in externem Editor"
+
 msgid "Open conf.py in external editor"
 msgstr "Öffne conf.py in externem Editor"
 
 msgid "Open current conf.py"
 msgstr "Öffne aktuelle conf.py"
+
+msgid "Open file"
+msgstr "Öffne Datei"
 
 msgid "Open file..."
 msgstr "Öffne Datei..."
@@ -340,6 +381,12 @@ msgstr "Öffne reStructuredText-Directives im Browser"
 msgid "Open reStructuredText Markup Specification in web browser"
 msgstr "Öffne reStructuredText-Markup-Spezifikationen im Browser"
 
+msgid "Open this Nikola instance's conf.py."
+msgstr "Öffne conf.py dieser Nikola-Instanz."
+
+msgid "Open this application's configuration file."
+msgstr "Öffne die Konfigurationsdatei dieser Anwendung"
+
 msgid "Output folder is set to default 'output'"
 msgstr "Ausgabeverzeichnis is auf den Standard 'output' gesetzt"
 
@@ -357,6 +404,9 @@ msgstr "Pfad zum Arbeitsverzeichnis fehlerhaft oder None."
 
 msgid "Posts"
 msgstr "Beiträge"
+
+msgid "Preferences"
+msgstr "Einstellungen"
 
 msgid "Pulled files from origin/src."
 msgstr "Dateien von origin/src gepullt."
@@ -391,6 +441,12 @@ msgstr ""
 "Dies wird nur die Quelldateien hochladen, die Seite aber nicht erstellen und "
 "deployen."
 
+msgid "Search"
+msgstr "Suche"
+
+msgid "Search started: {}"
+msgstr "Suche gestartet: {}"
+
 msgid "Show info window about this application"
 msgstr "Zeige Info-Fenster zu dieser Anwendung"
 
@@ -403,8 +459,14 @@ msgstr "Größe"
 msgid "Slug"
 msgstr "Slug"
 
+msgid "Status"
+msgstr "Status"
+
 msgid "Stop preview"
 msgstr "Vorschau beenden"
+
+msgid "Stop search process"
+msgstr "Suche anhalten"
 
 msgid "Summary"
 msgstr "Zusammenfassung"
@@ -474,6 +536,9 @@ msgstr "Entwürfe hochladen"
 msgid "Uploading drafts canceled."
 msgstr "Hochladen der Entwürfe abgebrochen."
 
+msgid "Warnings"
+msgstr "Warnungen"
+
 msgid "Working Nikola configuration required"
 msgstr "Funktionierende Konfigurationsdatei benötigt"
 
@@ -504,6 +569,3 @@ msgstr "ja"
 
 msgid "{} doesn't exist...create..."
 msgstr "{} existiert nicht...wird erstellt..."
-
-#~ msgid "Create a new page"
-#~ msgstr "Neue Seite erstellen"
