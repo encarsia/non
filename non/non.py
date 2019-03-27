@@ -134,16 +134,24 @@ and/or \"git commit -a\")\n":
     # ########### vte terminal ########################
 
     def on_term_contents_changed(self, widget):
+        # get_text returns a tuple of information including the complete
+        # content of the console widget: rstrip cut empty lines, then cut the
+        # rest in lines and use only the last
         last_line = widget.get_text()[0].rstrip().split("\n")[-1]
-        if app.prompt == "":
-            app.prompt = last_line
+        try:
+            if last_line.split("$")[1] == "":
+                prompt_ready = True
+            else:
+                prompt_ready = False
+        except IndexError:
+            prompt_ready = False
         if last_line == "INFO: github_deploy: Successful deployment":
             app.messenger(_("Deploying to GitHub/GitLab successful."))
         # gui_cmd is bool var for command being run via toolbar button
         # if command is invoked by button the app focus returns back to graphic
-        # interface stack child 'gui'
-        if app.gui_cmd is True and last_line == app.prompt:
-            time.sleep(2)
+        # interface stack child 'gui' if the command is finished
+        if app.gui_cmd and prompt_ready:
+            time.sleep(2)   # just wait a moment so the user can get output
             app.obj("stack").set_visible_child(app.obj("gui"))
             app.update_sitedata(app.sitedata)
             app.get_window_content()
@@ -192,7 +200,8 @@ and/or \"git commit -a\")\n":
             store.clear()
 
             for r in app.search_result:
-                # row = title, file, weight, line (currently not used), counter, preview
+                # row = title, file, weight, line (currently not used),
+                # counter, preview
                 row = store.append(None, [r[0], None, 800, None, r[1], ""])
                 for f in r[2]:
                     store.append(row, [f[0], f[1], 400, None, f[2], f[3]])
@@ -216,9 +225,12 @@ and/or \"git commit -a\")\n":
     def on_selection_search_changed(self, widget, *args):
         row, pos = app.obj("selection_search").get_selected()
         try:
-            app.obj("search_result_textbuffer").set_text(row[pos][5], len(row[pos][5]))
+            app.obj("search_result_textbuffer").set_text(row[pos][5],
+                                                         len(row[pos][5]),
+                                                         )
         except TypeError:
-            # signal is triggered if widget outside the TreeView is activated so we do not need any action here until
+            # signal is triggered if widget outside the TreeView is activated
+            # so we do not need any action here until
             # clicked on a search result again
             pass
 
@@ -316,7 +328,8 @@ directives.html")
                 if "ERROR" in str(status.stderr):
                     app.messenger("Failed to create post.", "error")
                     # show Nikola error message
-                    app.obj("entry_message").set_text(str(status.stderr).split("ERROR: Nikola: ")[1].split("\n")[0])
+                    app.obj("entry_message").set_text(str(status.stderr).split(
+                                        "ERROR: Nikola: ")[1].split("\n")[0])
                     app.obj("newpost_entry").grab_focus()
                 else:
                     self.on_window_close(widget)
@@ -436,7 +449,8 @@ stash pop"))
             popover.add(box)
             for l in app.translation_lang:
                 item = Gtk.ModelButton()
-                item.set_property("text", _("Create translation for {}".format(l)))
+                item.set_property("text",
+                                  _("Create translation for {}".format(l)))
                 box.add(item)
                 item.connect("clicked", self.on_create_translation, l)
                 popover.show_all()
@@ -463,7 +477,8 @@ stash pop"))
 
     def on_view_posts_button_release_event(self, widget, event):
         row, pos = app.obj("selection_post").get_selected()
-        # signal is emitted on clicking on the table header (sorting) so no selection is possible
+        # signal is emitted on clicking on the table header (sorting) so no
+        # selection is possible
         if pos is not None:
             self.on_pp_table_click(event, row, pos, widget)
 
@@ -476,7 +491,8 @@ stash pop"))
         title = row[pos][0]
         slug = row[pos][1]
         filename = row[pos][2]
-        # if slug is not set the output path is generated from the filename without file extension
+        # if slug is not set the output path is generated from the filename
+        # without file extension
         if slug == "":
             slug = filename.split("/")[-1].split(".")[0]
         path = os.path.join(*filename.split("/")[:-1])
@@ -528,7 +544,8 @@ stash pop"))
         # open popover at mouse position
         rect = Gdk.Rectangle()
         rect.x = event.x
-        rect.y = event.y + 25  # additional vertical space because popover is not positioned exactly
+        rect.y = event.y + 25
+        # additional vertical space because popover is not positioned exactly
         rect.width = rect.height = 1
         popover.set_pointing_to(rect)
         popover.set_position(Gtk.PositionType.RIGHT)
@@ -676,8 +693,6 @@ class NiApp:
             None,
             None,
         )
-        # prompt is detected on first emission of the 'contents changed' signal
-        self.prompt = ""
         # bool variable to decide if focus should return from terminal stack
         # child, True when command is invoked by button, False if command is
         # typed directly in terminal
@@ -691,20 +706,27 @@ class NiApp:
         # appending new bookmark all existing bookmarks are appended
         # repeatedly
         for i in self.obj("menu_box"):
-            if isinstance(i, Gtk.ModelButton) and i.get_property("text").startswith(_("Bookmark: ")):
+            if isinstance(i, Gtk.ModelButton) and \
+                    i.get_property("text").startswith(_("Bookmark: ")):
                 self.obj("menu_box").remove(i)
         # add menu items for bookmarks
         if len(self.bookmarks) > 0:
-            self.messenger(_("Found {} bookmark(s)").format(len(self.bookmarks)))
+            self.messenger(_("Found {} bookmark(s)").format(
+                                                        len(self.bookmarks)))
             for b in self.bookmarks:
                 item = Gtk.ModelButton()
                 item.set_property("text", _("Bookmark: {}").format(b))
                 self.obj("menu_box").add(item)
                 # mark current Nikola site and deactivate button
                 if self.wdir == self.bookmarks[b]:
-                    item.set_property("text", _("Bookmark: {} (active)").format(b))
+                    item.set_property("text",
+                                      _("Bookmark: {} (active)").format(b),
+                                      )
                     item.set_sensitive(False)
-                item.connect("clicked", self.select_bookmark, self.bookmarks[b])
+                item.connect("clicked",
+                             self.select_bookmark,
+                             self.bookmarks[b],
+                             )
             self.obj("menu").show_all()
         else:
             self.messenger(_("No bookmarks found."))
@@ -728,6 +750,9 @@ anymore."), "warning")
                            "warning")
             self.obj("choose_conf_file").run()
             self.wdir = os.path.expanduser("~")
+
+        # populate status popover
+        self.get_status()
 
         self.start_console(self.wdir)
         self.get_site_info()
@@ -769,10 +794,18 @@ anymore."), "warning")
         sitedata = dict()
         sitedata["posts"], \
             sitedata["post_tags"], \
-            sitedata["post_cats"] = self.get_src_content("posts", d=dict(), t=set(), c=set())
+            sitedata["post_cats"] = self.get_src_content("posts",
+                                                         d=dict(),
+                                                         t=set(),
+                                                         c=set(),
+                                                         )
         sitedata["pages"], \
             sitedata["page_tags"], \
-            sitedata["page_cats"] = self.get_src_content("pages", d=dict(), t=set(), c=set())
+            sitedata["page_cats"] = self.get_src_content("pages",
+                                                         d=dict(),
+                                                         t=set(),
+                                                         c=set(),
+                                                         )
         self.messenger(_("Collect data of Nikola site complete."))
         self.dump_sitedata_file(sitedata)
         return sitedata
@@ -787,10 +820,11 @@ anymore."), "warning")
             new_files[sub] = []
             for f in filelist[sub]:
                  if f in sitedata[sub].keys():
-                    if not sitedata[sub][f]["last_modified"] == os.path.getmtime(f):
+                    if not sitedata[sub][f]["last_modified"] == \
+                                                        os.path.getmtime(f):
                         new_files[sub].append(f)
-                        self.messenger(
-                                _("Update article data for: {}").format(sitedata[sub][f]["title"]))
+                        self.messenger(_("Update article data for: {}").format(
+                                                sitedata[sub][f]["title"]))
                  else:
                      new_files[sub].append(f)
                      self.messenger(
@@ -804,21 +838,21 @@ anymore."), "warning")
         sitedata["posts"], \
             sitedata["post_tags"], \
             sitedata["post_cats"] = self.get_src_content(
-                                                    "posts",
-                                                    d=sitedata["posts"],
-                                                    t=set(sitedata["post_tags"]),
-                                                    c=set(sitedata["post_cats"]),
-                                                    update=new_files["posts"],
-                                                    )
+                                                "posts",
+                                                d=sitedata["posts"],
+                                                t=set(sitedata["post_tags"]),
+                                                c=set(sitedata["post_cats"]),
+                                                update=new_files["posts"],
+                                                )
         sitedata["pages"], \
             sitedata["page_tags"], \
             sitedata["page_cats"] = self.get_src_content(
-                                                    "pages",
-                                                    sitedata["pages"],
-                                                    t=set(sitedata["page_tags"]),
-                                                    c=set(sitedata["page_cats"]),
-                                                    update=new_files["pages"],
-                                                    )
+                                                "pages",
+                                                sitedata["pages"],
+                                                t=set(sitedata["page_tags"]),
+                                                c=set(sitedata["page_cats"]),
+                                                update=new_files["pages"],
+                                                )
         sitedata["listings"] = glob.glob("listings/**/*.*", recursive=True)
 
         return sitedata
@@ -1035,9 +1069,6 @@ one!"))
             self.obj("view_images").expand_all()
             self.obj("view_files").expand_all()
 
-            # populate status popover
-            self.get_status()
-
         except AttributeError:
             self.messenger(_("Failed to load data, choose another conf.py"),
                            "error")
@@ -1046,7 +1077,8 @@ one!"))
         filelist = list()
         for path in self.src_files_paths[sub]:
             _allfiles = glob.glob(path + "/**/*.*", recursive=True)
-            filelist += [x for x in _allfiles if not (x.endswith(".meta") or "/." in _allfiles)]
+            filelist += [x for x in _allfiles if not (x.endswith(".meta") or \
+                                                        "/." in _allfiles)]
         return filelist
 
     def get_src_content(self, subdir, d, t, c, update=None):
@@ -1151,12 +1183,16 @@ one!"))
             slug = filename.split("/")[-1].split(".")[0]
         try:
             return filecmp.cmp(os.path.join(filename),
-                               os.path.join(output,
-                                            lang,
-                                            *filename.split("/")[:-1], # path to file
-                                            slug,
-                                            "index.{}".format(filename.split(".")[1]), #file extension
-                                            ))
+                               os.path.join(
+                                   output,
+                                   lang,
+                                   # path to file
+                                   *filename.split("/")[:-1],
+                                   slug,
+                                   # file extension
+                                   "index.{}".format(filename.split(".")[1]),
+                                   ),
+                               )
         except FileNotFoundError:
             return False
 
@@ -1249,10 +1285,12 @@ one!"))
                                                 ])
                         counter += 1
             if counter > 0:
-                self.obj(store).set_value(row, 0, "{} ({})".format(item, counter))
+                self.obj(store).set_value(row, 0, "{} ({})".format(item,
+                                                                   counter))
                 self.obj(store).set_value(row, 4, counter)
             else:
-                # do not append row if occurence is zero and delete from sitedata dict
+                # do not append row if occurence is zero and delete from
+                # sitedata dict
                 self.obj(store).remove(row)
                 for list in (self.sitedata["post_tags"],
                              self.sitedata["page_tags"],
@@ -1295,7 +1333,7 @@ one!"))
         d = {}
         for root, dirs, files in sorted(os.walk(subdir)):
             for f in files:
-                # images are changed in size when deployed so check only for#
+                # images are changed in size when deployed so check only for
                 # filename
                 if subdir == "images":
                     equ = os.path.isfile(os.path.join(output, root, f))
@@ -1431,7 +1469,8 @@ one!"))
         try:
             infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
         except IndexError:
-            self.messenger("Could not fetch site status. See 'Status' messages and solve errors", "error")
+            self.messenger("Could not fetch site status. See 'Status' \
+messages and solve errors", "error")
             return
         infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
                                                             "nikola check -l"))
@@ -1450,9 +1489,11 @@ one!"))
         txt = template.format(**infodict)
 
         # convert markdown to html
-        html_content = markdown.markdown(txt, extensions=["markdown.extensions.tables",
-                                                  "markdown.extensions.toc",
-                                                  ])
+        html_content = markdown.markdown(txt,
+                                     extensions=["markdown.extensions.tables",
+                                                 "markdown.extensions.toc",
+                                                ],
+                                         )
 
         # wrap content in body
         html = """<!DOCTYPE html>
@@ -1473,25 +1514,25 @@ one!"))
         self.webview.load_uri("file://" + self.summaryfile)
 
     def process_search(self, pattern):
-        # store search results as shared variable between mainloop and multiprocessing thread
+        # store search results as shared variable between mainloop and
+        # multiprocessing thread
         self.search_result = multiprocessing.Manager().list()
-
-        # start search as multiprocessing process/thread so it is interruptable when the search pattern is changed
-        p = multiprocessing.Process(target=self.search_files, args=(pattern, self.search_result))
+        # start search as multiprocessing process/thread so it is interruptable
+        # when the search pattern is changed
+        p = multiprocessing.Process(target=self.search_files,
+                                    args=(pattern, self.search_result))
         p.start()
         return p
 
     def search_files(self, pattern, result):
-
         # search results are stored as list and read when search is finished
         # the treeview then is updated by the mainloop because Gtk
         # variable structure:
-        #       ("Posts", res_counter, [(file1, title1, res_counter, preview_string),
-        #                               (file2, ...),
-        #                              ]),
+        #       ("Posts", counter, [(file1, title1, counter, preview_string),
+        #                           (file2, ...),
+        #                          ]),
         #       ("Pages", ...),
         #       ("Listings", ...)
-
         subdirs = [("Posts", self.sitedata["posts"]),
                    ("Pages", self.sitedata["pages"]),
                    ("Listings", self.sitedata["listings"]),
@@ -1512,10 +1553,11 @@ one!"))
                 with open(filename) as txt:
                     try:
                         for no, line in enumerate(txt):
-                            if pattern.lower() in line.lower():     # do not search case-sensitive
+                            # do not search case-sensitive
+                            if pattern.lower() in line.lower():
                                 counter += 1
-                                # print(no, line)
-                                preview += "Line {}:\n\n{}\n-----------\n".format(no + 1, line)
+                                preview += "Line {}:\n\n{}\n----------- \
+\n".format(no + 1, line)
                     except UnicodeDecodeError:
                         # ignore if line cannot be read
                         pass
@@ -1555,7 +1597,7 @@ one!"))
         if attention:
             self.obj("status_button_label").set_text("Status (!)")
         else:
-            self.obj("status_button_label").set_text("Status")
+            self.obj("status_button_label").set_text("Status (ok)")
 
     def run_nikola_build(self):
         self.messenger(_("Execute Nikola: run build process"))

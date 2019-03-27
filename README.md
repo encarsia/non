@@ -13,7 +13,7 @@
  * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances
  * search for strings in posts, pages and listings
- * push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
+ * [experimental] push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
