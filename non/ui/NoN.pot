@@ -7,7 +7,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: NoN 0.6\n"
+"Project-Id-Version: NoN v0.7\n"
 "Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
 "POT-Creation-Date: 2018-11-10 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "> (no custom shortcodes)"
 msgstr ""
 
-msgid "A manager for your Nikola powered website."
+msgid "A manager for Nikola powered websites."
 msgstr ""
 
 msgid "Add bookmark"
@@ -67,6 +67,9 @@ msgid ""
 "<b>Commit and push changed files to the GitHub repository's src branch?</b>"
 msgstr ""
 
+msgid "Choose another Nikola instance's conf.py to load into the application."
+msgstr ""
+
 msgid "Choose conf.py"
 msgstr ""
 
@@ -80,6 +83,9 @@ msgid "Collect data of Nikola site complete."
 msgstr ""
 
 msgid "Console"
+msgstr ""
+
+msgid "Could not fetch site status. See 'Status' messages and solve errors"
 msgstr ""
 
 msgid "Could not read data file."
@@ -151,6 +157,9 @@ msgstr ""
 msgid "Error: {}"
 msgstr ""
 
+msgid "Errors"
+msgstr ""
+
 msgid "Execute Nikola: run build process"
 msgstr ""
 
@@ -163,13 +172,22 @@ msgstr ""
 msgid "Execute git stash & git pull origin src & git stash pop"
 msgstr ""
 
+msgid "Failed to create post."
+msgstr ""
+
 msgid "Failed to load data, choose another conf.py"
+msgstr ""
+
+msgid "File"
 msgstr ""
 
 msgid "Filename"
 msgstr ""
 
 msgid "Files"
+msgstr ""
+
+msgid "Find in files"
 msgstr ""
 
 msgid "Found config to work with..."
@@ -208,6 +226,9 @@ msgstr ""
 msgid "Images"
 msgstr ""
 
+msgid "Info"
+msgstr ""
+
 msgid "Input file format: {}. Separate metafile: {}."
 msgstr ""
 
@@ -241,7 +262,13 @@ msgstr ""
 msgid "Markdown syntax"
 msgstr ""
 
+msgid "Matches"
+msgstr ""
+
 msgid "Menu"
+msgstr ""
+
+msgid "Messages in 'Status' popover updated."
 msgstr ""
 
 msgid "New bookmark added for {}."
@@ -274,6 +301,9 @@ msgstr ""
 msgid "No local changes, pulled changes from origin/src."
 msgstr ""
 
+msgid "No search process here to stop"
+msgstr ""
+
 msgid "No summary file to load, let's generate one!"
 msgstr ""
 
@@ -298,10 +328,19 @@ msgstr ""
 msgid "Open Nikola handbook in web browser"
 msgstr ""
 
+msgid "Open NoN config file"
+msgstr ""
+
+msgid "Open NoN config file in external editor"
+msgstr ""
+
 msgid "Open conf.py in external editor"
 msgstr ""
 
 msgid "Open current conf.py"
+msgstr ""
+
+msgid "Open file"
 msgstr ""
 
 msgid "Open file..."
@@ -331,6 +370,12 @@ msgstr ""
 msgid "Open reStructuredText Markup Specification in web browser"
 msgstr ""
 
+msgid "Open this Nikola instance's conf.py."
+msgstr ""
+
+msgid "Open this application's configuration file."
+msgstr ""
+
 msgid "Output folder is set to default 'output'"
 msgstr ""
 
@@ -347,6 +392,9 @@ msgid "Path to working directory malformed or None."
 msgstr ""
 
 msgid "Posts"
+msgstr ""
+
+msgid "Preferences"
 msgstr ""
 
 msgid "Pulled files from origin/src."
@@ -378,6 +426,12 @@ msgid ""
 "This will only upload source files and not build and deploy the site."
 msgstr ""
 
+msgid "Search"
+msgstr ""
+
+msgid "Search started: {}"
+msgstr ""
+
 msgid "Show info window about this application"
 msgstr ""
 
@@ -390,7 +444,13 @@ msgstr ""
 msgid "Slug"
 msgstr ""
 
+msgid "Status"
+msgstr ""
+
 msgid "Stop preview"
+msgstr ""
+
+msgid "Stop search process"
 msgstr ""
 
 msgid "Summary"
@@ -455,6 +515,9 @@ msgid "Upload drafts"
 msgstr ""
 
 msgid "Uploading drafts canceled."
+msgstr ""
+
+msgid "Warnings"
 msgstr ""
 
 msgid "Working Nikola configuration required"

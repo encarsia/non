@@ -8,11 +8,12 @@
  * open files from app or load article in a browser on right click
  * keep track of changes made since last build (hint: **bold**)
  * create new posts and pages
- * write in default reStructuredText, Markdown is also available if configured
+ * if configured the applicaion detects different input markup (reStructuredText, Markdown, ...)
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances
- * push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
+ * search for strings in posts, pages and listings
+ * [experimental] push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
@@ -20,7 +21,7 @@
 
  * integrated terminal for switching easily between GUI and commandline interface
  * in the 'Summary' tab there are some detailed information about the Nikola site like disk usage, available and installed themes or plugins (beta feature)
- * this application is ready for localization ([POT file](ui/NoN.pot)); add your translation and open a PR if you like
+ * this application is ready for localization ([POT file](ui/NoN.pot)); add your translation and open a PR if you like (only German translation available yet)
  
 ### WHAT CAN'T I DO WITH IT?
 
@@ -30,8 +31,8 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.0.1
-   * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it 
+   * latest tested versions are 7.8.15 and 8.0.2
+   * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
@@ -39,7 +40,7 @@
  * recommended: Git (it's probably already installed)
  * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
 
-#### PREPARING ARCHLINUX AND ITS RELATIVES
+#### PREPARE ARCHLINUX AND ITS RELATIVES
 
 The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
@@ -47,7 +48,7 @@ The PyGObject Introspection bindings are probably already installed (tested with
 $ sudo pacman -S nikola python-yaml python-setuptools
 ```
 
-#### PREPARING UBUNTU 18.04 LTS
+#### PREPARE UBUNTU 18.04 LTS
 
 ``` bash
 $ sudo apt-get install python3-gi gir1.2-webkit2-4.0 gir1.2-vte-2.91 python3-pip python3-setuptools
@@ -88,8 +89,8 @@ $ pip3 install Nikola[extras]
    * `non.log` for the type of persons who stick their noses into everything
    * `path_to_nikola_site.json` stores all data (posts/pages with metadata, listings, tags etc. of a site, one file per site
    * `path_to_nikola_site.html` contains the page shown in the 'Summary' tab, one file per site
- * if you want to edit or delete bookmarks you have to edit the config file (`~/.non/config.yaml`)
- * the summary page is generated if a ``conf.py`` is loaded for the first time or invoked by the corresponding menu item because the task may take some time; it is a HTML file with [GitHub flavoured css](https://github.com/sindresorhus/github-markdown-css)
+ * if you want to edit or delete bookmarks you have to edit the config file (`~/.non/config.yaml`); you can open the file from the preferences menu
+ * the summary page is generated if a ``conf.py`` is loaded for the first time or the task is invoked by the corresponding menu item; it is a HTML file with [GitHub flavoured CSS](https://github.com/sindresorhus/github-markdown-css); generating the summary may take some time
  * if you load data from a Nikola site for the first time the application indexes the content and saves it as a JSON file in the `~/.non` folder and only updates on every next startup; this initial task may take some time depending on the size if the site - just be patient
 
 ### THAT SOUNDS PRETTY BASIC. ANY PLANS FOR THE FUTURE ON THIS?
@@ -114,6 +115,10 @@ $ pip3 install Nikola[extras]
 #### SUMMARY TAB
 
 ![main window](data/screenshot_summary.png)
+
+#### SEARCH
+
+![main window](data/screenshot_search.png)
 
 ### SOURCES AND LICENSES
 

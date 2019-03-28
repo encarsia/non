@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.6"
+__version__ = "0.7"
 
 try:
     import nikola
@@ -11,11 +11,10 @@ except (ModuleNotFoundError, ImportError) as e:
 
 try:
     import gi
-
     gi.require_version("Gtk", "3.0")
     gi.require_version("Vte", "2.91")
     gi.require_version("WebKit2", "4.0")
-    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2
+    from gi.repository import Gtk, Vte, GObject, GLib, Gio, WebKit2, Gdk
 except (ModuleNotFoundError, ImportError) as e:
     print("Unable to load Python bindings for GObject Introspection.")
     raise
@@ -30,6 +29,7 @@ import locale
 import logging
 import logging.config
 import markdown
+import multiprocessing
 import os
 import setproctitle
 import shlex
@@ -55,6 +55,7 @@ class Handler:
     # ########### toolbar ##########################
 
     def on_newpost_clicked(self, widget):
+        self.stop_preview()
         app.obj("entry_message").set_text("")
         app.obj("newpost_entry").set_text("")
         app.obj("newpost_dialog").run()
@@ -69,12 +70,15 @@ class Handler:
             self.serve.kill()
 
     def on_build_clicked(self, widget):
+        self.stop_preview()
         app.run_nikola_build()
 
     def on_deploy_git_clicked(self, widget):
+        self.stop_preview()
         app.run_nikola_github_deploy()
 
     def on_deploy_clicked(self, widget):
+        self.stop_preview()
         app.run_nikola_deploy()
 
     def on_refresh_clicked(self, widget):
@@ -85,6 +89,7 @@ class Handler:
         app.get_window_content()
 
     def on_save_drafts(self, widget):
+        self.stop_preview()
         # just to be sure, should already be on src
         app.exec_cmd("git checkout src")
         # git commit && git push origin src
@@ -101,6 +106,7 @@ and/or \"git commit -a\")\n" \
             app.messenger(_("Unknown status: {}").format(status), "warning")
 
     def on_get_drafts(self, widget):
+        self.stop_preview()
         # just to be sure, should already be on src
         app.exec_cmd("git checkout src")
         status = app.exec_cmd("git status")
@@ -128,16 +134,24 @@ and/or \"git commit -a\")\n":
     # ########### vte terminal ########################
 
     def on_term_contents_changed(self, widget):
+        # get_text returns a tuple of information including the complete
+        # content of the console widget: rstrip cut empty lines, then cut the
+        # rest in lines and use only the last
         last_line = widget.get_text()[0].rstrip().split("\n")[-1]
-        if app.prompt == "":
-            app.prompt = last_line
+        try:
+            if last_line.split("$")[1] == "":
+                prompt_ready = True
+            else:
+                prompt_ready = False
+        except IndexError:
+            prompt_ready = False
         if last_line == "INFO: github_deploy: Successful deployment":
             app.messenger(_("Deploying to GitHub/GitLab successful."))
         # gui_cmd is bool var for command being run via toolbar button
         # if command is invoked by button the app focus returns back to graphic
-        # interface stack child 'gui'
-        if app.gui_cmd is True and last_line == app.prompt:
-            time.sleep(2)
+        # interface stack child 'gui' if the command is finished
+        if app.gui_cmd and prompt_ready:
+            time.sleep(2)   # just wait a moment so the user can get output
             app.obj("stack").set_visible_child(app.obj("gui"))
             app.update_sitedata(app.sitedata)
             app.get_window_content()
@@ -155,37 +169,106 @@ and/or \"git commit -a\")\n":
         app.messenger(_("Open About dialog"))
         app.obj("about_dialog").run()
 
+    def on_search_button_toggled(self, widget):
+        if widget.get_active():
+            app.obj("gui").set_visible_child(app.obj("search"))
+            app.obj("search_entry").grab_focus()
+        else:
+            app.obj("gui").set_visible_child(app.obj("main_gui"))
+
+    # ########## searchbar #########################
+
+    def on_search_entry_activate(self, widget):
+        txt = app.obj("search_comboboxtext").get_active_text()
+        if not  txt == "":
+            # stop search process if there is running any
+            try:
+                self.sp.terminate()
+                time.sleep(.01)
+                self.sp.close()
+                app.messenger(_("Stop search process"), "debug")
+            except AttributeError:
+                app.messenger(_("No search process here to stop"), "debug")
+            app.messenger(_("Search started: {}").format(txt))
+            self.sp = app.process_search(txt)
+            # wait until search is done before showing results
+            while self.sp.is_alive():
+                time.sleep(.1)
+
+            # load results into TreeView
+            store = app.obj("store_search")
+            store.clear()
+
+            for r in app.search_result:
+                # row = title, file, weight, line (currently not used),
+                # counter, preview
+                row = store.append(None, [r[0], None, 800, None, r[1], ""])
+                for f in r[2]:
+                    store.append(row, [f[0], f[1], 400, None, f[2], f[3]])
+
+            app.obj("view_search").expand_all()
+
+    def on_search_entry_icon_press(self, widget, icon_pos, *args):
+        if icon_pos == 1:
+            widget.set_text("")
+        else:
+            self.on_search_entry_activate()
+
+    def on_view_search_row_activated(self, widget, *args):
+        app.messenger(_("Open file"))
+        row, pos = app.obj("selection_search").get_selected()
+        subprocess.run(['xdg-open',
+                        os.path.join(app.wdir, row[pos][1])]
+                       )
+
+    # show search results in TextView
+    def on_selection_search_changed(self, widget, *args):
+        row, pos = app.obj("selection_search").get_selected()
+        try:
+            app.obj("search_result_textbuffer").set_text(row[pos][5],
+                                                         len(row[pos][5]),
+                                                         )
+        except TypeError:
+            # signal is triggered if widget outside the TreeView is activated
+            # so we do not need any action here until
+            # clicked on a search result again
+            pass
+
     # ########## link menu #########################
 
-    def on_ref_handbook_activate(self, widget):
+    def on_ref_handbook_clicked(self, widget):
         app.messenger(_("Open Nikola handbook in web browser"))
         webbrowser.open("https://getnikola.com/handbook.html")
 
-    def on_ref_rest_markup_activate(self, widget):
+    def on_ref_rest_markup_clicked(self, widget):
         app.messenger(_("Open reST syntax reference in web browser"))
         webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/\
 restructuredtext.html")
 
-    def on_ref_rest_dir_activate(self, widget):
+    def on_ref_rest_dir_clicked(self, widget):
         app.messenger(_("Open reST directives in web browser"))
         webbrowser.open("http://docutils.sourceforge.net/docs/ref/rst/\
 directives.html")
 
-    def on_ref_md_activate(self, widget):
+    def on_ref_md_clicked(self, widget):
         app.messenger(_("Open Markdown syntax reference in web browser"))
         webbrowser.open("https://www.markdownguide.org/basic-syntax")
 
     # ########### menu #############################
 
-    def on_open_conf_activate(self, widget):
+    def on_open_conf_clicked(self, widget):
         app.messenger(_("Open conf.py in external editor"))
         subprocess.run(['xdg-open', os.path.join(app.wdir, "conf.py")])
 
-    def on_load_conf_activate(self, widget):
+    def on_load_conf_clicked(self, widget):
         app.messenger(_("Choose configuration file to read"))
         app.obj("choose_conf_file").run()
 
-    def on_add_bookmark_activate(self, widget):
+    def on_open_non_conf_clicked(self, widget):
+        app.messenger(_("Open NoN config file in external editor"))
+        subprocess.run(['xdg-open', app.conf_file])
+
+    def on_add_bookmark_clicked(self, widget):
         # add title and location to bookmark dict
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
         app.bookmarks.update(bookmark)
@@ -193,7 +276,7 @@ directives.html")
             app.siteconf.BLOG_TITLE))
         app.check_nonconf()
 
-    def on_gen_sum_activate(self, widget):
+    def on_gen_sum_clicked(self, widget):
         app.messenger(_("Generate page for summary tab"))
         app.generate_summary()
         # change to tab when finished
@@ -231,7 +314,6 @@ directives.html")
                                                 _("Title must not be empty."))
                 app.obj("newpost_entry").grab_focus()
             else:
-                self.on_window_close(widget)
                 if app.obj("create_page").get_active():
                     new_site_obj = "new_page"
                 else:
@@ -247,11 +329,18 @@ directives.html")
                                         app.obj("newpost_entry").get_text(),
                                         format,
                                        ))
-
-                app.messenger(_("New post created: {}").format(
+                if "ERROR" in str(status.stderr):
+                    app.messenger(_("Failed to create post."), "error")
+                    # show Nikola error message
+                    app.obj("entry_message").set_text(str(status.stderr).split(
+                                        "ERROR: Nikola: ")[1].split("\n")[0])
+                    app.obj("newpost_entry").grab_focus()
+                else:
+                    self.on_window_close(widget)
+                    app.messenger(_("New post created: {}").format(
                                         app.obj("newpost_entry").get_text()))
-                app.update_sitedata(app.sitedata)
-                app.get_window_content()
+                    app.update_sitedata(app.sitedata)
+                    app.get_window_content()
         else:
             self.on_window_close(widget)
 
@@ -318,7 +407,7 @@ stash pop"))
         else:
             row, pos = app.obj("selection_tags").get_selected()
             subprocess.run(['xdg-open',
-                            os.path.join(app.wdir, row[pos][6], row[pos][5])]
+                            os.path.join(app.wdir, row[pos][5])]
                            )
 
     def on_view_cats_row_activated(self, widget, pos, *args):
@@ -327,63 +416,62 @@ stash pop"))
         else:
             row, pos = app.obj("selection_cats").get_selected()
             subprocess.run(['xdg-open',
-                            os.path.join(app.wdir, row[pos][6], row[pos][5])]
+                            os.path.join(app.wdir, row[pos][5])]
                            )
 
     def on_view_listings_row_activated(self, widget, *args):
         row, pos = app.obj("selection_listings").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "listings", row[pos][0])]
+                        os.path.join(app.wdir, row[pos][4])]
                        )
 
     def on_view_images_row_activated(self, widget, *args):
         row, pos = app.obj("selection_images").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "images", row[pos][0])]
+                        os.path.join(app.wdir, row[pos][4])]
                        )
 
     def on_view_files_row_activated(self, widget, *args):
         row, pos = app.obj("selection_files").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, "files", row[pos][0])]
+                        os.path.join(app.wdir, row[pos][4])]
                        )
 
     def on_view_translations_row_activated(self, widget, *args):
         app.messenger(_("Open file..."))
         row, pos = app.obj("selection_translations").get_selected()
         subprocess.run(['xdg-open',
-                        os.path.join(app.wdir, row[pos][6], row[pos][2])]
+                        os.path.join(app.wdir, row[pos][2])]
                        )
 
     # open context menu for translation options
 
     def on_view_translations_button_release_event(self, widget, event):
-        popup = Gtk.Menu()
-        for l in app.translation_lang:
-            item = Gtk.MenuItem.new_with_label(
-                                    _("Create translation for {}".format(l)))
-            # selected row already caught by on_treeview_selection_changed func
-            item.connect("activate", self.on_create_translation, l)
-            popup.append(item)
-        popup.show_all()
-        # only show on right click
-        if event.button == 3:
-            popup.popup(None, None, None, None, event.button, event.time)
-            return True
+        if event.button == 3:   # only show on right click
+            popover = self.refresh_popover(widget, event)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            popover.add(box)
+            for l in app.translation_lang:
+                item = Gtk.ModelButton()
+                item.set_property("text",
+                                  _("Create translation for {}".format(l)))
+                box.add(item)
+                item.connect("clicked", self.on_create_translation, l)
+                popover.show_all()
+                popover.popup()
 
     def on_create_translation(self, widget, lang):
         row, pos = app.obj("selection_translations").get_selected()
-        subdir = row[pos][6]
         file = row[pos][2]
         file_base = file.split(".")[0]
         file_ext = file.split(".")[-1]
         trans_file = "{}.{}.{}".format(file_base, lang, file_ext)
-        if os.path.isfile(os.path.join(subdir, trans_file)):
+        if os.path.isfile(os.path.join(trans_file)):
             app.messenger(_("Translation file already exists."), "warning")
         else:
             shutil.copy(
-                os.path.join(subdir, file),
-                os.path.join(subdir, trans_file))
+                os.path.join(file),
+                os.path.join(trans_file))
             app.messenger(_("Create translation file for {}").format(
                                                                 row[pos][0]))
             app.update_sitedata(app.sitedata)
@@ -393,17 +481,22 @@ stash pop"))
 
     def on_view_posts_button_release_event(self, widget, event):
         row, pos = app.obj("selection_post").get_selected()
-        self.on_pp_table_click(event, row, pos)
+        # signal is emitted on clicking on the table header (sorting) so no
+        # selection is possible
+        if pos is not None:
+            self.on_pp_table_click(event, row, pos, widget)
 
     def on_view_pages_button_release_event(self, widget, event):
         row, pos = app.obj("selection_page").get_selected()
-        self.on_pp_table_click(event, row, pos)
+        if pos is not None:
+            self.on_pp_table_click(event, row, pos, widget)
 
-    def on_pp_table_click(self, event, row, pos):
+    def on_pp_table_click(self, event, row, pos, widget):
         title = row[pos][0]
         slug = row[pos][1]
         filename = row[pos][2]
-        # if slug is not set the output path is generated from the filename without file extension
+        # if slug is not set the output path is generated from the filename
+        # without file extension
         if slug == "":
             slug = filename.split("/")[-1].split(".")[0]
         path = os.path.join(*filename.split("/")[:-1])
@@ -419,20 +512,20 @@ stash pop"))
                                             filename.split(".")[1], has_meta))
         # only generate popup menu on right click
         elif event.button == 3:
-            popup = Gtk.Menu()
-            item = Gtk.MenuItem.new_with_label(_("Open in web browser"))
-            # selected row already caught by on_treeview_selection_changed
-            # function. I don't know what to do with this information but I'm
-            # afraid to delete it
-            item.connect("activate", self.on_open_pp_web, title, path, slug)
-            popup.append(item)
-            if meta is not "":
-                item = Gtk.MenuItem.new_with_label(_("Edit meta data file"))
-                item.connect("activate", self.on_open_metafile, meta)
-                popup.append(item)
-            popup.show_all()
-            popup.popup(None, None, None, None, event.button, event.time)
-            return True
+            popover = self.refresh_popover(widget, event)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            popover.add(box)
+            item = Gtk.ModelButton()
+            item.set_property("text", _("Open in web browser"))
+            box.add(item)
+            item.connect("clicked", self.on_open_pp_web, title, path, slug)
+            if meta is not "": # create button if metafile exists
+                item = Gtk.ModelButton()
+                item.set_property("text", _("Edit meta data file"))
+                item.connect("clicked", self.on_open_metafile, meta)
+                box.add(item)
+            popover.show_all()
+            popover.popup()
         else:
             app.messenger(_("No function (button event: {})").format(
                                                         event.button), "debug")
@@ -446,6 +539,26 @@ stash pop"))
         subprocess.run(['xdg-open',
                         os.path.join(app.wdir, meta)]
                        )
+
+    def on_status_reload_clicked(self, widget):
+        app.get_status()
+
+    def refresh_popover(self, widget, event):
+        popover = Gtk.Popover()
+        # open popover at mouse position
+        rect = Gdk.Rectangle()
+        rect.x = event.x
+        rect.y = event.y + 25
+        # additional vertical space because popover is not positioned exactly
+        rect.width = rect.height = 1
+        popover.set_pointing_to(rect)
+        popover.set_position(Gtk.PositionType.RIGHT)
+        popover.set_relative_to(widget)
+        return popover
+
+    def stop_preview(self):
+        if app.obj("preview").get_active():
+            app.obj("preview").set_active(False)
 
 
 class NiApp:
@@ -549,9 +662,6 @@ class NiApp:
         self.add_dialogbuttons(self.obj("choose_conf_file"))
         # self.add_dialogokbutton(self.obj("about_dialog"))
 
-        # add image to menubutton (Glade bug)
-        self.obj("ref_menu_button").add(self.obj("help_image"))
-
         # load config from config.yaml or start with new
         if not os.path.isfile(self.conf_file):
             self.messenger(_("No config available..."))
@@ -570,9 +680,8 @@ class NiApp:
         #                                       "ui",
         #                                       "duckyou.svg"))
         window.set_application(app)
-        window.show_all()
-
         self.check_nonconf()
+        window.show_all()
 
     def start_console(self, wdir):
         # spawn_sync is deprecated and spawn_async doesn't exist anymore
@@ -588,8 +697,6 @@ class NiApp:
             None,
             None,
         )
-        # prompt is detected on first emission of the 'contents changed' signal
-        self.prompt = ""
         # bool variable to decide if focus should return from terminal stack
         # child, True when command is invoked by button, False if command is
         # typed directly in terminal
@@ -602,32 +709,32 @@ class NiApp:
         # remove generated bookmark menu items, otherwise when
         # appending new bookmark all existing bookmarks are appended
         # repeatedly
-        for i in self.obj("menu").get_children():
-            # the separator item is stretched vertically when applying
-            # get_label function (which does not return any value but
-            # no error either) but I don't know how to do a GTK class
-            # comparison to exclude the separator or include the
-            # menuitems so this works fine
-            if isinstance(i, type(self.obj("load_conf"))):
-                if i.get_label().startswith(_("Bookmark: ")):
-                    self.obj("menu").remove(i)
+        for i in self.obj("menu_box"):
+            if isinstance(i, Gtk.ModelButton) and \
+                    i.get_property("text").startswith(_("Bookmark: ")):
+                self.obj("menu_box").remove(i)
         # add menu items for bookmarks
-        for b in self.bookmarks:
-            if self.wdir == self.bookmarks[b]:
-                item = Gtk.MenuItem.new_with_label(
-                                        _("Bookmark: {} (active)").format(b))
-                item.set_sensitive(False)
-            else:
-                item = Gtk.MenuItem.new_with_label(_("Bookmark: {}").format(b))
-            item.connect("activate", self.select_bookmark, self.bookmarks[b])
-            self.obj("menu").append(item)
-
-        self.obj("menu").show_all()
         if len(self.bookmarks) > 0:
             self.messenger(_("Found {} bookmark(s)").format(
-                len(self.bookmarks)))
+                                                        len(self.bookmarks)))
+            for b in self.bookmarks:
+                item = Gtk.ModelButton()
+                item.set_property("text", _("Bookmark: {}").format(b))
+                self.obj("menu_box").add(item)
+                # mark current Nikola site and deactivate button
+                if self.wdir == self.bookmarks[b]:
+                    item.set_property("text",
+                                      _("Bookmark: {} (active)").format(b),
+                                      )
+                    item.set_sensitive(False)
+                item.connect("clicked",
+                             self.select_bookmark,
+                             self.bookmarks[b],
+                             )
+            self.obj("menu").show_all()
         else:
             self.messenger(_("No bookmarks found."))
+
         # check if last wdir still exists
         try:
             os.chdir(self.wdir)
@@ -648,6 +755,7 @@ anymore."), "warning")
             self.obj("choose_conf_file").run()
             self.wdir = os.path.expanduser("~")
 
+        self.get_status()
         self.start_console(self.wdir)
         self.get_site_info()
         self.get_window_content()
@@ -664,6 +772,7 @@ anymore."), "warning")
         dialog.add_action_widget(button, Gtk.ResponseType.OK)
 
     def select_bookmark(self, widget, path):
+        Handler().stop_preview()
         try:
             self.dump_sitedata_file(self.sitedata)
         except AttributeError:
@@ -687,10 +796,18 @@ anymore."), "warning")
         sitedata = dict()
         sitedata["posts"], \
             sitedata["post_tags"], \
-            sitedata["post_cats"] = self.get_src_content("posts", d=dict(), t=set(), c=set())
+            sitedata["post_cats"] = self.get_src_content("posts",
+                                                         d=dict(),
+                                                         t=set(),
+                                                         c=set(),
+                                                         )
         sitedata["pages"], \
             sitedata["page_tags"], \
-            sitedata["page_cats"] = self.get_src_content("pages", d=dict(), t=set(), c=set())
+            sitedata["page_cats"] = self.get_src_content("pages",
+                                                         d=dict(),
+                                                         t=set(),
+                                                         c=set(),
+                                                         )
         self.messenger(_("Collect data of Nikola site complete."))
         self.dump_sitedata_file(sitedata)
         return sitedata
@@ -705,10 +822,11 @@ anymore."), "warning")
             new_files[sub] = []
             for f in filelist[sub]:
                  if f in sitedata[sub].keys():
-                    if not sitedata[sub][f]["last_modified"] == os.path.getmtime(f):
+                    if not sitedata[sub][f]["last_modified"] == \
+                                                        os.path.getmtime(f):
                         new_files[sub].append(f)
-                        self.messenger(
-                                _("Update article data for: {}").format(sitedata[sub][f]["title"]))
+                        self.messenger(_("Update article data for: {}").format(
+                                                sitedata[sub][f]["title"]))
                  else:
                      new_files[sub].append(f)
                      self.messenger(
@@ -722,21 +840,23 @@ anymore."), "warning")
         sitedata["posts"], \
             sitedata["post_tags"], \
             sitedata["post_cats"] = self.get_src_content(
-                                                    "posts",
-                                                    d=sitedata["posts"],
-                                                    t=set(sitedata["post_tags"]),
-                                                    c=set(sitedata["post_cats"]),
-                                                    update=new_files["posts"],
-                                                    )
+                                                "posts",
+                                                d=sitedata["posts"],
+                                                t=set(sitedata["post_tags"]),
+                                                c=set(sitedata["post_cats"]),
+                                                update=new_files["posts"],
+                                                )
         sitedata["pages"], \
             sitedata["page_tags"], \
             sitedata["page_cats"] = self.get_src_content(
-                                                    "pages",
-                                                    sitedata["pages"],
-                                                    t=set(sitedata["page_tags"]),
-                                                    c=set(sitedata["page_cats"]),
-                                                    update=new_files["pages"],
-                                                    )
+                                                "pages",
+                                                sitedata["pages"],
+                                                t=set(sitedata["page_tags"]),
+                                                c=set(sitedata["page_cats"]),
+                                                update=new_files["pages"],
+                                                )
+        sitedata["listings"] = glob.glob("listings/**/*.*", recursive=True)
+
         return sitedata
 
     def dump_sitedata_file(self, sitedata):
@@ -903,10 +1023,18 @@ one!"))
             self.get_tree_data_src("store_pages", self.pages)
             # files/listings/images are based on treestores, data rows are
             # appended without dict usage
-            self.get_tree_data("store_listings", "listings",
-                               self.output_folder)
-            self.get_tree_data("store_files", "files", self.output_folder)
-            self.get_tree_data("store_images", "images", self.output_folder)
+            self.get_tree_data("store_listings",
+                               "listings",
+                               self.output_folder,
+                               )
+            self.get_tree_data("store_files",
+                               "files",
+                               self.output_folder,
+                               )
+            self.get_tree_data("store_images",
+                               "images",
+                               self.output_folder,
+                               )
             # tags/category tab
             self.get_tree_data_label(self.posts,
                                      self.pages,
@@ -926,7 +1054,11 @@ one!"))
             self.get_tree_data_translations("store_translation", self.posts)
             self.get_tree_data_translations("store_translation", self.pages)
 
-            # sort tags according to number of occurrences
+            # sort tags/categories by number of occurrences and then by date
+            self.obj("store_tags").set_sort_column_id(2,
+                                                      Gtk.SortType.DESCENDING)
+            self.obj("store_cats").set_sort_column_id(2,
+                                                      Gtk.SortType.DESCENDING)
             self.obj("store_tags").set_sort_column_id(4,
                                                       Gtk.SortType.DESCENDING)
             self.obj("store_cats").set_sort_column_id(4,
@@ -934,8 +1066,11 @@ one!"))
             self.obj("store_translation").set_sort_column_id(
                 3, Gtk.SortType.DESCENDING)
 
-            # expands all rows in translation tab
+            # expand rows in some tabs
             self.obj("view_translations").expand_all()
+            self.obj("view_images").expand_all()
+            self.obj("view_files").expand_all()
+
         except AttributeError:
             self.messenger(_("Failed to load data, choose another conf.py"),
                            "error")
@@ -944,7 +1079,8 @@ one!"))
         filelist = list()
         for path in self.src_files_paths[sub]:
             _allfiles = glob.glob(path + "/**/*.*", recursive=True)
-            filelist += [x for x in _allfiles if not (x.endswith(".meta") or "/." in _allfiles)]
+            filelist += [x for x in _allfiles if not (x.endswith(".meta") or \
+                                                        "/." in _allfiles)]
         return filelist
 
     def get_src_content(self, subdir, d, t, c, update=None):
@@ -1049,12 +1185,16 @@ one!"))
             slug = filename.split("/")[-1].split(".")[0]
         try:
             return filecmp.cmp(os.path.join(filename),
-                               os.path.join(output,
-                                            lang,
-                                            *filename.split("/")[:-1], # path to file
-                                            slug,
-                                            "index.{}".format(filename.split(".")[1]), #file extension
-                                            ))
+                               os.path.join(
+                                   output,
+                                   lang,
+                                   # path to file
+                                   *filename.split("/")[:-1],
+                                   slug,
+                                   # file extension
+                                   "index.{}".format(filename.split(".")[1]),
+                                   ),
+                               )
         except FileNotFoundError:
             return False
 
@@ -1103,6 +1243,7 @@ one!"))
                                         self.sizeof_fmt(os.path.getsize(
                                             os.path.join(subdir, item))),
                                         weight,
+                                        os.path.join(subdir, item),
                                         ])
             elif os.path.isdir(os.path.join(subdir, item)):
                 # TODO size of folder
@@ -1112,7 +1253,12 @@ one!"))
                     weight = 800
                     self.obj("build").set_sensitive(True)
                 row = self.obj(store).append(parent,
-                                             [item, None, None, weight])
+                                             [item,
+                                              None,
+                                              None,
+                                              weight,
+                                              os.path.join(subdir, item),
+                                              ])
                 subsubdir = os.path.join(subdir, item)
                 # read subdirs as child rows
                 self.get_tree_data(store, subsubdir, output, row)
@@ -1124,7 +1270,7 @@ one!"))
         post.discard("")
         for item in post:
             counter = 0
-            # row = title,gerdate,date,weight,counter
+            # row = title, gerdate, date, weight, counter
             row = self.obj(store).append(
                 None, [None, None, None, 800, None, None, None])
             for dict in (post_dict, page_dict):
@@ -1140,8 +1286,22 @@ one!"))
                                                 dict[key]["sub"],
                                                 ])
                         counter += 1
-            self.obj(store).set_value(row, 0, "{} ({})".format(item, counter))
-            self.obj(store).set_value(row, 4, counter)
+            if counter > 0:
+                self.obj(store).set_value(row, 0, "{} ({})".format(item,
+                                                                   counter))
+                self.obj(store).set_value(row, 4, counter)
+            else:
+                # do not append row if occurence is zero and delete from
+                # sitedata dict
+                self.obj(store).remove(row)
+                for list in (self.sitedata["post_tags"],
+                             self.sitedata["page_tags"],
+                             self.sitedata["post_cats"],
+                             self.sitedata["page_cats"]):
+                    try:
+                        list.remove(item)
+                    except ValueError:
+                        pass    # do nothing if item is not in list
 
     def get_tree_data_translations(self, store, dict):
         for key in dict:
@@ -1175,7 +1335,7 @@ one!"))
         d = {}
         for root, dirs, files in sorted(os.walk(subdir)):
             for f in files:
-                # images are changed in size when deployed so check only for#
+                # images are changed in size when deployed so check only for
                 # filename
                 if subdir == "images":
                     equ = os.path.isfile(os.path.join(output, root, f))
@@ -1308,8 +1468,12 @@ one!"))
                    ]
 
         infodict["disk_usage"] = get_diskusage_string(folders)
-        infodict["status"] = self.exec_cmd("nikola status").stdout.split(
-                                                                    "\n")[1]
+        try:
+            infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
+        except IndexError:
+            self.messenger(_("Could not fetch site status. See 'Status' \
+messages and solve errors"), "error")
+            return
         infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
                                                             "nikola check -l"))
         infodict["current_theme"] = self.siteconf.THEME
@@ -1327,9 +1491,11 @@ one!"))
         txt = template.format(**infodict)
 
         # convert markdown to html
-        html_content = markdown.markdown(txt, extensions=["markdown.extensions.tables",
-                                                  "markdown.extensions.toc",
-                                                  ])
+        html_content = markdown.markdown(txt,
+                                     extensions=["markdown.extensions.tables",
+                                                 "markdown.extensions.toc",
+                                                ],
+                                         )
 
         # wrap content in body
         html = """<!DOCTYPE html>
@@ -1349,22 +1515,104 @@ one!"))
         # load file into webview
         self.webview.load_uri("file://" + self.summaryfile)
 
+    def process_search(self, pattern):
+        # store search results as shared variable between mainloop and
+        # multiprocessing thread
+        self.search_result = multiprocessing.Manager().list()
+        # start search as multiprocessing process/thread so it is interruptable
+        # when the search pattern is changed
+        p = multiprocessing.Process(target=self.search_files,
+                                    args=(pattern, self.search_result))
+        p.start()
+        return p
+
+    def search_files(self, pattern, result):
+        # search results are stored as list and read when search is finished
+        # the treeview then is updated by the mainloop because Gtk
+        # variable structure:
+        #       ("Posts", counter, [(file1, title1, counter, preview_string),
+        #                           (file2, ...),
+        #                          ]),
+        #       ("Pages", ...),
+        #       ("Listings", ...)
+        subdirs = [("Posts", self.sitedata["posts"]),
+                   ("Pages", self.sitedata["pages"]),
+                   ("Listings", self.sitedata["listings"]),
+                  ]
+
+        for s in subdirs:
+
+            match = []
+            counter_sub = 0
+
+            for f in s[1]:
+                if s[0] == "Listings":
+                    filename = f
+                else:
+                    filename = s[1][f]["file"]
+                counter = 0
+                preview = ""
+                with open(filename) as txt:
+                    try:
+                        for no, line in enumerate(txt):
+                            # do not search case-sensitive
+                            if pattern.lower() in line.lower():
+                                counter += 1
+                                preview += "Line {}:\n\n{}\n----------- \
+\n".format(no + 1, line)
+                    except UnicodeDecodeError:
+                        # ignore if line cannot be read
+                        pass
+                if counter > 0:
+                    counter_sub += 1
+                    if s[0] == "Listings":
+                        match.append((filename, filename, counter, preview))
+                    else:
+                        match.append((s[1][f]["title"],
+                                      s[1][f]["file"],
+                                      counter,
+                                      preview)
+                                     )
+            result.append((s[0], counter_sub, match))
+
+    def get_status(self):
+        output = self.exec_cmd("nikola status")
+        output = output.stderr.split("\n")
+        #for no, l in output:
+        #    print(no, l)
+        attention = False
+        for s in ("error", "warning", "info"):
+            self.obj("textbuffer_{}".format(s)).set_text("")
+            txt = ""
+            counter = 0
+            for line in output:
+                try:
+                    message = line.split("{}: Nikola: ".format(s.upper()))[1]
+                    counter += 1
+                    txt += """    ({}) {}
+                    
+""".format(counter, message)
+                    attention = True
+                except IndexError:
+                    pass
+            self.obj("textbuffer_{}".format(s)).set_text(txt)
+        if attention:
+            self.obj("status_button_label").set_text("Status (!)")
+        else:
+            self.obj("status_button_label").set_text("Status (ok)")
+        self.messenger(_("Messages in 'Status' popover updated."))
+
     def run_nikola_build(self):
-        # self.gui_cmd = True
-        # self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run build process"))
         self.term_cmd("nikola build")
 
     def run_nikola_github_deploy(self):
         self.run_nikola_build()
-        # self.gui_cmd = True
-        # self.obj("stack").set_visible_child(app.obj("term"))
         self.messenger(_("Execute Nikola: run deploy to GitHub command"))
         self.term_cmd("nikola github_deploy")
 
     def run_nikola_deploy(self):
         self.run_nikola_build()
-        # self.gui_cmd = True
         self.messenger(
                     _("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
