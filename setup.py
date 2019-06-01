@@ -10,39 +10,9 @@ import sys
 from setuptools import setup, Command
 from setuptools.command.install import install
 
-# path related stuff
-rel_app_path = "share/applications"
-rel_icon_path = "share/icons/hicolor/scalable/apps"
-here = os.path.abspath(os.path.dirname(__file__))
+from non import info
 
-# package meta data
-NAME = "non"
-DESCRIPTION = "Knights Of Ni - a GTK+ manager for your Nikola powered website"
-URL = "https://github.com/encarsia/non"
-EMAIL = "An.Ke@bahnfreikartoffelbrei.de"
-AUTHOR = "Anke K"
-LICENSE = "MIT"
-URL = "https://github.com/encarsia/non"
-VERSION = "0.5"
-REQUIRES_PYTHON = ">=3.2"
-REQUIRED = [
-            "Nikola",
-            "PyGObject",
-            "PyYAML",
-            ]
-# put desktop and app icon in the right place
-DATAFILES = [
-            (rel_app_path, ["data/non.desktop"]),
-            (rel_icon_path, ["non/ui/duckyou.svg"]),
-            ]
-# add non-code ui (glade/icon) files
-PACKAGES = ["non"]
-PACKAGE_DIR = {"non": "non"}
-PACKAGE_DATA = {"non": ["ui/*",
-                        "logging.yaml",
-                         ]
-                }
-    
+here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = "\n" + f.read()
 
@@ -55,6 +25,12 @@ def _find_install_path():
         prefix = sys.prefix
     return inst, prefix
 
+def _oserr_message(e, name):
+    if e.errno == 2:
+        return "Info: '{}' - {}.".format(name, e.strerror)
+    else:
+        return "Error: '{}' - {}.".format(name, e.strerror)
+
 
 class CustomInstall(install):
     
@@ -62,10 +38,10 @@ class CustomInstall(install):
         install_path, prefix = _find_install_path()
         self.update_desktop_file("data/KnightsOfNi.desktop",
                                  install_path,
-                                 os.path.join(prefix, rel_icon_path))
+                                 )
         install.run(self)
-        
-    def update_desktop_file(self, filename, install_path, icon_path):
+
+    def update_desktop_file(self, filename, install_path):
         """Set exec/icon path of install dir in .desktop file."""
         with open(filename) as f:
             content = f.readlines()
@@ -108,7 +84,7 @@ class UnInstall(Command):
 
     def run(self):
         install_path, prefix = _find_install_path()
-        
+
         print("Removing setuptools files...")
         dir_list = ["build",
                     "dist",
@@ -119,14 +95,14 @@ class UnInstall(Command):
                 shutil.rmtree(d)
                 print("Removed '{}' folder...".format(d))
             except OSError as e:
-                print(self._oserr_message(e, d))
-        
+                print(_oserr_message(e, d))
+
         print("Removing Python package...") # and also the Egg dir
         for match in glob.glob(os.path.join(install_path, "non*")):
             try:
                 shutil.rmtree(match)
             except OSError as e:
-                print(self._oserr_message(e, match))
+                print(_oserr_message(e, match))
 
         print("Removing desktop files...")
         desktop_files = [(prefix, rel_app_path, "non.desktop"),
@@ -139,33 +115,61 @@ class UnInstall(Command):
                 os.remove(filepath)
                 print("Removed '{}'...".format(filepath))
             except OSError as e:
-                print(self._oserr_message(e, filepath))
+                print(_oserr_message(e, filepath))
 
-    def _oserr_message(self, e, name):
-        if e.errno == 2:
-            return "Info: '{}' - {}.".format(name, e.strerror)
-        else:
-            return "Error: '{}' - {}.".format(name, e.strerror)
+
+class CustomClean(Command):
+    """Custom command to remove all files from the build/sdist processes.
+       The regular 'clean' does not do the job adequately, see
+       https://github.com/pypa/setuptools/issues/1347
+
+       Usage: run 'python setup.py clean' without any options
+    """
+
+    description = "remove files from the build processes"
+    user_options = []
+
+    def initialize_options(self):
+        """Abstract method that is required to be overwritten.
+           Define all available options here.
+        """
+
+    def finalize_options(self):
+        """Abstract method that is required to be overwritten."""
+
+    def run(self):
+        print("Removing setuptools files...")
+        dir_list = ["build",
+                    "dist",
+                    "non.egg-info",
+                    ]
+        for d in dir_list:
+            try:
+                shutil.rmtree(d)
+                print("Removed '{}' folder...".format(d))
+            except OSError as e:
+                print(_oserr_message(e, d))
+
 
 setup(
-    name=NAME,
-    version=VERSION,
-    description=DESCRIPTION,
+    name=info.NAME,
+    version=info.__version__,
+    description=info.DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author=AUTHOR,
-    author_email=EMAIL,
-    python_requires=REQUIRES_PYTHON,
-    url=URL,
-    license=LICENSE,
-    packages=PACKAGES,
-    package_dir=PACKAGE_DIR,
-    package_data=PACKAGE_DATA,
-    install_requires=REQUIRED,
+    author=info.AUTHOR,
+    author_email=info.EMAIL,
+    python_requires=info.REQUIRES_PYTHON,
+    url=info.URL,
+    license=info.__license__,
+    packages=info.PACKAGES,
+    package_dir=info.PACKAGE_DIR,
+    package_data=info.PACKAGE_DATA,
+    install_requires=info.REQUIRED,
     include_package_data=True,
-    data_files=DATAFILES,
+    data_files=info.DATAFILES,
     cmdclass={"install": CustomInstall,
               "uninstall": UnInstall,
+              "clean": CustomClean,
               }
     )
-

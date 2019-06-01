@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "0.7"
+# TODO setup: add appdata.xml and binary file,
 
 try:
     import nikola
@@ -28,17 +28,23 @@ import json
 import locale
 import logging
 import logging.config
-import markdown
 import multiprocessing
 import os
-import setproctitle
 import shlex
 import shutil
 import subprocess
 import sys
 import time
 import webbrowser
+
 import yaml
+import markdown
+import setproctitle
+
+try:
+    import info
+except ModuleNotFoundError:
+    from non import info
 
 _ = gettext.gettext
 
@@ -292,7 +298,7 @@ directives.html")
             try:
                 app.dump_sitedata_file(app.sitedata)
                 app.non_config["wdir"] = os.path.split(
-                                                    widget.get_filename())[0]
+                    widget.get_filename())[0]
                 app.check_nonconf()
             except AttributeError:
                 app.messenger(_("Working Nikola configuration required"),
@@ -311,7 +317,7 @@ directives.html")
             if app.obj("newpost_entry").get_text() == "":
                 app.messenger(_("Create new post"))
                 app.obj("entry_message").set_text(
-                                                _("Title must not be empty."))
+                    _("Title must not be empty."))
                 app.obj("newpost_entry").grab_focus()
             else:
                 if app.obj("create_page").get_active():
@@ -328,17 +334,18 @@ directives.html")
                                         new_site_obj,
                                         app.obj("newpost_entry").get_text(),
                                         format,
-                                       ))
+                                        )
+                                     )
                 if "ERROR" in str(status.stderr):
                     app.messenger(_("Failed to create post."), "error")
                     # show Nikola error message
                     app.obj("entry_message").set_text(str(status.stderr).split(
-                                        "ERROR: Nikola: ")[1].split("\n")[0])
+                        "ERROR: Nikola: ")[1].split("\n")[0])
                     app.obj("newpost_entry").grab_focus()
                 else:
                     self.on_window_close(widget)
                     app.messenger(_("New post created: {}").format(
-                                        app.obj("newpost_entry").get_text()))
+                        app.obj("newpost_entry").get_text()))
                     app.update_sitedata(app.sitedata)
                     app.get_window_content()
         else:
@@ -473,7 +480,7 @@ stash pop"))
                 os.path.join(file),
                 os.path.join(trans_file))
             app.messenger(_("Create translation file for {}").format(
-                                                                row[pos][0]))
+                row[pos][0]))
             app.update_sitedata(app.sitedata)
             app.get_window_content()
 
@@ -509,7 +516,7 @@ stash pop"))
                 has_meta = _("no")
             app.messenger(
                 _("Input file format: {}. Separate metafile: {}.").format(
-                                            filename.split(".")[1], has_meta))
+                    filename.split(".")[1], has_meta))
         # only generate popup menu on right click
         elif event.button == 3:
             popover = self.refresh_popover(widget, event)
@@ -528,7 +535,7 @@ stash pop"))
             popover.popup()
         else:
             app.messenger(_("No function (button event: {})").format(
-                                                        event.button), "debug")
+                event.button), "debug")
 
     def on_open_pp_web(self, widget, title, path, slug):
         app.messenger(_("Open '{}' in web browser").format(title))
@@ -583,7 +590,7 @@ class NiApp:
         # GSettings
         # self.app = Gtk.Application.new("app.knights-of-ni",
 
-        self.app = Gtk.Application.new(None, Gio.ApplicationFlags(0))
+        self.app = Gtk.Application.new(None, Gio.ApplicationFlags(4))
         self.app.connect("startup", self.on_app_startup)
         self.app.connect("activate", self.on_app_activate)
         self.app.connect("shutdown", self.on_app_shutdown)
@@ -620,14 +627,14 @@ class NiApp:
                           }
 
         # log version info for debugging
-        self.log.debug("Application version: {}".format(__version__))
+        self.log.debug("Application version: {}".format(info.__version__))
         self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
                                                        Gtk.get_minor_version(),
                                                        Gtk.get_micro_version(),
                                                        ))
         self.log.debug("Nikola version: {}".format(nikola.__version__))
         self.log.debug("Application executed from {}".format(self.install_dir))
-        
+
     def on_app_activate(self, app):
         # setting up localization
         locales_dir = os.path.join(self.install_dir, "ui", "locale")
@@ -684,10 +691,10 @@ class NiApp:
         window.show_all()
 
     def start_console(self, wdir):
-        # spawn_sync is deprecated and spawn_async doesn't exist anymore
-        # and I don't understand how to use GLib.spawn_async so I leave
-        # this here for now as long as this is only a warning and I
-        # don't have a solution
+        # FIXME spawn_sync is deprecated
+        #  and spawn_async doesn't exist anymore and I don't understand
+        #  how to use GLib.spawn_async so I leave this here for now as
+        #  long as this is only a warning and I don't have a solution
         self.obj("term").spawn_sync(
             Vte.PtyFlags.DEFAULT,
             wdir,
@@ -714,9 +721,9 @@ class NiApp:
                     i.get_property("text").startswith(_("Bookmark: ")):
                 self.obj("menu_box").remove(i)
         # add menu items for bookmarks
-        if len(self.bookmarks) > 0:
+        if self.bookmarks:
             self.messenger(_("Found {} bookmark(s)").format(
-                                                        len(self.bookmarks)))
+                len(self.bookmarks)))
             for b in self.bookmarks:
                 item = Gtk.ModelButton()
                 item.set_property("text", _("Bookmark: {}").format(b))
@@ -814,23 +821,23 @@ anymore."), "warning")
 
     def update_sitedata(self, sitedata):
         self.messenger(_("Update data file for: {}").format(
-                                                    self.siteconf.BLOG_TITLE))
+            self.siteconf.BLOG_TITLE))
         filelist = dict()
         new_files = dict()
         for sub in ["posts", "pages"]:
             filelist[sub] = self.get_src_filelist(sub)
             new_files[sub] = []
             for f in filelist[sub]:
-                 if f in sitedata[sub].keys():
+                if f in sitedata[sub].keys():
                     if not sitedata[sub][f]["last_modified"] == \
                                                         os.path.getmtime(f):
                         new_files[sub].append(f)
                         self.messenger(_("Update article data for: {}").format(
-                                                sitedata[sub][f]["title"]))
-                 else:
-                     new_files[sub].append(f)
-                     self.messenger(
-                            _("Add new article data for: {}.").format(f))
+                            sitedata[sub][f]["title"]))
+                else:
+                    new_files[sub].append(f)
+                    self.messenger(
+                        _("Add new article data for: {}.").format(f))
             # delete dict items of removed or renamed source files
             for p in sitedata[sub].copy():
                 if p not in filelist[sub]:
@@ -840,21 +847,21 @@ anymore."), "warning")
         sitedata["posts"], \
             sitedata["post_tags"], \
             sitedata["post_cats"] = self.get_src_content(
-                                                "posts",
-                                                d=sitedata["posts"],
-                                                t=set(sitedata["post_tags"]),
-                                                c=set(sitedata["post_cats"]),
-                                                update=new_files["posts"],
-                                                )
+                "posts",
+                d=sitedata["posts"],
+                t=set(sitedata["post_tags"]),
+                c=set(sitedata["post_cats"]),
+                update=new_files["posts"],
+                )
         sitedata["pages"], \
             sitedata["page_tags"], \
             sitedata["page_cats"] = self.get_src_content(
-                                                "pages",
-                                                sitedata["pages"],
-                                                t=set(sitedata["page_tags"]),
-                                                c=set(sitedata["page_cats"]),
-                                                update=new_files["pages"],
-                                                )
+                "pages",
+                sitedata["pages"],
+                t=set(sitedata["page_tags"]),
+                c=set(sitedata["page_cats"]),
+                update=new_files["pages"],
+                )
         sitedata["listings"] = glob.glob("listings/**/*.*", recursive=True)
 
         return sitedata
@@ -886,8 +893,8 @@ anymore."), "warning")
             # detect multilingual sites
             self.default_lang = self.siteconf.DEFAULT_LANG
             self.translation_lang = set([key for key in
-                                        self.siteconf.TRANSLATIONS
-                                        if key != self.default_lang])
+                                         self.siteconf.TRANSLATIONS
+                                         if key != self.default_lang])
             self.obj("lang").set_text(self.default_lang)
             self.obj("trans_lang").set_text(", ".join(str(s) for s in
                                                       self.translation_lang
@@ -905,7 +912,7 @@ anymore."), "warning")
             try:
                 self.output_folder = self.siteconf.OUTPUT_FOLDER
                 self.messenger(_("Output folder: '{}'").format(
-                                                        self.output_folder))
+                    self.output_folder))
             except AttributeError:
                 self.output_folder = "output"
                 self.messenger(_("Output folder is set to default 'output'"))
@@ -929,7 +936,7 @@ up-/downloading drafts is deactivated."))
             for subdir in ["files", "listings", "images"]:
                 if not os.path.isdir(os.path.join(self.wdir, subdir)):
                     self.messenger(_("{} doesn't exist...create...").format(
-                                                                    subdir))
+                        subdir))
                     os.mkdir(os.path.join(self.wdir, subdir))
 
             # set 'add bookmark' menu item inactive if bookmark already
@@ -949,8 +956,8 @@ up-/downloading drafts is deactivated."))
 
             # get paths and filetypes for posts/pages source files
             self.src_files_paths = {"pages": self.siteconf.PAGES,
-                              "posts": self.siteconf.POSTS,
-                              }
+                                    "posts": self.siteconf.POSTS,
+                                    }
             self.src_files_ext = set()
             for key in self.src_files_paths:
                 _paths = set()
@@ -1093,7 +1100,7 @@ one!"))
             title, slug, date, tagstr, tags, catstr, cats, metafile = \
                 self.read_src_files(f)
             # detect language
-            if len(self.translation_lang) > 0:
+            if self.translation_lang:
                 if f.split(".")[1] in self.src_files_ext:
                     # set empty string because var is used by os.path.join
                     # which throws NameError if var is None
@@ -1383,7 +1390,7 @@ one!"))
             for line in output.stderr.split("\n"):
                 if "WARNING: check:" in line:
                     string += " * {}\n".format(
-                                            line.split("WARNING: check: ")[1])
+                        line.split("WARNING: check: ")[1])
             if string == "":
                 return "> (no broken links)"
             else:
@@ -1410,7 +1417,7 @@ one!"))
 
             return string
 
-        # TODO: merge with nearly identical function obove
+        # TODO merge with nearly identical function obove
         def get_plugins_table(available, installed):
             # chop the output
             available = available.stdout.split("\n")[2:-1]
@@ -1475,27 +1482,28 @@ one!"))
 messages and solve errors"), "error")
             return
         infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
-                                                            "nikola check -l"))
+            "nikola check -l"))
         infodict["current_theme"] = self.siteconf.THEME
         infodict["themes"] = get_themes_table(
-                                self.exec_cmd("nikola theme -l"),
-                                self.exec_cmd("nikola theme --list-installed")
-                                )
+            self.exec_cmd("nikola theme -l"),
+            self.exec_cmd("nikola theme --list-installed")
+            )
         infodict["plugins"] = get_plugins_table(
-                                self.exec_cmd("nikola plugin -l"),
-                                self.exec_cmd("nikola plugin --list-installed")
-                                )
+            self.exec_cmd("nikola plugin -l"),
+            self.exec_cmd("nikola plugin --list-installed")
+            )
         infodict["shortcodes"] = get_shortcodes("shortcodes")
 
         # template format data strings
         txt = template.format(**infodict)
 
         # convert markdown to html
-        html_content = markdown.markdown(txt,
-                                     extensions=["markdown.extensions.tables",
-                                                 "markdown.extensions.toc",
-                                                ],
-                                         )
+        html_content = markdown.markdown(
+            txt,
+            extensions=["markdown.extensions.tables",
+                        "markdown.extensions.toc",
+                        ],
+            )
 
         # wrap content in body
         html = """<!DOCTYPE html>
@@ -1614,7 +1622,7 @@ messages and solve errors"), "error")
     def run_nikola_deploy(self):
         self.run_nikola_build()
         self.messenger(
-                    _("Execute Nikola: run deploy to default preset command"))
+            _("Execute Nikola: run deploy to default preset command"))
         self.term_cmd("nikola deploy")
 
     def exec_cmd(self, command):
@@ -1665,6 +1673,12 @@ messages and solve errors"), "error")
     def run(self, argv):
         self.app.run(argv)
 
-
-app = NiApp()
-app.run(sys.argv)
+if __name__ == "__main__":
+    app = NiApp()
+    app.run(sys.argv)
+else:
+    # run application from Python console
+    # from non import application
+    os.chdir("non/")
+    app = NiApp()
+    app.run(None)
