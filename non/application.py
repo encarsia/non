@@ -336,6 +336,8 @@ directives.html")
                                         format,
                                         )
                                      )
+                print(status)
+
                 if "ERROR" in str(status.stderr):
                     app.messenger(_("Failed to create post."), "error")
                     # show Nikola error message
@@ -510,7 +512,7 @@ stash pop"))
         meta = row[pos][10]
         # show info in statusbar on left click
         if event.button == 1:
-            if meta is not "":
+            if meta != "":
                 has_meta = _("yes")
             else:
                 has_meta = _("no")
@@ -526,7 +528,7 @@ stash pop"))
             item.set_property("text", _("Open in web browser"))
             box.add(item)
             item.connect("clicked", self.on_open_pp_web, title, path, slug)
-            if meta is not "": # create button if metafile exists
+            if meta != "": # create button if metafile exists
                 item = Gtk.ModelButton()
                 item.set_property("text", _("Edit meta data file"))
                 item.connect("clicked", self.on_open_metafile, meta)
@@ -616,7 +618,7 @@ class NiApp:
         # setting up logging
         self.log = logging.getLogger("non")
         with open(os.path.join(self.install_dir, "logging.yaml")) as f:
-            config = yaml.load(f)
+            config = yaml.load(f, Loader=yaml.FullLoader)
             logging.config.dictConfig(config)
 
         self.loglevels = {"critical": 50,
@@ -632,6 +634,10 @@ class NiApp:
                                                        Gtk.get_minor_version(),
                                                        Gtk.get_micro_version(),
                                                        ))
+        self.log.debug("Python version: {}.{}.{}".format(sys.version_info.major,
+                                                         sys.version_info.minor,
+                                                         sys.version_info.micro,
+                                                         ))
         self.log.debug("Nikola version: {}".format(nikola.__version__))
         self.log.debug("Application executed from {}".format(self.install_dir))
 
@@ -677,7 +683,9 @@ class NiApp:
                                }
             self.messenger(_("Empty config created..."))
         else:
-            self.non_config = yaml.load(open(self.conf_file))
+            self.non_config = yaml.load(open(self.conf_file),
+                                             Loader=yaml.FullLoader,
+                                        )
             self.messenger(_("Found config to work with..."))
 
         # main window
@@ -1153,7 +1161,7 @@ one!"))
         # ex: articlename.lang.rst > lang is added to transl entry of
         # articlename.rst
         for key in d:
-            if d[key]["lang"] is not "":
+            if d[key]["lang"] != "":
                 lang = d[key]["lang"]
                 default_src = key.replace(".{}.".format(lang), ".")
                 d[default_src]["transl"].append(lang)
