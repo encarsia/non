@@ -15,7 +15,6 @@ URL = "https://github.com/encarsia/non"
 EMAIL = "An.Ke@bahnfreikartoffelbrei.de"
 AUTHOR = "Anke K"
 LICENSE = "MIT"
-URL = "https://github.com/encarsia/non"
 VERSION = "0.5"
 REQUIRES_PYTHON = ">=3.2"
 REQUIRED = [
@@ -33,5 +32,5 @@ PACKAGES = ["non"]
 PACKAGE_DIR = {"non": "non"}
 PACKAGE_DATA = {"non": ["ui/*",
                         "logging.yaml",
-                         ]
+                        ]
                 }

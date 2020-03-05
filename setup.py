@@ -16,6 +16,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = "\n" + f.read()
 
+
 def _find_install_path():
     if "--user" in sys.argv:
         inst = site.getusersitepackages()
@@ -24,6 +25,7 @@ def _find_install_path():
         inst = site.getsitepackages()[0]
         prefix = sys.prefix
     return inst, prefix
+
 
 def _oserr_message(e, name):
     if e.errno == 2:
@@ -57,8 +59,8 @@ class CustomInstall(install):
 
 
 class UnInstall(Command):
-    """Custom command to remove all files from the install/build/sdist processes.
-       This includes
+    """Custom command to remove all files from the install/build/sdist
+       processes. This includes
             * files in the extracted repo folder
             * the Python module
             * .desktop files and the application icon
@@ -97,7 +99,7 @@ class UnInstall(Command):
             except OSError as e:
                 print(_oserr_message(e, d))
 
-        print("Removing Python package...") # and also the Egg dir
+        print("Removing Python package...")  # and also the Egg dir
         for match in glob.glob(os.path.join(install_path, "non*")):
             try:
                 shutil.rmtree(match)

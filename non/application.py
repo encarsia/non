@@ -274,6 +274,10 @@ directives.html")
         app.messenger(_("Open NoN config file in external editor"))
         subprocess.run(['xdg-open', app.conf_file])
 
+    def on_open_non_log_clicked(self, widget):
+        app.messenger(_("Open NoN log file in external editor"))
+        subprocess.run(['xdg-open', app.log_file])
+
     def on_add_bookmark_clicked(self, widget):
         # add title and location to bookmark dict
         bookmark = {app.siteconf.BLOG_TITLE: app.wdir}
@@ -336,14 +340,20 @@ directives.html")
                                         format,
                                         )
                                      )
-                print(status)
 
                 if "ERROR" in str(status.stderr):
-                    app.messenger(_("Failed to create post."), "error")
+                    app.messenger(_(f"Failed to create post. Message: "
+                                    f"{status.stdout}"), "error")
                     # show Nikola error message
                     app.obj("entry_message").set_text(str(status.stderr).split(
-                        "ERROR: Nikola: ")[1].split("\n")[0])
+                        "ERROR: ")[1].split("\n")[0])
                     app.obj("newpost_entry").grab_focus()
+                elif status.returncode != 0:
+                    app.messenger(_(f"Failed to create post. Message:"
+                                    f" {status.stderr}"), "error")
+                    app.obj("entry_message").set_text(f"Error while creating "
+                                                      f"post. See logfile for "
+                                                      f"details.")
                 else:
                     self.on_window_close(widget)
                     app.messenger(_("New post created: {}").format(
@@ -550,6 +560,8 @@ stash pop"))
                        )
 
     def on_status_reload_clicked(self, widget):
+        for s in ("error", "warning", "info"):
+            app.obj(f"textbuffer_{s}").set_text("")
         app.get_status()
 
     def refresh_popover(self, widget, event):
@@ -580,6 +592,7 @@ class NiApp:
                                          ".non",
                                          )
         self.conf_file = os.path.join(self.user_app_dir, "config.yaml")
+        self.log_file = os.path.join(self.user_app_dir, "non.log")
 
         # create hidden app folder in user's home directory if it does
         # not exist
@@ -629,17 +642,15 @@ class NiApp:
                           }
 
         # log version info for debugging
-        self.log.debug("Application version: {}".format(info.__version__))
-        self.log.debug("GTK+ version: {}.{}.{}".format(Gtk.get_major_version(),
-                                                       Gtk.get_minor_version(),
-                                                       Gtk.get_micro_version(),
-                                                       ))
-        self.log.debug("Python version: {}.{}.{}".format(sys.version_info.major,
-                                                         sys.version_info.minor,
-                                                         sys.version_info.micro,
-                                                         ))
-        self.log.debug("Nikola version: {}".format(nikola.__version__))
-        self.log.debug("Application executed from {}".format(self.install_dir))
+        self.log.debug(f"Application version: {info.__version__}")
+        self.log.debug(f"GTK+ version: {Gtk.get_major_version()}."
+                       f"{Gtk.get_minor_version()}."
+                       f"{Gtk.get_micro_version()}")
+        self.log.debug(f"Python version: {sys.version_info.major}."
+                       f"{sys.version_info.minor}."
+                       f"{sys.version_info.micro}")
+        self.log.debug(f"Nikola version: {nikola.__version__}")
+        self.log.debug(f"Application executed from {self.install_dir}")
 
     def on_app_activate(self, app):
         # setting up localization
@@ -1594,12 +1605,16 @@ messages and solve errors"), "error")
     def get_status(self):
         output = self.exec_cmd("nikola status")
         output = output.stderr.split("\n")
-        #for no, l in output:
-        #    print(no, l)
         attention = False
         for s in ("error", "warning", "info"):
-            self.obj("textbuffer_{}".format(s)).set_text("")
-            txt = ""
+            textbuffer = self.obj(f"textbuffer_{s}")
+            start_iter = textbuffer.get_start_iter()
+            end_iter = textbuffer.get_end_iter()
+            # error messages from executing commands are displayed in errors so
+            # catch content instead of clearing the textbuffer
+            txt = textbuffer.get_text(start_iter, end_iter, True)
+            if txt != "":
+                attention = True
             counter = 0
             for line in output:
                 try:
@@ -1611,7 +1626,7 @@ messages and solve errors"), "error")
                     attention = True
                 except IndexError:
                     pass
-            self.obj("textbuffer_{}".format(s)).set_text(txt)
+            textbuffer.set_text(txt)
         if attention:
             self.obj("status_button_label").set_text("Status (!)")
         else:
@@ -1643,6 +1658,13 @@ messages and solve errors"), "error")
                                 encoding="utf-8",
                                 env=self.myenv,
                                 )
+        if output.returncode != 0:
+            self.messenger(f"Error while executing command: {output.stderr} "
+                           f"(returncode: {output.returncode})",
+                           "error")
+            self.obj("textbuffer_error").set_text(output.stderr)
+            self.obj("status_button_label").set_text("Status (!)")
+
         return output
 
     def term_cmd(self, command):

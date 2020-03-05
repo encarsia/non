@@ -22,7 +22,7 @@
  * integrated terminal for switching easily between GUI and commandline interface
  * in the 'Summary' tab there are some detailed information about the Nikola site like disk usage, available and installed themes or plugins (beta feature)
  * this application is ready for localization ([POT file](ui/NoN.pot)); add your translation and open a PR if you like (only German translation available yet)
- 
+
 ### WHAT CAN'T I DO WITH IT?
 
  * create a Nikola site
@@ -31,13 +31,14 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.0.2
+   * latest tested versions are 7.8.15 and 8.0.4
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
  * [Python-Markdown](https://python-markdown.github.io/) for Python 3
  * recommended: Git (it's probably already installed)
+ * [ghp-import](https://pypi.org/project/ghp-import/): deploy to GitHub Pages
  * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
 
 #### PREPARE ARCHLINUX AND ITS RELATIVES
@@ -45,7 +46,7 @@
 The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
 ``` bash
-$ sudo pacman -S nikola python-yaml python-setuptools
+$ sudo pacman -S nikola python-yaml python-setuptools python-ghp-import
 ```
 
 #### PREPARE UBUNTU 18.04 LTS
