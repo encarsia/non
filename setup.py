@@ -30,14 +30,13 @@ def _find_install_path():
 def _oserr_message(e, name):
     if e.errno == 2:
         return "Info: '{}' - {}.".format(name, e.strerror)
-    else:
-        return "Error: '{}' - {}.".format(name, e.strerror)
+    return "Error: '{}' - {}.".format(name, e.strerror)
 
 
 class CustomInstall(install):
-    
-    def run(self):      
-        install_path, prefix = _find_install_path()
+
+    def run(self):
+        install_path, _ = _find_install_path()
         self.update_desktop_file("data/KnightsOfNi.desktop",
                                  install_path,
                                  )
@@ -55,7 +54,7 @@ class CustomInstall(install):
                 line = line.replace("../non/ui/", "")
             content_new += line
         with open("data/non.desktop", "w") as f:
-            f.writelines(content_new) 
+            f.writelines(content_new)
 
 
 class UnInstall(Command):
@@ -64,14 +63,14 @@ class UnInstall(Command):
             * files in the extracted repo folder
             * the Python module
             * .desktop files and the application icon
-            
+
        Usage: 1) run 'python setup.py uninstall' without any options for
                     uninstalling system-wide, you may run this command
                     with superuser privilege
               2) run 'python setup.py uninstall --user' to undo
                     installation in local user directory.
     """
-    
+
     description = "remove files from installation and build processes"
     user_options = [("user", "u", "delete local user installation")]
 

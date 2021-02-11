@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO setup: add appdata.xml and binary file,
+# TODO setup: add appdata.xml and binary file
 
 try:
     import nikola
@@ -1196,6 +1196,7 @@ one!"))
                 slug = line[8:].strip()
             elif line.startswith(".. date:"):
                 date = line[8:20].strip()
+                date = date.replace("/", "-")   # convert slash separated dates
             elif line.startswith(".. tags:"):
                 tagstr = line[8:].strip()
                 tags = [t.strip() for t in tagstr.split(",")]
@@ -1529,12 +1530,25 @@ messages and solve errors"), "error")
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{}">
   <title>Summary</title>
 </head>
+<style>
+    .markdown-body {{
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+    }}
+</style>
+<article class="markdown-body">
 <body>
 {}
 </body>
-</html>""".format(html_content)
+</article>
+</html>""".format(infodict["css_file"], html_content)
 
         # dump html to file
         with open(self.summaryfile, "w") as f:
