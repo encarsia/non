@@ -13,7 +13,7 @@
  * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances
  * search for strings in posts, pages and listings
- * [experimental] push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
+
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
@@ -31,7 +31,7 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.0.4
+   * latest tested versions are 7.8.15 and 8.1.3
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))

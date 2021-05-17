@@ -256,7 +256,9 @@ directives.html")
 
     def on_choose_conf_file_response(self, widget, response):
         if response == -5:
+            print(widget.get_filename())
             try:
+                app.sitedata = dict()
                 app.dump_sitedata_file(app.sitedata)
                 app.non_config["wdir"] = os.path.split(
                     widget.get_filename())[0]
@@ -265,10 +267,13 @@ directives.html")
                 app.messenger(_("Working Nikola configuration required"),
                               "warning")
                 app.obj("config_info").run()
+
         else:
             app.messenger(_("Working Nikola configuration required"),
                           "warning")
+            self.on_window_close(widget)
             app.obj("config_info").run()
+            raise
         self.on_window_close(widget)
 
     # ############## new post dialog ############
@@ -730,6 +735,7 @@ anymore."), "warning")
             self.non_config["wdir"] = None
             self.obj("choose_conf_file").run()
         except TypeError as e:
+            print(e)
             self.messenger(_("Path to working directory malformed or None."),
                            "warning")
             self.obj("choose_conf_file").run()
