@@ -94,49 +94,6 @@ class Handler:
             app.create_sitedata()
         app.get_window_content()
 
-    def on_save_drafts(self, widget):
-        self.stop_preview()
-        # just to be sure, should already be on src
-        app.exec_cmd("git checkout src")
-        # git commit && git push origin src
-        status = app.exec_cmd("git status")
-        status = status.stdout.split("\n\n")
-        if status[-1] == "nothing to commit, working tree clean\n":
-            app.messenger(_("No changes, no upload."))
-        elif status[-1] == "no changes added to commit (use \"git add\" \
-and/or \"git commit -a\")\n" \
-                or "Changes to be committed" in status[1]:
-            app.obj("git_changed_files").set_label(status[-2])
-            app.obj("git_push_changes_dialog").run()
-        else:
-            app.messenger(_("Unknown status: {}").format(status), "warning")
-
-    def on_get_drafts(self, widget):
-        self.stop_preview()
-        # just to be sure, should already be on src
-        app.exec_cmd("git checkout src")
-        status = app.exec_cmd("git status")
-        status = status.stdout.split("\n\n")
-        if status[-1] == "nothing to commit, working tree clean\n":
-            app.exec_cmd("git pull origin src")
-            app.messenger(_("No local changes, pulled changes \
-from origin/src."))
-            self.on_refresh_clicked(None)
-        elif status[-1] == "no changes added to commit (use \"git add\" \
-and/or \"git commit -a\")\n":
-            app.obj("git_unstashed_files").set_label(status[-2])
-            app.obj("git_get_changes_dialog").run()
-        else:
-            app.messenger(_("Unknown status: {}").format(status), "warning")
-        # git show --stat
-        # git diff-tree --oneline --no-commit-id --name-only -r origin/src
-        # git remote update
-        # git diff src:posts/file.rst origin/src:posts/file.rst
-        # src is the source branch, get name from conf.py
-        # returns a list of filenames
-        # show window with titles of changed files, cancel and proceed
-        # buttons to handle
-
     # ########### vte terminal ########################
 
     def on_term_contents_changed(self, widget):
@@ -679,9 +636,6 @@ class NiApp:
         self.webview = WebKit2.WebView()
         self.obj("html_view").add(self.webview)
 
-        # set buttons inactive unless activated otherwise
-        self.obj("build").set_sensitive(False)
-
         # error if created in Glade
         self.add_dialogbuttons(self.obj("choose_conf_file"))
         # self.add_dialogokbutton(self.obj("about_dialog"))
@@ -901,14 +855,6 @@ anymore."), "warning")
             self.siteconf = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(self.siteconf)
 
-            # labels
-            self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
-            self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
-            self.obj("title").set_text(self.siteconf.BLOG_TITLE)
-            self.obj("pathlocal").set_uri("file://{}".format(self.wdir))
-            self.obj("pathlocal").set_label("...{}".format(self.wdir[-25:]))
-            self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
-            self.obj("pathremote").set_label(self.siteconf.SITE_URL)
             # detect multilingual sites
             self.default_lang = self.siteconf.DEFAULT_LANG
             self.translation_lang = set([key for key in
@@ -919,6 +865,30 @@ anymore."), "warning")
                                                       self.translation_lang
                                                       if s != self.default_lang
                                                       ))
+
+            # labels
+
+            # author, description, title are translatable so either a string
+            # or dict
+
+            try:
+                self.obj("author").set_text(self.siteconf.BLOG_AUTHOR)
+            except TypeError:
+                self.obj("author").set_text(self.siteconf.BLOG_AUTHOR[self.default_lang])
+            try:
+                self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
+            except TypeError:
+                    self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION[self.default_lang])
+            try:
+                self.obj("title").set_text(self.siteconf.BLOG_TITLE)
+            except TypeError:
+                self.obj("title").set_text(self.siteconf.BLOG_TITLE[self.default_lang])
+
+            self.obj("pathlocal").set_uri("file://{}".format(self.wdir))
+            self.obj("pathlocal").set_label("...{}".format(self.wdir[-25:]))
+            self.obj("pathremote").set_uri(self.siteconf.SITE_URL)
+            self.obj("pathremote").set_label(self.siteconf.SITE_URL)
+
             # activate toolbar item if deploy commands for default preset
             # exists
             try:
@@ -935,21 +905,6 @@ anymore."), "warning")
             except AttributeError:
                 self.output_folder = "output"
                 self.messenger(_("Output folder is set to default 'output'"))
-            # sync drafts with GitHub, activate only if setup in conf.py
-            try:
-                self.gh_src = self.siteconf.GITHUB_SOURCE_BRANCH
-                self.gh_depl = self.siteconf.GITHUB_DEPLOY_BRANCH
-                self.gh_rem = self.siteconf.GITHUB_REMOTE_NAME
-                self.obj("get_drafts").set_sensitive(True)
-                self.obj("save_drafts").set_sensitive(True)
-                self.messenger(_("Up-/download drafts to/from GitHub is \
-enabled."))
-            except AttributeError:
-                self.obj("save_drafts").set_sensitive(False)
-                self.obj("get_drafts").set_sensitive(False)
-                self.messenger(_("This site is not configured to use GitHub, \
-up-/downloading drafts is deactivated."))
-
             # check if folder for files, listings and images exist to avoid
             # FileNotFoundError, this also has to be done only on startup
             for subdir in ["files", "listings", "images"]:
@@ -1134,7 +1089,6 @@ one!"))
                 fontstyle = "normal"
             else:
                 fontstyle = "bold"
-                self.obj("build").set_sensitive(True)
             # add new found tags/categories to set
             t.update(tags)
             c.update(cats)
@@ -1260,7 +1214,6 @@ one!"))
                         equ = False
                 if not equ:
                     weight = 800
-                    self.obj("build").set_sensitive(True)
                 else:
                     weight = 400
                 self.obj(store).append(parent,
@@ -1278,7 +1231,6 @@ one!"))
                     weight = 400
                 else:
                     weight = 800
-                    self.obj("build").set_sensitive(True)
                 row = self.obj(store).append(parent,
                                              [item,
                                               None,

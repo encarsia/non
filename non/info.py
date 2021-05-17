@@ -6,7 +6,7 @@ rel_app_path = "share/applications"
 rel_icon_path = "share/icons/hicolor/scalable/apps"
 
 # package meta data
-__version__ = "0.7"
+__version__ = "0.8"
 __license__ = "MIT"
 
 NAME = "non"
@@ -15,7 +15,7 @@ URL = "https://github.com/encarsia/non"
 EMAIL = "An.Ke@bahnfreikartoffelbrei.de"
 AUTHOR = "Anke K"
 LICENSE = "MIT"
-VERSION = "0.5"
+VERSION = "0.8"
 REQUIRES_PYTHON = ">=3.2"
 REQUIRED = [
             "Nikola",
