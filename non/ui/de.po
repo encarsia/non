@@ -56,19 +56,6 @@ msgstr "Kategorien"
 msgid "Category"
 msgstr "Kategorie"
 
-msgid ""
-"Changes that have been made since last upload which is done via the \"Upload "
-"to GitHub\" function or when deploying the site.\n"
-"\n"
-"<b>Commit and push changed files to the GitHub repository's src branch?</b>"
-msgstr ""
-"Seit dem letzten Upload wurden Änderungen vorgenommen.\n"
-"Dies passiert mittels \"Zu GitHub hochladen\"-Funktion oder wenn die Seite "
-"deployt wird.\n"
-"\n"
-"<b>Sollen die veränderten Dateien in den Branch src des GitHub-Repositorys "
-"committet und gepusht werden?</b>"
-
 msgid "Choose another Nikola instance's conf.py to load into the application."
 msgstr "Mit conf.py einer anderen Nikola-Instanz fortfahren."
 
@@ -87,15 +74,15 @@ msgstr "Daten von Nikola-Seite sammeln fertig."
 msgid "Console"
 msgstr "Konsole"
 
-msgid "Could not fetch site status. See 'Status' messages and solve errors"
+msgid "Could not fetch site status. See 'Status' messages and solve errors."
 msgstr ""
 "Konnte Seitenstatus nicht ermitteln. Siehe 'Status'-Nachrichten, um Fehler "
-"zu beheben"
+"zu beheben."
 
 msgid "Could not read data file."
 msgstr "Konnte Seitendaten-Datei nicht lesen."
 
-msgid "Could not write site data to JSON file"
+msgid "Could not write site data to JSON file."
 msgstr "Konnte Seitendaten nicht in JSON-Datei schreiben."
 
 msgid "Create new page"
@@ -146,9 +133,6 @@ msgstr "Beschreibung"
 msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
-msgid "Downloading drafts canceled."
-msgstr "Herunterladen der Entwürfe abgebrochen."
-
 msgid "Edit meta data file"
 msgstr "Metadaten-Datei bearbeiten"
 
@@ -173,11 +157,11 @@ msgstr "Nikola ausführen: Deployment zu GitHub"
 msgid "Execute Nikola: run deploy to default preset command"
 msgstr "Nikola ausführen: voreingestellte Deployment-Konfiguration"
 
-msgid "Execute git stash & git pull origin src & git stash pop"
-msgstr "Ausführen von git stash & git pull origin src & git stash pop"
-
 msgid "Failed to create post."
 msgstr "Anlegen des neuen Beitrags gescheitert."
+
+msgid "Failed to create post. Message: "
+msgstr "Anlegen des neuen Beitrags gescheitert. Nachricht: "
 
 msgid "Failed to load data, choose another conf.py"
 msgstr "Laden der Daten gescheitert, eine andere conf.py auswählen"
@@ -212,12 +196,6 @@ msgstr "Zusammenfassung in Tab generieren"
 msgid "Generate summary"
 msgstr "Generiere Zusammenfassung"
 
-msgid "Get drafts"
-msgstr "Entwürfe holen"
-
-msgid "Get drafts from GitHub"
-msgstr "Hole Entwürfe von GitHub"
-
 msgid "Get some external help"
 msgstr "Externe Hilfe"
 
@@ -250,17 +228,6 @@ msgstr "Listings"
 
 msgid "Local"
 msgstr "Lokal"
-
-msgid ""
-"Local files have been changed.\n"
-"\n"
-"<b>Keep local changes and try to pull from origin or discard changes and "
-"just pull from origin?</b>"
-msgstr ""
-"Lokale Dateien wurden geändert.\n"
-"\n"
-"<b>Lokale Änderungen behalten und versuchen, von origin zu pullen oder "
-"Änderungen verwerfen und nur von origin pullen?</b>"
 
 msgid ""
 "Markdown support is disabled by default. Consult the Nikola handbook on how "
@@ -345,6 +312,12 @@ msgstr "Öffne NoN-Konfigurationsdatei"
 msgid "Open NoN config file in external editor"
 msgstr "Öffne NoN-Konfigurationsdatei in externem Editor"
 
+msgid "Open NoN log file"
+msgstr "Öffne NoN-Logdatei"
+
+msgid "Open NoN log file in external editor"
+msgstr "Öffne NoN-Logdatei in externem Editor"
+
 msgid "Open conf.py in external editor"
 msgstr "Öffne conf.py in externem Editor"
 
@@ -408,12 +381,6 @@ msgstr "Beiträge"
 msgid "Preferences"
 msgstr "Einstellungen"
 
-msgid "Pulled files from origin/src."
-msgstr "Dateien von origin/src gepullt."
-
-msgid "Pushed changes to origin/src."
-msgstr "Änderungen nach origin/src gepusht."
-
 msgid "Refresh"
 msgstr "Aktualisieren"
 
@@ -432,14 +399,6 @@ msgstr "Konflikte auflösen!"
 msgid "Run \"Choose conf.py\" menu item again or select a bookmark item."
 msgstr ""
 "\"Wähle conf.py\" Menüeintrag erneut aufrufen oder Lesezeichen auswählen."
-
-msgid ""
-"Save drafts to GitHub.\n"
-"This will only upload source files and not build and deploy the site."
-msgstr ""
-"Entwürfe in GitHub speichern.\n"
-"Dies wird nur die Quelldateien hochladen, die Seite aber nicht erstellen und "
-"deployen."
 
 msgid "Search"
 msgstr "Suche"
@@ -530,12 +489,6 @@ msgstr "Aktualisiere Artikeldaten für: {}"
 msgid "Update data file for: {}"
 msgstr "Aktualisiere Datendatei für: {}"
 
-msgid "Upload drafts"
-msgstr "Entwürfe hochladen"
-
-msgid "Uploading drafts canceled."
-msgstr "Hochladen der Entwürfe abgebrochen."
-
 msgid "Warnings"
 msgstr "Warnungen"
 
@@ -569,3 +522,4 @@ msgstr "ja"
 
 msgid "{} doesn't exist...create..."
 msgstr "{} existiert nicht...wird erstellt..."
+

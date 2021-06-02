@@ -1,13 +1,13 @@
 # Translations template for Knights of Ni.
-# Copyright (C) 2018.
+# Copyright (C) 2021.
 # This file is distributed under the same license as the 
 # Knights of Ni project.
-# Anke K <An.Ke@bahnfreikartoffelbrei.de>, 2018.
+# Anke K <An.Ke@bahnfreikartoffelbrei.de>, 2021.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: NoN v0.7\n"
+"Project-Id-Version: NoN v0.8\n"
 "Report-Msgid-Bugs-To: https://github.com/encarsia/non\n"
 "POT-Creation-Date: 2018-11-10 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -85,13 +85,13 @@ msgstr ""
 msgid "Console"
 msgstr ""
 
-msgid "Could not fetch site status. See 'Status' messages and solve errors"
+msgid "Could not fetch site status. See 'Status' messages and solve errors."
 msgstr ""
 
 msgid "Could not read data file."
 msgstr ""
 
-msgid "Could not write site data to JSON file"
+msgid "Could not write site data to JSON file."
 msgstr ""
 
 msgid "Create new page"
@@ -175,6 +175,12 @@ msgstr ""
 msgid "Failed to create post."
 msgstr ""
 
+msgid "Failed to create post. Message:"
+msgstr ""
+
+msgid "Failed to create post. Message: "
+msgstr ""
+
 msgid "Failed to load data, choose another conf.py"
 msgstr ""
 
@@ -208,12 +214,6 @@ msgstr ""
 msgid "Generate summary"
 msgstr ""
 
-msgid "Get drafts"
-msgstr ""
-
-msgid "Get drafts from GitHub"
-msgstr ""
-
 msgid "Get some external help"
 msgstr ""
 
@@ -245,13 +245,6 @@ msgid "Listings"
 msgstr ""
 
 msgid "Local"
-msgstr ""
-
-msgid ""
-"Local files have been changed.\n"
-"\n"
-"<b>Keep local changes and try to pull from origin or discard changes and "
-"just pull from origin?</b>"
 msgstr ""
 
 msgid ""
@@ -332,6 +325,12 @@ msgid "Open NoN config file"
 msgstr ""
 
 msgid "Open NoN config file in external editor"
+msgstr ""
+
+msgid "Open NoN log file"
+msgstr ""
+
+msgid "Open NoN log file in external editor"
 msgstr ""
 
 msgid "Open conf.py in external editor"

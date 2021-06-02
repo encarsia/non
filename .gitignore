@@ -17,3 +17,6 @@ data/non.desktop
 localizeorcry.py
 update_mo.py
 ignoredstrings
+
+# exec script draft, kept here for later use
+data/non

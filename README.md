@@ -8,12 +8,12 @@
  * open files from app or load article in a browser on right click
  * keep track of changes made since last build (hint: **bold**)
  * create new posts and pages
- * if configured the applicaion detects different input markup (reStructuredText, Markdown, ...)
+ * if configured the application detects different input markup (reStructuredText, Markdown, ...)
  * build, preview and deploy to GitHub or GitLab or a custom target¹
  * create translation files on right click in the 'Translation' tab
  * bookmark and switch between different Nikola site instances
  * search for strings in posts, pages and listings
- * [experimental] push/pull changes to/from GitGub without building and deploying the site so you can edit articles on multiple places/systems
+
 
 ¹ For deploying to GitLab the `nikola github_deploy` command is used. See this [Example Nikola site using GitLab Pages](https://gitlab.com/pages/nikola) for details on how to setup your Nikola configuration. The second "Deploy" toolbutton is active if you setup `DEPLOY_COMMANDS` in your `conf.py` and will execute the _default_ preset.
 
@@ -22,7 +22,7 @@
  * integrated terminal for switching easily between GUI and commandline interface
  * in the 'Summary' tab there are some detailed information about the Nikola site like disk usage, available and installed themes or plugins (beta feature)
  * this application is ready for localization ([POT file](ui/NoN.pot)); add your translation and open a PR if you like (only German translation available yet)
- 
+
 ### WHAT CAN'T I DO WITH IT?
 
  * create a Nikola site
@@ -31,13 +31,14 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.0.2
+   * latest tested versions are 7.8.15 and 8.1.3
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
  * [Python-Markdown](https://python-markdown.github.io/) for Python 3
  * recommended: Git (it's probably already installed)
+ * [ghp-import](https://pypi.org/project/ghp-import/): deploy to GitHub Pages
  * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
 
 #### PREPARE ARCHLINUX AND ITS RELATIVES
@@ -45,19 +46,19 @@
 The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
 
 ``` bash
-$ sudo pacman -S nikola python-yaml python-setuptools
+sudo pacman -S nikola python-yaml python-setuptools python-ghp-import
 ```
 
-#### PREPARE UBUNTU 18.04 LTS
+#### PREPARE UBUNTU 21.04
 
 ``` bash
-$ sudo apt-get install python3-gi gir1.2-webkit2-4.0 gir1.2-vte-2.91 python3-pip python3-setuptools
+sudo apt-get install python3-gi gir1.2-webkit2-4.0 gir1.2-vte-2.91 python3-pip python3-setuptools python3-setproctitle git
 ```
 
-Currently there is no Nikola package in the Ubuntu repositories available so you install via pip (which is the recommended install method anyway) with all dependencies included:
+There is a snap package for Nikola avaiable:
 
 ``` bash
-$ pip3 install Nikola[extras]
+sudo snap install nikola
 ```
 
 ### INSTALLATION
@@ -68,7 +69,7 @@ $ pip3 install Nikola[extras]
  
 ### ARE WE THERE YET?
 
- * change into the `non` folder and execute `non.py`
+ * change into the `non` folder and execute `application.py`
  * if you intend to use the desktop icon, edit `data/KnightsOfNi.desktop` and customize path of "Exec", and "Icon" and copy file to `~/.local/share/applications/`
 
 ### I'M LAZY!
@@ -99,8 +100,7 @@ $ pip3 install Nikola[extras]
  * Besides this there are some ideas for further features such like
     * an integrated reST editor
     * provide personal article templates by using the ``-i`` option of the ``new_post`` command
- * Roadmap:
-    * fix the Vte.Terminal issue
+
 
 ### WHAT DOES IT LOOK LIKE? 
 

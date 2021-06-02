@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="vte-2.91" version="0.46"/>
@@ -10,32 +10,31 @@
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-find</property>
+    <property name="can-focus">False</property>
+    <property name="stock">gtk-find-and-replace</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">reload</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">reload</property>
   </object>
   <object class="GtkPopoverMenu" id="menu">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="position">bottom</property>
     <child>
       <object class="GtkBox" id="menu_box">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_left">5</property>
-        <property name="margin_right">5</property>
-        <property name="margin_top">5</property>
-        <property name="margin_bottom">5</property>
+        <property name="can-focus">False</property>
+        <property name="double-buffered">False</property>
+        <property name="margin-top">5</property>
+        <property name="margin-bottom">5</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton" id="load_conf">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Choose another Nikola instance's conf.py to load into the application.</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Choose another Nikola instance's conf.py to load into the application.</property>
             <property name="text" translatable="yes">Choose conf.py</property>
             <signal name="clicked" handler="on_load_conf_clicked" swapped="no"/>
           </object>
@@ -48,9 +47,9 @@
         <child>
           <object class="GtkModelButton" id="open_conf">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open this Nikola instance's conf.py.</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Open this Nikola instance's conf.py.</property>
             <property name="text" translatable="yes">Open current conf.py</property>
             <signal name="clicked" handler="on_open_conf_clicked" swapped="no"/>
           </object>
@@ -63,9 +62,9 @@
         <child>
           <object class="GtkModelButton" id="open_non_conf">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open this application's configuration file.</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Open this application's configuration file.</property>
             <property name="text" translatable="yes">Open NoN config file</property>
             <signal name="clicked" handler="on_open_non_conf_clicked" swapped="no"/>
           </object>
@@ -76,9 +75,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSeparator">
+          <object class="GtkModelButton" id="open_non_log">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Open NoN log file</property>
+            <signal name="clicked" handler="on_open_non_log_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -87,12 +89,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="gen_sum">
+          <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes">Generate summary</property>
-            <signal name="clicked" handler="on_gen_sum_clicked" swapped="no"/>
+            <property name="can-focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -101,9 +100,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSeparator">
+          <object class="GtkModelButton" id="gen_sum">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Generate summary</property>
+            <signal name="clicked" handler="on_gen_sum_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -112,12 +114,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="add_bookmark">
+          <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes">Add bookmark</property>
-            <signal name="clicked" handler="on_add_bookmark_clicked" swapped="no"/>
+            <property name="can-focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -126,14 +125,28 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSeparator">
+          <object class="GtkModelButton" id="add_bookmark">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Add bookmark</property>
+            <signal name="clicked" handler="on_add_bookmark_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">7</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">8</property>
           </packing>
         </child>
       </object>
@@ -144,22 +157,22 @@
     </child>
   </object>
   <object class="GtkPopoverMenu" id="references">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_left">5</property>
-        <property name="margin_right">5</property>
-        <property name="margin_top">5</property>
-        <property name="margin_bottom">5</property>
+        <property name="can-focus">False</property>
+        <property name="margin-left">5</property>
+        <property name="margin-right">5</property>
+        <property name="margin-top">5</property>
+        <property name="margin-bottom">5</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton" id="ref_handbook">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open Nikola handbook in web browser</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Open Nikola handbook in web browser</property>
             <property name="text" translatable="yes">Nikola handbook</property>
             <signal name="clicked" handler="on_ref_handbook_clicked" swapped="no"/>
           </object>
@@ -172,9 +185,9 @@
         <child>
           <object class="GtkModelButton" id="ref_rest_markup">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open reStructuredText Markup Specification in web browser</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Open reStructuredText Markup Specification in web browser</property>
             <property name="text" translatable="yes">reStructuredText markup</property>
             <signal name="clicked" handler="on_ref_rest_markup_clicked" swapped="no"/>
           </object>
@@ -187,9 +200,9 @@
         <child>
           <object class="GtkModelButton" id="ref_rest_dir">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open reStructuredText Directives in web browser</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Open reStructuredText Directives in web browser</property>
             <property name="text" translatable="yes">reStructuredText directives</property>
             <signal name="clicked" handler="on_ref_rest_dir_clicked" swapped="no"/>
           </object>
@@ -202,9 +215,9 @@
         <child>
           <object class="GtkModelButton" id="ref_md">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Open Markdown basic syntax reference in web browser</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Open Markdown basic syntax reference in web browser</property>
             <property name="text" translatable="yes">Markdown syntax</property>
             <signal name="clicked" handler="on_ref_md_clicked" swapped="no"/>
           </object>
@@ -392,24 +405,24 @@
   <object class="GtkTextBuffer" id="textbuffer_info"/>
   <object class="GtkTextBuffer" id="textbuffer_warning"/>
   <object class="GtkPopover" id="status_popover">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkStackSwitcher">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="stack">status_stack</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
@@ -417,10 +430,10 @@
             <child>
               <object class="GtkButton" id="status_reload">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
                 <property name="image">image3</property>
-                <property name="always_show_image">True</property>
+                <property name="always-show-image">True</property>
                 <signal name="clicked" handler="on_status_reload_clicked" swapped="no"/>
               </object>
               <packing>
@@ -438,24 +451,25 @@
         </child>
         <child>
           <object class="GtkStack" id="status_stack">
-            <property name="width_request">200</property>
-            <property name="height_request">200</property>
+            <property name="width-request">500</property>
+            <property name="height-request">300</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
+                <property name="can-focus">True</property>
+                <property name="vexpand">True</property>
+                <property name="shadow-type">in</property>
                 <child>
                   <object class="GtkTextView">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="editable">False</property>
-                    <property name="wrap_mode">word</property>
-                    <property name="cursor_visible">False</property>
+                    <property name="wrap-mode">word</property>
+                    <property name="cursor-visible">False</property>
                     <property name="buffer">textbuffer_error</property>
-                    <property name="accepts_tab">False</property>
+                    <property name="accepts-tab">False</property>
                   </object>
                 </child>
               </object>
@@ -467,17 +481,17 @@
             <child>
               <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
                 <child>
                   <object class="GtkTextView">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="editable">False</property>
-                    <property name="wrap_mode">word</property>
-                    <property name="cursor_visible">False</property>
+                    <property name="wrap-mode">word</property>
+                    <property name="cursor-visible">False</property>
                     <property name="buffer">textbuffer_warning</property>
-                    <property name="accepts_tab">False</property>
+                    <property name="accepts-tab">False</property>
                   </object>
                 </child>
               </object>
@@ -490,17 +504,17 @@
             <child>
               <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
                 <child>
                   <object class="GtkTextView">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="editable">False</property>
-                    <property name="wrap_mode">word</property>
-                    <property name="cursor_visible">False</property>
+                    <property name="wrap-mode">word</property>
+                    <property name="cursor-visible">False</property>
                     <property name="buffer">textbuffer_info</property>
-                    <property name="accepts_tab">False</property>
+                    <property name="accepts-tab">False</property>
                   </object>
                 </child>
               </object>
@@ -521,127 +535,38 @@
     </child>
   </object>
   <object class="GtkApplicationWindow" id="non_window_stack">
-    <property name="height_request">600</property>
-    <property name="can_focus">False</property>
-    <property name="default_width">600</property>
-    <property name="default_height">600</property>
+    <property name="height-request">600</property>
+    <property name="can-focus">False</property>
+    <property name="default-width">600</property>
+    <property name="default-height">600</property>
     <property name="icon">duckyou.svg</property>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="title">Knights of Ni</property>
-        <property name="has_subtitle">False</property>
-        <property name="spacing">5</property>
-        <property name="show_close_button">True</property>
-        <child>
-          <object class="GtkStackSwitcher">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="icon_size">0</property>
-            <property name="stack">stack</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkMenuButton">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Preferences</property>
-            <property name="popover">menu</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">open-menu-symbolic</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="info_button">
-            <property name="label">gtk-about</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Show info window about this application</property>
-            <property name="use_stock">True</property>
-            <property name="always_show_image">True</property>
-            <signal name="clicked" handler="on_info_button_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkMenuButton" id="ref_menu_button">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Get some external help</property>
-            <property name="popover">references</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="stock">gtk-help</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkToggleButton" id="search_button">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Find in files</property>
-            <property name="image">image2</property>
-            <property name="always_show_image">True</property>
-            <signal name="toggled" handler="on_search_button_toggled" swapped="no"/>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">4</property>
-          </packing>
-        </child>
-      </object>
-    </child>
     <child>
       <object class="GtkStack" id="stack">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="transition_type">over-down-up</property>
+        <property name="can-focus">False</property>
+        <property name="transition-type">over-down-up</property>
         <child>
           <object class="GtkStack" id="gui">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="transition_type">over-down-up</property>
+            <property name="can-focus">False</property>
+            <property name="transition-type">over-down-up</property>
             <child>
               <object class="GtkBox" id="main_gui">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkToolbar">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="toolbar_style">both</property>
+                    <property name="can-focus">False</property>
+                    <property name="toolbar-style">both</property>
                     <child>
                       <object class="GtkToolButton" id="newpost">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">New post</property>
-                        <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-new</property>
+                        <property name="use-underline">True</property>
+                        <property name="stock-id">gtk-new</property>
                         <signal name="clicked" handler="on_newpost_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -652,10 +577,10 @@
                     <child>
                       <object class="GtkToolButton" id="build">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Build</property>
-                        <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-execute</property>
+                        <property name="use-underline">True</property>
+                        <property name="stock-id">gtk-execute</property>
                         <signal name="clicked" handler="on_build_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -666,10 +591,10 @@
                     <child>
                       <object class="GtkToggleToolButton" id="preview">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Browser preview</property>
-                        <property name="use_underline">True</property>
-                        <property name="icon_name">web-browser</property>
+                        <property name="use-underline">True</property>
+                        <property name="icon-name">web-browser</property>
                         <signal name="toggled" handler="on_preview_toggled" swapped="no"/>
                       </object>
                       <packing>
@@ -680,7 +605,7 @@
                     <child>
                       <object class="GtkSeparatorToolItem">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -690,11 +615,11 @@
                     <child>
                       <object class="GtkToolButton" id="deploy_git">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Deploy site to GitHub/GitLab</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Deploy site to GitHub/GitLab</property>
                         <property name="label" translatable="yes">Deploy to GitHub</property>
-                        <property name="use_underline">True</property>
-                        <property name="icon_name">send-to-symbolic</property>
+                        <property name="use-underline">True</property>
+                        <property name="icon-name">send-to-symbolic</property>
                         <signal name="clicked" handler="on_deploy_git_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -706,44 +631,13 @@
                       <object class="GtkToolButton" id="deploy">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Deploy site to default deploy preset</property>
-                        <property name="opacity">0.90196078431372551</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Deploy site to default deploy preset</property>
+                        <property name="opacity">0.9019607843137255</property>
                         <property name="label" translatable="yes">Deploy</property>
-                        <property name="use_underline">True</property>
-                        <property name="icon_name">send-to-symbolic</property>
+                        <property name="use-underline">True</property>
+                        <property name="icon-name">send-to-symbolic</property>
                         <signal name="clicked" handler="on_deploy_clicked" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToolButton" id="save_drafts">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Save drafts to GitHub.
-This will only upload source files and not build and deploy the site.</property>
-                        <property name="label" translatable="yes">Upload drafts</property>
-                        <property name="use_underline">True</property>
-                        <property name="icon_name">document-send-symbolic.symbolic</property>
-                        <signal name="clicked" handler="on_save_drafts" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToolButton" id="get_drafts">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Get drafts from GitHub</property>
-                        <property name="label" translatable="yes">Get drafts</property>
-                        <property name="use_underline">True</property>
-                        <property name="icon_name">document-save-symbolic</property>
-                        <signal name="clicked" handler="on_get_drafts" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -753,7 +647,7 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkSeparatorToolItem">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -763,10 +657,10 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkToolButton" id="refresh">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Refresh</property>
-                        <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-refresh</property>
+                        <property name="use-underline">True</property>
+                        <property name="stock-id">gtk-refresh</property>
                         <signal name="clicked" handler="on_refresh_clicked" swapped="no"/>
                         <accelerator key="F5" signal="clicked"/>
                       </object>
@@ -785,7 +679,7 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -796,16 +690,16 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Title</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -830,12 +724,12 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkLabel" id="title">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -856,7 +750,7 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -867,12 +761,12 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Description</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -887,7 +781,7 @@ This will only upload source files and not build and deploy the site.</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Author</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -909,12 +803,12 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkLabel" id="descr">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -925,7 +819,7 @@ This will only upload source files and not build and deploy the site.</property>
                         <child>
                           <object class="GtkLabel" id="author">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -943,7 +837,7 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -954,12 +848,12 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Default language</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -974,7 +868,7 @@ This will only upload source files and not build and deploy the site.</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Translations</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -996,12 +890,12 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkLabel" id="lang">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1012,7 +906,7 @@ This will only upload source files and not build and deploy the site.</property>
                         <child>
                           <object class="GtkLabel" id="trans_lang">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1037,7 +931,7 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1046,95 +940,96 @@ This will only upload source files and not build and deploy the site.</property>
                   </packing>
                 </child>
                 <child>
+                  <!-- n-columns=7 n-rows=3 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Local</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLinkButton" id="pathlocal">
                         <property name="label">button</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <property name="relief">none</property>
                       </object>
                       <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Remote</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
                       </object>
                       <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLinkButton" id="pathremote">
                         <property name="label">button</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <property name="relief">none</property>
                       </object>
                       <packing>
-                        <property name="left_attach">4</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                       </object>
                       <packing>
-                        <property name="left_attach">5</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">5</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkMenuButton">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <property name="popover">status_popover</property>
                         <child>
                           <object class="GtkLabel" id="status_button_label">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">5</property>
-                            <property name="margin_right">5</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-left">5</property>
+                            <property name="margin-right">5</property>
                             <property name="label" translatable="yes">Status</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -1143,9 +1038,51 @@ This will only upload source files and not build and deploy the site.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">6</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">6</property>
+                        <property name="top-attach">0</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -1157,7 +1094,7 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1168,22 +1105,20 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkNotebook" id="notebook">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
-                        <property name="propagate_natural_width">True</property>
-                        <property name="propagate_natural_height">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="window-placement-set">False</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_posts">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_posts</property>
-                            <property name="rules_hint">True</property>
-                            <property name="search_column">0</property>
-                            <property name="show_expanders">False</property>
+                            <property name="search-column">0</property>
+                            <property name="show-expanders">False</property>
                             <signal name="button-release-event" handler="on_view_posts_button_release_event" swapped="no"/>
                             <signal name="row-activated" handler="on_view_posts_row_activated" swapped="no"/>
                             <child internal-child="selection">
@@ -1192,11 +1127,11 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
-                                <property name="fixed_width">250</property>
+                                <property name="fixed-width">250</property>
                                 <property name="title" translatable="yes">Title</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1209,11 +1144,11 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
-                                <property name="fixed_width">150</property>
+                                <property name="fixed-width">150</property>
                                 <property name="title" translatable="yes">Slug</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">1</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1227,9 +1162,9 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Created</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_order">descending</property>
-                                <property name="sort_column_id">3</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-order">descending</property>
+                                <property name="sort-column-id">3</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1242,7 +1177,7 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
-                                <property name="fixed_width">150</property>
+                                <property name="fixed-width">150</property>
                                 <property name="title" translatable="yes">Tags</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
@@ -1257,8 +1192,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
                                 <property name="title" translatable="yes">Category</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">6</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">6</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1284,33 +1219,33 @@ This will only upload source files and not build and deploy the site.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Posts</property>
                       </object>
                       <packing>
-                        <property name="tab_expand">True</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-expand">True</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_pages">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_pages</property>
-                            <property name="rules_hint">True</property>
-                            <property name="search_column">0</property>
-                            <property name="show_expanders">False</property>
+                            <property name="rules-hint">True</property>
+                            <property name="search-column">0</property>
+                            <property name="show-expanders">False</property>
                             <signal name="button-release-event" handler="on_view_pages_button_release_event" swapped="no"/>
                             <signal name="row-activated" handler="on_view_pages_row_activated" swapped="no"/>
                             <child internal-child="selection">
@@ -1319,11 +1254,11 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
-                                <property name="fixed_width">250</property>
+                                <property name="fixed-width">250</property>
                                 <property name="title" translatable="yes">Title</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1336,11 +1271,11 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
-                                <property name="fixed_width">150</property>
+                                <property name="fixed-width">150</property>
                                 <property name="title" translatable="yes">Slug</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">1</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1354,8 +1289,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Created</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">3</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">3</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1368,7 +1303,7 @@ This will only upload source files and not build and deploy the site.</property>
                             <child>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
-                                <property name="fixed_width">150</property>
+                                <property name="fixed-width">150</property>
                                 <property name="title" translatable="yes">Tags</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
@@ -1383,8 +1318,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="resizable">True</property>
                                 <property name="title" translatable="yes">Category</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">6</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">6</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1416,28 +1351,28 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Pages</property>
                       </object>
                       <packing>
                         <property name="position">1</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_tags">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_tags</property>
-                            <property name="rules_hint">True</property>
-                            <property name="enable_search">False</property>
-                            <property name="search_column">0</property>
-                            <property name="level_indentation">2</property>
+                            <property name="rules-hint">True</property>
+                            <property name="enable-search">False</property>
+                            <property name="search-column">0</property>
+                            <property name="level-indentation">2</property>
                             <signal name="row-activated" handler="on_view_tags_row_activated" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection_tags"/>
@@ -1446,9 +1381,9 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn" id="label_col">
                                 <property name="title" translatable="yes">Tag</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_order">descending</property>
-                                <property name="sort_column_id">4</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-order">descending</property>
+                                <property name="sort-column-id">4</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1462,7 +1397,7 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Date</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_column_id">2</property>
+                                <property name="sort-column-id">2</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1481,26 +1416,26 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Tags</property>
                       </object>
                       <packing>
                         <property name="position">2</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_cats">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_cats</property>
-                            <property name="enable_search">False</property>
-                            <property name="search_column">0</property>
+                            <property name="enable-search">False</property>
+                            <property name="search-column">0</property>
                             <signal name="row-activated" handler="on_view_cats_row_activated" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection_cats"/>
@@ -1509,9 +1444,9 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Category</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_order">descending</property>
-                                <property name="sort_column_id">4</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-order">descending</property>
+                                <property name="sort-column-id">4</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1525,7 +1460,7 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Date</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_column_id">2</property>
+                                <property name="sort-column-id">2</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1544,26 +1479,26 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Categories</property>
                       </object>
                       <packing>
                         <property name="position">3</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_listings">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_listings</property>
-                            <property name="enable_search">False</property>
-                            <property name="search_column">0</property>
+                            <property name="enable-search">False</property>
+                            <property name="search-column">0</property>
                             <signal name="row-activated" handler="on_view_listings_row_activated" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection_listings"/>
@@ -1572,8 +1507,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Filename</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1587,8 +1522,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Size</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">1</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1608,25 +1543,25 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Listings</property>
                       </object>
                       <packing>
                         <property name="position">4</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_images">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_images</property>
-                            <property name="search_column">0</property>
+                            <property name="search-column">0</property>
                             <signal name="row-activated" handler="on_view_images_row_activated" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection_images"/>
@@ -1635,8 +1570,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Filename</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1650,8 +1585,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Size</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">1</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1671,26 +1606,26 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Images</property>
                       </object>
                       <packing>
                         <property name="position">5</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_files">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_files</property>
-                            <property name="enable_search">False</property>
-                            <property name="search_column">0</property>
+                            <property name="enable-search">False</property>
+                            <property name="search-column">0</property>
                             <signal name="row-activated" handler="on_view_files_row_activated" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection_files"/>
@@ -1699,8 +1634,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Filename</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1714,8 +1649,8 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Size</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_column_id">1</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-column-id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1735,25 +1670,25 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Files</property>
                       </object>
                       <packing>
                         <property name="position">6</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow" id="tab_transl">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_translations">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_translation</property>
-                            <property name="search_column">0</property>
+                            <property name="search-column">0</property>
                             <signal name="button-release-event" handler="on_view_translations_button_release_event" swapped="no"/>
                             <signal name="row-activated" handler="on_view_translations_row_activated" swapped="no"/>
                             <child internal-child="selection">
@@ -1763,7 +1698,7 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Title</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_column_id">0</property>
+                                <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1777,9 +1712,9 @@ This will only upload source files and not build and deploy the site.</property>
                               <object class="GtkTreeViewColumn">
                                 <property name="title" translatable="yes">Date</property>
                                 <property name="clickable">True</property>
-                                <property name="sort_indicator">True</property>
-                                <property name="sort_order">descending</property>
-                                <property name="sort_column_id">3</property>
+                                <property name="sort-indicator">True</property>
+                                <property name="sort-order">descending</property>
+                                <property name="sort-column-id">3</property>
                                 <child>
                                   <object class="GtkCellRendererText"/>
                                   <attributes>
@@ -1811,19 +1746,19 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Translations</property>
                       </object>
                       <packing>
                         <property name="position">7</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow" id="html_view">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <placeholder/>
                         </child>
@@ -1835,12 +1770,12 @@ This will only upload source files and not build and deploy the site.</property>
                     <child type="tab">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Summary</property>
                       </object>
                       <packing>
                         <property name="position">8</property>
-                        <property name="tab_fill">False</property>
+                        <property name="tab-fill">False</property>
                       </packing>
                     </child>
                   </object>
@@ -1853,13 +1788,11 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkStatusbar" id="statusbar">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="margin_left">10</property>
-                    <property name="margin_right">10</property>
-                    <property name="margin_start">10</property>
-                    <property name="margin_end">10</property>
-                    <property name="margin_top">5</property>
-                    <property name="margin_bottom">5</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-top">5</property>
+                    <property name="margin-bottom">5</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">2</property>
                   </object>
@@ -1877,35 +1810,35 @@ This will only upload source files and not build and deploy the site.</property>
             <child>
               <object class="GtkBox" id="search">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkSearchBar" id="searchbar">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="search_mode_enabled">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="search-mode-enabled">True</property>
                         <child>
                           <object class="GtkComboBoxText" id="search_comboboxtext">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="has_entry">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="has-entry">True</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="search_entry">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="can_default">True</property>
-                                <property name="has_default">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="width_chars">50</property>
-                                <property name="caps_lock_warning">False</property>
-                                <property name="primary_icon_name">edit-find-symbolic</property>
-                                <property name="secondary_icon_name">edit-clear-symbolic</property>
-                                <property name="placeholder_text" translatable="yes">Search</property>
+                                <property name="can-focus">True</property>
+                                <property name="can-default">True</property>
+                                <property name="has-default">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="width-chars">50</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="primary-icon-name">edit-find-symbolic</property>
+                                <property name="secondary-icon-name">edit-clear-symbolic</property>
+                                <property name="placeholder-text" translatable="yes">Search</property>
                                 <signal name="activate" handler="on_search_entry_activate" swapped="no"/>
                                 <signal name="icon-press" handler="on_search_entry_icon_press" swapped="no"/>
                               </object>
@@ -1929,21 +1862,21 @@ This will only upload source files and not build and deploy the site.</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="view_search">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="model">store_search</property>
-                            <property name="rules_hint">True</property>
-                            <property name="enable_search">False</property>
-                            <property name="level_indentation">2</property>
+                            <property name="rules-hint">True</property>
+                            <property name="enable-search">False</property>
+                            <property name="level-indentation">2</property>
                             <signal name="row-activated" handler="on_view_search_row_activated" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection_search">
@@ -1988,17 +1921,17 @@ This will only upload source files and not build and deploy the site.</property>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTextView">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can-focus">True</property>
                             <property name="editable">False</property>
-                            <property name="wrap_mode">word</property>
-                            <property name="cursor_visible">False</property>
+                            <property name="wrap-mode">word</property>
+                            <property name="cursor-visible">False</property>
                             <property name="buffer">search_result_textbuffer</property>
-                            <property name="accepts_tab">False</property>
+                            <property name="accepts-tab">False</property>
                             <property name="monospace">True</property>
                           </object>
                         </child>
@@ -2031,14 +1964,14 @@ This will only upload source files and not build and deploy the site.</property>
         <child>
           <object class="VteTerminal" id="term">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="has_focus">True</property>
-            <property name="hscroll_policy">natural</property>
-            <property name="vscroll_policy">natural</property>
+            <property name="can-focus">True</property>
+            <property name="has-focus">True</property>
+            <property name="hscroll-policy">natural</property>
+            <property name="vscroll-policy">natural</property>
             <property name="encoding">UTF-8</property>
-            <property name="scrollback_lines">200</property>
-            <property name="scroll_on_keystroke">True</property>
-            <property name="scroll_on_output">False</property>
+            <property name="scrollback-lines">200</property>
+            <property name="scroll-on-keystroke">True</property>
+            <property name="scroll-on-output">False</property>
             <signal name="child-exited" handler="on_term_child_exited" swapped="no"/>
             <signal name="contents-changed" handler="on_term_contents_changed" swapped="no"/>
           </object>
@@ -2050,33 +1983,119 @@ This will only upload source files and not build and deploy the site.</property>
         </child>
       </object>
     </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="title">Knights of Ni</property>
+        <property name="has-subtitle">False</property>
+        <property name="spacing">5</property>
+        <property name="show-close-button">True</property>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="icon-size">0</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkMenuButton">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Preferences</property>
+            <property name="popover">menu</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">open-menu-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="info_button">
+            <property name="label">gtk-about</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Show info window about this application</property>
+            <property name="use-stock">True</property>
+            <property name="always-show-image">True</property>
+            <signal name="clicked" handler="on_info_button_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="ref_menu_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Get some external help</property>
+            <property name="popover">references</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="stock">gtk-help</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="search_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Find in files</property>
+            <property name="image">image2</property>
+            <property name="always-show-image">True</property>
+            <signal name="toggled" handler="on_search_button_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkAboutDialog" id="about_dialog">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="resizable">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
-    <property name="program_name">Knights of Ni</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">non_window_stack</property>
+    <property name="program-name">Knights of Ni</property>
     <property name="version">v0.7</property>
     <property name="website">https://github.com/encarsia/non</property>
-    <property name="website_label" translatable="yes">A manager for Nikola powered websites.</property>
-    <property name="logo_icon_name">help-about</property>
-    <property name="license_type">mit-x11</property>
+    <property name="website-label" translatable="yes">A manager for Nikola powered websites.</property>
+    <property name="logo-icon-name">help-about</property>
+    <property name="license-type">mit-x11</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">3</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">center</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">center</property>
             <child>
               <placeholder/>
             </child>
@@ -2091,38 +2110,28 @@ This will only upload source files and not build and deploy the site.</property>
     </child>
   </object>
   <object class="GtkFileChooserDialog" id="choose_conf_file">
-    <property name="width_request">700</property>
-    <property name="height_request">400</property>
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
-    <property name="attached_to">non_window_stack</property>
-    <property name="create_folders">False</property>
+    <property name="width-request">700</property>
+    <property name="height-request">400</property>
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">non_window_stack</property>
+    <property name="attached-to">non_window_stack</property>
+    <property name="create-folders">False</property>
     <property name="filter">filefilter1</property>
-    <property name="preview_widget_active">False</property>
+    <property name="preview-widget-active">False</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="file-activated" handler="on_choose_conf_file_file_activated" swapped="no"/>
     <signal name="response" handler="on_choose_conf_file_response" swapped="no"/>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="title" translatable="yes">Choose configuration file</property>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>
@@ -2135,26 +2144,34 @@ This will only upload source files and not build and deploy the site.</property>
         </child>
       </object>
     </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="title" translatable="yes">Choose configuration file</property>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkMessageDialog" id="config_info">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
+    <property name="type-hint">dialog</property>
     <property name="buttons">ok</property>
     <property name="text" translatable="yes">This application will not work without pointing to a local Nikola site configuration file.</property>
-    <property name="secondary_text" translatable="yes">Run "Choose conf.py" menu item again or select a bookmark item.</property>
+    <property name="secondary-text" translatable="yes">Run "Choose conf.py" menu item again or select a bookmark item.</property>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
-            <property name="layout_style">end</property>
+            <property name="layout-style">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -2165,7 +2182,7 @@ This will only upload source files and not build and deploy the site.</property>
         <child>
           <object class="GtkImage" id="image1">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="stock">gtk-dialog-warning</property>
             <property name="icon_size">6</property>
           </object>
@@ -2179,26 +2196,26 @@ This will only upload source files and not build and deploy the site.</property>
     </child>
   </object>
   <object class="GtkMessageDialog" id="git_conflict_dialog">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
-    <property name="message_type">warning</property>
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">non_window_stack</property>
+    <property name="message-type">warning</property>
     <property name="buttons">ok</property>
     <property name="text" translatable="yes">Resolve conflicts!</property>
-    <property name="secondary_text" translatable="yes">There are conflicts trying to pull from GitHub.</property>
+    <property name="secondary-text" translatable="yes">There are conflicts trying to pull from GitHub.</property>
     <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_window_close" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
-            <property name="layout_style">end</property>
+            <property name="layout-style">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -2209,7 +2226,7 @@ This will only upload source files and not build and deploy the site.</property>
         <child>
           <object class="GtkLabel" id="git_conflict_message">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -2220,160 +2237,7 @@ This will only upload source files and not build and deploy the site.</property>
         <child>
           <object class="GtkLabel" id="git_conflict_message_err">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkMessageDialog" id="git_get_changes_dialog">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
-    <property name="message_type">question</property>
-    <property name="buttons">cancel</property>
-    <property name="text" translatable="yes">Repository changes</property>
-    <property name="secondary_text" translatable="yes">Local files have been changed.
-
-&lt;b&gt;Keep local changes and try to pull from origin or discard changes and just pull from origin?&lt;/b&gt;</property>
-    <property name="secondary_use_markup">True</property>
-    <signal name="close" handler="on_window_close" swapped="no"/>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
-    <signal name="response" handler="on_git_get_changes_dialog_response" swapped="no"/>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="margin_top">10</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button2">
-                <property name="label" translatable="yes">Discard changes</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button1">
-                <property name="label" translatable="yes">Keep changes</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
-            <property name="shadow_type">in</property>
-            <property name="min_content_height">100</property>
-            <child>
-              <object class="GtkViewport">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkLabel" id="git_unstashed_files">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="-2">button2</action-widget>
-      <action-widget response="-3">button1</action-widget>
-    </action-widgets>
-  </object>
-  <object class="GtkMessageDialog" id="git_push_changes_dialog">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
-    <property name="message_type">question</property>
-    <property name="buttons">ok-cancel</property>
-    <property name="text" translatable="yes">Repository changes</property>
-    <property name="secondary_text" translatable="yes">Changes that have been made since last upload which is done via the "Upload to GitHub" function or when deploying the site.
-
-&lt;b&gt;Commit and push changed files to the GitHub repository's src branch?&lt;/b&gt;</property>
-    <property name="secondary_use_markup">True</property>
-    <signal name="close" handler="on_window_close" swapped="no"/>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
-    <signal name="response" handler="on_git_push_changes_dialog_response" swapped="no"/>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="margin_top">10</property>
-            <property name="homogeneous">True</property>
-            <property name="layout_style">end</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
-            <property name="shadow_type">in</property>
-            <property name="min_content_height">100</property>
-            <child>
-              <object class="GtkViewport">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkLabel" id="git_changed_files">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                </child>
-              </object>
-            </child>
+            <property name="can-focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -2385,27 +2249,27 @@ This will only upload source files and not build and deploy the site.</property>
     </child>
   </object>
   <object class="GtkMessageDialog" id="newpost_dialog">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="title" translatable="yes">Create new post</property>
-    <property name="default_width">300</property>
-    <property name="type_hint">dialog</property>
-    <property name="transient_for">non_window_stack</property>
-    <property name="message_type">question</property>
+    <property name="default-width">300</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">non_window_stack</property>
+    <property name="message-type">question</property>
     <property name="buttons">ok-cancel</property>
     <property name="text" translatable="yes">Title of new post</property>
-    <property name="secondary_text"> </property>
+    <property name="secondary-text"> </property>
     <signal name="close" handler="on_window_close" swapped="no"/>
     <signal name="delete-event" handler="on_window_close" swapped="no"/>
     <signal name="response" handler="on_newpost_dialog_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
-            <property name="layout_style">end</property>
+            <property name="layout-style">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -2416,15 +2280,15 @@ This will only upload source files and not build and deploy the site.</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">10</property>
-            <property name="margin_right">10</property>
+            <property name="can-focus">False</property>
+            <property name="margin-left">10</property>
+            <property name="margin-right">10</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
               <object class="GtkEntry" id="newpost_entry">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <signal name="activate" handler="on_newpost_entry_activate" swapped="no"/>
               </object>
               <packing>
@@ -2436,9 +2300,9 @@ This will only upload source files and not build and deploy the site.</property>
             <child>
               <object class="GtkLabel" id="entry_message">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="wrap">True</property>
-                <property name="max_width_chars">150</property>
+                <property name="max-width-chars">150</property>
                 <attributes>
                   <attribute name="foreground" value="#efef29292929"/>
                 </attributes>
@@ -2453,10 +2317,10 @@ This will only upload source files and not build and deploy the site.</property>
               <object class="GtkCheckButton" id="create_page">
                 <property name="label" translatable="yes">Create new page</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
                 <property name="halign">start</property>
-                <property name="draw_indicator">True</property>
+                <property name="draw-indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2469,11 +2333,11 @@ This will only upload source files and not build and deploy the site.</property>
                 <property name="label" translatable="yes">Write in Markdown</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Markdown support is disabled by default. Consult the Nikola handbook on how to configure it.</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Markdown support is disabled by default. Consult the Nikola handbook on how to configure it.</property>
                 <property name="halign">start</property>
-                <property name="draw_indicator">True</property>
+                <property name="draw-indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
