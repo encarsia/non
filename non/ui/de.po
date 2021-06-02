@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: NoN.pot\n"
 
@@ -343,10 +343,10 @@ msgid "Open preview in standard web browser"
 msgstr "Öffne Vorschau in Standard-Browser"
 
 msgid "Open reST directives in web browser"
-msgstr "reST-Directives im Browser öffnen"
+msgstr "Öffne reST-Directives im Browser"
 
 msgid "Open reST syntax reference in web browser"
-msgstr "reST Syntaxreferenz im Browser öffnen"
+msgstr "Öffne reST-Syntaxreferenz im Browser"
 
 msgid "Open reStructuredText Directives in web browser"
 msgstr "Öffne reStructuredText-Directives im Browser"
@@ -358,7 +358,7 @@ msgid "Open this Nikola instance's conf.py."
 msgstr "Öffne conf.py dieser Nikola-Instanz."
 
 msgid "Open this application's configuration file."
-msgstr "Öffne die Konfigurationsdatei dieser Anwendung"
+msgstr "Öffne die Konfigurationsdatei dieser Anwendung."
 
 msgid "Output folder is set to default 'output'"
 msgstr "Ausgabeverzeichnis is auf den Standard 'output' gesetzt"
@@ -522,4 +522,3 @@ msgstr "ja"
 
 msgid "{} doesn't exist...create..."
 msgstr "{} existiert nicht...wird erstellt..."
-
