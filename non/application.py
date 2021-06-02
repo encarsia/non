@@ -669,19 +669,21 @@ class NiApp:
         window.show_all()
 
     def start_console(self, wdir):
-        # FIXME spawn_sync is deprecated
-        #  and spawn_async doesn't exist anymore and I don't understand
-        #  how to use GLib.spawn_async so I leave this here for now as
-        #  long as this is only a warning and I don't have a solution
-        self.obj("term").spawn_sync(
+
+        # spawn_async throws a waning that the runtime check failed but at
+        # least it's not deprecated
+        self.obj("term").spawn_async(
             Vte.PtyFlags.DEFAULT,
             wdir,
             ["/bin/bash"],
             None,
-            GLib.SpawnFlags.DEFAULT,
+            GLib.SpawnFlags.DO_NOT_REAP_CHILD,
             None,
+            Gio.Cancellable,
+            -1,
             None,
         )
+
         # bool variable to decide if focus should return from terminal stack
         # child, True when command is invoked by button, False if command is
         # typed directly in terminal
@@ -851,7 +853,7 @@ anymore."), "warning")
                 json.dump(sitedata, outfile, indent=4)
             self.messenger(_("Write site data to JSON file."))
         except AttributeError:
-            self.messenger(_("Could not write site data to JSON file"), "warn")
+            self.messenger(_("Could not write site data to JSON file."), "warn")
 
     def get_site_info(self):
         # load nikola conf.py as module to gain simple access to variables
@@ -1457,7 +1459,7 @@ one!"))
             infodict["status"] = self.exec_cmd("nikola status").stdout.split("\n")[1]
         except IndexError:
             self.messenger(_("Could not fetch site status. See 'Status' \
-messages and solve errors"), "error")
+messages and solve errors."), "error")
             return
         infodict["broken_links"] = get_brokenlinks_string(self.exec_cmd(
             "nikola check -l"))
@@ -1631,7 +1633,7 @@ messages and solve errors"), "error")
                                 env=self.myenv,
                                 )
         if output.returncode != 0:
-            self.messenger(f"Error while executing command: {output.stderr} "
+            self.messenger(f_("Error while executing command: {output.stderr} ")
                            f"(returncode: {output.returncode})",
                            "error")
             self.obj("textbuffer_error").set_text(output.stderr)
