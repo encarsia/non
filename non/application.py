@@ -143,7 +143,7 @@ class Handler:
 
     def on_search_entry_activate(self, widget):
         txt = app.obj("search_comboboxtext").get_active_text()
-        if not  txt == "":
+        if not txt == "":
             # stop search process if there is running any
             try:
                 self.sp.terminate()
@@ -301,7 +301,7 @@ directives.html")
                                         app.obj("newpost_entry").get_text(),
                                         format,
                                         )
-                                     )
+                                      )
 
                 if "ERROR" in str(status.stderr):
                     app.messenger(_(f"Failed to create post. Message: "
@@ -500,7 +500,7 @@ stash pop"))
             item.set_property("text", _("Open in web browser"))
             box.add(item)
             item.connect("clicked", self.on_open_pp_web, title, path, slug)
-            if meta != "": # create button if metafile exists
+            if meta != "":  # create button if metafile exists
                 item = Gtk.ModelButton()
                 item.set_property("text", _("Edit meta data file"))
                 item.connect("clicked", self.on_open_metafile, meta)
@@ -654,7 +654,7 @@ class NiApp:
             self.messenger(_("Empty config created..."))
         else:
             self.non_config = yaml.load(open(self.conf_file),
-                                             Loader=yaml.FullLoader,
+                                        Loader=yaml.FullLoader,
                                         )
             self.messenger(_("Found config to work with..."))
 
@@ -853,7 +853,8 @@ anymore."), "warning")
                 json.dump(sitedata, outfile, indent=4)
             self.messenger(_("Write site data to JSON file."))
         except AttributeError:
-            self.messenger(_("Could not write site data to JSON file."), "warn")
+            self.messenger(_("Could not write site data to JSON file."),
+                           "warn")
 
     def get_site_info(self):
         # load nikola conf.py as module to gain simple access to variables
@@ -886,7 +887,7 @@ anymore."), "warning")
             try:
                 self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION)
             except TypeError:
-                    self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION[self.default_lang])
+                self.obj("descr").set_text(self.siteconf.BLOG_DESCRIPTION[self.default_lang])
             try:
                 self.obj("title").set_text(self.siteconf.BLOG_TITLE)
             except TypeError:
@@ -943,7 +944,7 @@ anymore."), "warning")
             self.src_files_ext = set()
             for key in self.src_files_paths:
                 _paths = set()
-                for val in  self.src_files_paths[key]:
+                for val in self.src_files_paths[key]:
                     _paths.add(val[0].split("/*.")[0])
                     self.src_files_ext.add(val[0].split("/*.")[1])
                 self.src_files_paths[key] = _paths
@@ -1068,8 +1069,7 @@ one!"))
         filelist = list()
         for path in self.src_files_paths[sub]:
             _allfiles = glob.glob(path + "/**/*.*", recursive=True)
-            filelist += [x for x in _allfiles if not (x.endswith(".meta") or \
-                                                        "/." in _allfiles)]
+            filelist += [x for x in _allfiles if not (x.endswith(".meta") or "/." in _allfiles)]
         return filelist
 
     def get_src_content(self, subdir, d, t, c, update=None):
@@ -1539,7 +1539,7 @@ messages and solve errors."), "error")
         subdirs = [("Posts", self.sitedata["posts"]),
                    ("Pages", self.sitedata["pages"]),
                    ("Listings", self.sitedata["listings"]),
-                  ]
+                   ]
 
         for s in subdirs:
 
@@ -1633,8 +1633,8 @@ messages and solve errors."), "error")
                                 env=self.myenv,
                                 )
         if output.returncode != 0:
-            self.messenger(f"_(Error while executing command:) {output.stderr} "
-                           f"(returncode: {output.returncode})",
+            self.messenger((f"Error while executing command: {output.stderr} "
+                            f"(returncode: {output.returncode})"),
                            "error")
             self.obj("textbuffer_error").set_text(output.stderr)
             self.obj("status_button_label").set_text("Status (!)")
@@ -1676,6 +1676,7 @@ messages and solve errors."), "error")
 
     def run(self, argv):
         self.app.run(argv)
+
 
 if __name__ == "__main__":
     app = NiApp()

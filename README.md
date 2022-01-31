@@ -31,7 +31,7 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.1.3
+   * latest tested versions are 7.8.15 and 8.2.0
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
@@ -40,6 +40,7 @@
  * recommended: Git (it's probably already installed)
  * [ghp-import](https://pypi.org/project/ghp-import/): deploy to GitHub Pages
  * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
+   (**Note:** This will currently throw a SetuptoolsDeprecationWarning but still works. I will wrap my head around this issue and probably package the application as something more modern.)
 
 #### PREPARE ARCHLINUX AND ITS RELATIVES
 
@@ -66,6 +67,8 @@ sudo snap install nikola
  * download and extract or clone repository and change into said folder
  
 > FTR: when executing `python`, it is Python 3
+
+> NOTE: setuptools is deprecated, will be solved in the next version
  
 ### ARE WE THERE YET?
 
