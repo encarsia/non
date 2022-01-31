@@ -1633,8 +1633,8 @@ messages and solve errors."), "error")
                                 env=self.myenv,
                                 )
         if output.returncode != 0:
-            self.messenger((f"Error while executing command: {output.stderr} "
-                            f"(returncode: {output.returncode})"),
+            self.messenger(f_("Error while executing command: {output.stderr} ")
+                           f"(returncode: {output.returncode})",
                            "error")
             self.obj("textbuffer_error").set_text(output.stderr)
             self.obj("status_button_label").set_text("Status (!)")
