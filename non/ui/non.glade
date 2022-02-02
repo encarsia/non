@@ -3,6 +3,47 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="vte-2.91" version="0.46"/>
+  <object class="GtkMessageDialog" id="config_info">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="buttons">ok</property>
+    <property name="text" translatable="yes">This application will not work without pointing to a local Nikola site configuration file.</property>
+    <property name="secondary-text" translatable="yes">Run "Choose conf.py" menu item again or select a bookmark item.</property>
+    <signal name="delete-event" handler="on_window_close" swapped="no"/>
+    <signal name="response" handler="on_window_close" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="homogeneous">True</property>
+            <property name="layout-style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="image1">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="stock">gtk-dialog-warning</property>
+            <property name="icon_size">6</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkFileFilter" id="filefilter1">
     <patterns>
       <pattern>conf.py</pattern>
@@ -2079,7 +2120,7 @@
     <property name="type-hint">dialog</property>
     <property name="transient-for">non_window_stack</property>
     <property name="program-name">Knights of Ni</property>
-    <property name="version">v0.7</property>
+    <property name="version">v0.81</property>
     <property name="website">https://github.com/encarsia/non</property>
     <property name="website-label" translatable="yes">A manager for Nikola powered websites.</property>
     <property name="logo-icon-name">help-about</property>
@@ -2151,46 +2192,6 @@
         <property name="title" translatable="yes">Choose configuration file</property>
         <child>
           <placeholder/>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkMessageDialog" id="config_info">
-    <property name="type-hint">dialog</property>
-    <property name="buttons">ok</property>
-    <property name="text" translatable="yes">This application will not work without pointing to a local Nikola site configuration file.</property>
-    <property name="secondary-text" translatable="yes">Run "Choose conf.py" menu item again or select a bookmark item.</property>
-    <signal name="delete-event" handler="on_window_close" swapped="no"/>
-    <signal name="response" handler="on_window_close" swapped="no"/>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="homogeneous">True</property>
-            <property name="layout-style">end</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="image1">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="stock">gtk-dialog-warning</property>
-            <property name="icon_size">6</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
         </child>
       </object>
     </child>
