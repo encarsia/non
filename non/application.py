@@ -41,10 +41,8 @@ import yaml
 import markdown
 import setproctitle
 
-try:
-    import info
-except ModuleNotFoundError:
-    from non import info
+import non
+
 
 _ = gettext.gettext
 
@@ -604,7 +602,7 @@ class NiApp:
                           }
 
         # log version info for debugging
-        self.log.debug(f"Application version: {info.__version__}")
+        self.log.debug(f"Application version: {non.__version__}")
         self.log.debug(f"GTK+ version: {Gtk.get_major_version()}."
                        f"{Gtk.get_minor_version()}."
                        f"{Gtk.get_micro_version()}")
@@ -1633,7 +1631,9 @@ messages and solve errors."), "error")
                                 env=self.myenv,
                                 )
         if output.returncode != 0:
-            self.messenger(f_("Error while executing command: {output.stderr} ")
+            # translatable and f-string doesn't go well
+            msg = _("Error while executing command:")
+            self.messenger(f"{msg} {output.stderr}) "
                            f"(returncode: {output.returncode})",
                            "error")
             self.obj("textbuffer_error").set_text(output.stderr)
@@ -1684,6 +1684,5 @@ if __name__ == "__main__":
 else:
     # run application from Python console
     # from non import application
-    os.chdir("non/")
     app = NiApp()
     app.run(None)

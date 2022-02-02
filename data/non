@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
+# execution file to put in /usr/bin
+
 import os
 
-# execution file to put in /usr/bin
-# modify var at installation time by setup.py
-os.chdir("../")
-lib_dir = os.getcwd()
-
-if lib_dir not in sys.path:
-    sys.path.insert(0, lib_dir)
+import non
+os.chdir(os.path.dirname(non.__file__))
 
 from non import application
-
