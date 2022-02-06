@@ -46,7 +46,7 @@
 The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop).
 
 ``` bash
-sudo pacman -S python-yaml python-setuptools python-ghp-import
+sudo pacman -S python-yaml python-setuptools python-ghp-import python-pip
 ```
 
 #### PREPARE UBUNTU 21.04

@@ -668,7 +668,7 @@ class NiApp:
 
     def start_console(self, wdir):
 
-        # spawn_async throws a waning that the runtime check failed but at
+        # spawn_async throws a warning that the runtime check failed but at
         # least it's not deprecated
         self.obj("term").spawn_async(
             Vte.PtyFlags.DEFAULT,
