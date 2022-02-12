@@ -31,22 +31,22 @@
 
  * Python 3
  * [Nikola](https://getnikola.com/) installation
-   * latest tested versions are 7.8.15 and 8.1.3
+   * latest tested versions are 7.8.15 and 8.2.0
    * consult the [upgrade guide for v8](https://getnikola.com/blog/upgrading-to-nikola-v8.html), this code piece cannot help you with that but also is not affected by it
  * configurated Nikola site ([Getting Started](https://getnikola.com/getting-started.html))
  * Python GObject Introspection bindings ([PyGObject](http://pygobject.readthedocs.io/en/latest/getting_started.html))
  * [PyYAML](https://github.com/yaml/pyyaml)
  * [Python-Markdown](https://python-markdown.github.io/) for Python 3
- * recommended: Git (it's probably already installed)
+ * recommended: Git (probably already installed)
  * [ghp-import](https://pypi.org/project/ghp-import/): deploy to GitHub Pages
- * if you plan an installation: [setuptools](https://github.com/pypa/setuptools)
+ * if you plan an installation: [setuptools](https://github.com/pypa/setuptools) and [pip](https://pip.pypa.io/en/stable) (probably already installed)
 
 #### PREPARE ARCHLINUX AND ITS RELATIVES
 
-The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop). You can install Nikola and dependencies from the repositories, otherwise use pip (see installation on Ubuntu below):
+The PyGObject Introspection bindings are probably already installed (tested with a plain Openbox and MATE desktop).
 
 ``` bash
-sudo pacman -S nikola python-yaml python-setuptools python-ghp-import
+sudo pacman -S python-yaml python-setuptools python-ghp-import
 ```
 
 #### PREPARE UBUNTU 21.04
@@ -55,33 +55,28 @@ sudo pacman -S nikola python-yaml python-setuptools python-ghp-import
 sudo apt-get install python3-gi gir1.2-webkit2-4.0 gir1.2-vte-2.91 python3-pip python3-setuptools python3-setproctitle git
 ```
 
-There is a snap package for Nikola avaiable:
-
-``` bash
-sudo snap install nikola
-```
-
 ### INSTALLATION
 
- * download and extract or clone repository and change into said folder
- 
 > FTR: when executing `python`, it is Python 3
+
+ * If you plan on testing NoN you probably have Nikola already installed. There are plenty ways to do so. Nonetheless Nikola will be installed as a dependency during the installation of NoN via pip.
+
+ * clone the [repository](https://github.com/encarsia/non) and change into said folder
+ * run `pip install .` for a user-wide installation, run the command with root privileges to install system-wide
+
+or
+
+ * run `pip install git+https://github.com/encarsia/non.git` without prior repo cloning
+
  
 ### ARE WE THERE YET?
 
- * change into the `non` folder and execute `application.py`
- * if you intend to use the desktop icon, edit `data/KnightsOfNi.desktop` and customize path of "Exec", and "Icon" and copy file to `~/.local/share/applications/`
-
-### I'M LAZY!
-
- * run `python setup.py install --user` to install the app just for your selfish self or
- * run `python setup.py install` with administrator privilege for system-wide installation
  * press the <kbd>SUPER</kbd> key and start typing <kbd>N</kbd>...<kbd>O</kbd>...<kbd>N</kbd> 
  * press <kbd>ENTER</kbd> if you spot the duck
 
 ### HOW DO I GET RID OF THIS?
 
- * Lucky you asked. If you installed the application via `setup.py`, run `python setup.py uninstall --user` or `python setup.py uninstall` (with superuserpowers) to undo the installation. This will remove the Python package and any desktop files.
+ * Lucky you asked. It's as easy as the installation, just run `pip uninstall non` and you're done.
 
 ### ANYTHING ELSE I SHOULD KNOW?
 
